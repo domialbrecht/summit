@@ -1,7 +1,29 @@
-import type { Handle } from '@sveltejs/kit';
-import * as auth from '$lib/server/auth.js';
+import { TokenBucket } from '$lib/server/rate-limit';
+import { error, type Handle } from '@sveltejs/kit';
+import * as auth from '$lib/server/session.js';
+import { sequence } from '@sveltejs/kit/hooks';
 
-const handleAuth: Handle = async ({ event, resolve }) => {
+const bucket = new TokenBucket<string>(100, 1);
+
+const rateLimitHandle: Handle = async ({ event, resolve }) => {
+	const clientIp = event.request.headers.get('X-Forwarded-For');
+	if (clientIp === null) {
+		return resolve(event);
+	}
+
+	let cost: number;
+	if (event.request.method === 'GET' || event.request.method === 'OPTIONS') {
+		cost = 1;
+	} else {
+		cost = 3;
+	}
+	if (!bucket.consume(clientIp, cost)) {
+		error(429, { message: 'Too many requests' });
+	}
+	return resolve(event);
+};
+
+const authHandle: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 	if (!sessionToken) {
 		event.locals.user = null;
@@ -22,4 +44,4 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle: Handle = handleAuth;
+export const handle: Handle = sequence(rateLimitHandle, authHandle);
