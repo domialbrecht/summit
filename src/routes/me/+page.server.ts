@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { deleteSessionTokenCookie, invalidateSession } from '$lib/server/session';
 
-import type { Actions, RequestEvent } from './$types';
+import type { Actions, RequestEvent } from '../$types';
 import { StravaApi } from '$lib/strava';
 
 export async function load(event: RequestEvent) {
