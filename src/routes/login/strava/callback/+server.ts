@@ -41,7 +41,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const userResponse = await fetch(userRequest);
 	const userResult = await userResponse.json();
 	const stravaId = userResult.id.toString();
-	const email = userResult.email;
 
 	const results = await db.select().from(table.user).where(eq(table.user.stravaId, stravaId));
 
@@ -49,6 +48,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	if (existingUser) {
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, existingUser.id);
+		await storeTokens(existingUser.id, tokens);
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {
 			status: 302,
@@ -58,11 +58,20 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
+	// Athlete data
+	const ftp = userResult.ftp;
+	const profile = userResult.profile;
+	const firstName = userResult.firstname;
+	const lastName = userResult.lastname;
+
 	try {
-		await db.insert(table.user).values({ id: stravaId, stravaId, email });
+		await db
+			.insert(table.user)
+			.values({ id: stravaId, stravaId, firstName, lastName, profile, ftp });
 
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, stravaId);
+		await storeTokens(stravaId, tokens);
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {
 			status: 302,
@@ -70,9 +79,37 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				Location: '/'
 			}
 		});
-	} catch {
+	} catch (e) {
+		console.error(e);
 		error(404, {
 			message: 'An error has occurred'
+		});
+	}
+}
+
+async function storeTokens(userId: string, tokens: OAuth2Tokens) {
+	const accessToken = tokens.accessToken();
+	const refreshToken = tokens.refreshToken();
+	const expiresAt = tokens.accessTokenExpiresAt();
+
+	const results = await db.select().from(table.tokens).where(eq(table.tokens.userId, userId));
+
+	const exixtingTokens = results.at(0);
+	if (exixtingTokens) {
+		db.update(table.tokens)
+			.set({
+				accessToken,
+				refreshToken,
+				expiresAt
+			})
+			.where(eq(table.tokens.userId, userId));
+	} else {
+		db.insert(table.tokens).values({
+			id: userId,
+			userId,
+			accessToken,
+			refreshToken,
+			expiresAt
 		});
 	}
 }
