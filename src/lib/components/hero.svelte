@@ -8,12 +8,12 @@
 		> <br />
 		<span class="inline-grid"
 			><span
-				class="pointer-events-none col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.accent)_42%,theme(colors.accent)_47%,theme(colors.primary)_100%)] bg-clip-text blur-xl [-webkit-text-fill-color:transparent] [transform:translate3d(0,0,0)] before:content-[attr(data-text)] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--er)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--a)))_67%,oklch(var(--a))_100.2%)]"
+				class="pointer-events-none col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.accent)_42%,theme(colors.accent)_47%,theme(colors.primary)_100%)] bg-clip-text blur-xl [-webkit-text-fill-color:transparent] [transform:translate3d(0,0,0)] before:content-[attr(data-text)] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--er)),oklch(var(--er)))_67%,oklch(var(--er))_100.2%)]"
 				aria-hidden="true"
 				data-text="SUMMITS Challange"
 			></span>
 			<span
-				class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 relative col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.accent)_42%,theme(colors.primary)_47%,theme(colors.primary)_100%)] bg-clip-text [-webkit-text-fill-color:transparent] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--er))_4%,color-mix(in_oklch,oklch(var(--er)),oklch(var(--er)))_22%,oklch(var(--a))_45%,color-mix(in_oklch,oklch(var(--a)),oklch(var(--a)))_67%,oklch(var(--p))_100.2%)]"
+				class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 relative col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.accent)_42%,theme(colors.primary)_47%,theme(colors.primary)_100%)] bg-clip-text [-webkit-text-fill-color:transparent] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_67%,oklch(var(--p))_100.2%)]"
 				>SUMMITS Challange</span
 			></span
 		> <br />
