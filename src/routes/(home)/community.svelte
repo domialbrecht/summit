@@ -1,4 +1,4 @@
-<div class="w-full overflow-hidden px-2 py-40 lg:px-10">
+<div class="w-full overflow-hidden px-2 py-24 lg:px-10">
 	<div class="text-center">
 		<div class="h-6"></div>
 		<div>
@@ -45,20 +45,12 @@
 		</div>
 		<div class="h-12"></div>
 		<h2
-			class="font-title relative z-[2] mx-auto text-[clamp(2rem,6vw,4.5rem)] font-black leading-none"
+			class="font-title relative z-[2] mx-auto text-[clamp(2rem,6vw,4.5rem)] font-black leading-none text-neutral"
 		>
-			Free and open-source <br /> <span class="font-light">Built by the community</span>
+			SolyVC Rennvelo Event<br />
+			<span class="font-light text-error">23 aktivi Mitglider</span>
 		</h2>
-		<div class="h-12"></div>
-		<p class="font-title font-light md:text-2xl">
-			<a
-				href="https://github.com/saadeghi/daisyui/blob/master/.github/CONTRIBUTING.md"
-				rel="noopener, noreferrer"
-				target="_blank"
-				class="link-hover link text-base-content/70"
-				>daisyUI welcomes contributions from developers around the world</a
-			>
-		</p>
+		<div class="h-6"></div>
 		<div class="flex w-full justify-center">
 			<div class="flex w-full max-w-5xl flex-wrap justify-center gap-3 p-10">
 				<div class="tooltip" data-tip="saadeghi">

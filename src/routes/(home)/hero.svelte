@@ -4,7 +4,7 @@
 	>
 		<span
 			class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 brightness-150 contrast-150"
-			>SOLYVC present<!----></span
+			>SOLYVC presents<!----></span
 		> <br />
 		<span class="inline-grid"
 			><span
@@ -24,8 +24,7 @@
 	</h1>
 	<div class="h-4"></div>
 	<p class="font-title py-4 font-light text-base-content/70 md:text-lg xl:text-2xl">
-		Wir bezwingen so viele Pässe wie noch nie! ⛰️
-		<span class="border-b-2 border-base-content/20">faster than ever.</span><!---->
+		Mir sammle so viu Päss wies geit! ⛰️
 	</p>
 	<div class="h-10"></div>
 	<div>
@@ -34,9 +33,9 @@
 		>
 			<a
 				data-sveltekit-preload-data=""
-				href="/docs/install/"
+				href="/me"
 				class="group btn btn-primary grow rounded-full px-12 md:btn-lg"
-				>Melde dich an<svg
+				>Mit Strava amäude<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"

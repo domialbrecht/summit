@@ -1,15 +1,18 @@
 <script lang="ts">
-	import Home from '$lib/components/home.svelte';
-	import Intro from '$lib/components/intro.svelte';
-	import Stats from '$lib/components/stats.svelte';
-	import Community from '$lib/components/community.svelte';
+	import Home from './home.svelte';
+	import Intro from './intro.svelte';
+	import Community from './community.svelte';
 	import Navbar from '$lib/components/navbar.svelte';
-	import Heroimg from '$lib/components/heroimg.svelte';
+	import Heroimg from './heroimg.svelte';
+
+	import type { PageData } from './$types';
+
+	export let data: PageData;
 </script>
 
 <div>
 	<div class="relative">
-		<Navbar />
+		<Navbar user={data.user} />
 		<Home />
 
 		<div class="absolute -right-6 bottom-20 z-0 w-10/12">
@@ -19,6 +22,5 @@
 		</div>
 	</div>
 	<Intro />
-	<Stats />
 	<Community />
 </div>

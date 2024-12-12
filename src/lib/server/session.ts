@@ -33,6 +33,8 @@ export async function validateSessionToken(token: string) {
 			// Adjust user table here to tweak returned data
 			user: {
 				id: table.user.id,
+				firstName: table.user.firstName,
+				lastName: table.user.lastName,
 				stravaId: table.user.stravaId,
 				profile: table.user.profile,
 				ftp: table.user.ftp
