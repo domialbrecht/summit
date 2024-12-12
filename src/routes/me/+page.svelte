@@ -16,5 +16,5 @@
 	<button>Sync my activities</button>
 </form>
 {#if form?.success}
-	<p>Successfully synced</p>
+	<p>Activity sync started. This will take some time. Will be available at /activities</p>
 {/if}

@@ -3,8 +3,9 @@ import * as table from '$lib/server/db/schema';
 import { getTokensForUser } from '$lib/server/oauth';
 import { error } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
+import { updateActivities } from './activity_sync';
 
-type StravaActivity = {
+export type StravaActivity = {
 	id: number;
 	upload_id: number;
 	name: string;
@@ -82,26 +83,8 @@ export async function updateActivityCache(userId: string) {
 	if (activities.length === 0) {
 		return true;
 	}
-	await db
-		.insert(table.activity)
-		.values(
-			activities.map((activity: StravaActivity) => ({
-				id: activity.id,
-				userId: userId,
-				uploadId: activity.upload_id,
-				name: activity.name,
-				distance: activity.distance,
-				movingTime: activity.moving_time,
-				elapsedTime: activity.elapsed_time,
-				totalElevationGain: activity.total_elevation_gain,
-				type: activity.type,
-				startDate: new Date(activity.start_date),
-				averageSpeed: activity.average_speed,
-				maxSpeed: activity.max_speed,
-				averageWatts: activity.average_watts
-			}))
-		)
-		.onConflictDoNothing();
+
+	await updateActivities(userId, activities);
 
 	return true;
 }

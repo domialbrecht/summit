@@ -31,6 +31,6 @@ async function sync(event: RequestEvent) {
 	if (event.locals.session === null || event.locals.user === null) {
 		return redirect(302, '/login');
 	}
-	await StravaApi.updateActivityCache(event.locals.user.id);
+	StravaApi.updateActivityCache(event.locals.user.id);
 	return { success: true };
 }
