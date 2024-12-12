@@ -35,7 +35,7 @@
 				data-sveltekit-preload-data=""
 				href="/me"
 				class="group btn btn-primary grow rounded-full px-12 md:btn-lg"
-				>Mit Strava amäude<svg
+				>Zu mine Summits<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"

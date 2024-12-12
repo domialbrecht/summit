@@ -4,6 +4,21 @@ import { getTokensForUser } from '$lib/server/oauth';
 import { error } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 
+type StravaActivity = {
+	id: number;
+	upload_id: number;
+	name: string;
+	distance: number;
+	moving_time: number;
+	elapsed_time: number;
+	total_elevation_gain: number;
+	type: string;
+	start_date: string;
+	average_speed: number;
+	max_speed: number;
+	average_watts: number;
+};
+
 async function stravaFetch(
 	endpoint: string,
 	userId: string,
@@ -27,16 +42,23 @@ async function stravaFetch(
 	});
 
 	if (!response.ok) {
-		error(response.status, { message: 'Failed to fetch data from Strava' });
+		const api_err = await response.json();
+		console.error(api_err);
+		error(response.status, { message: `Failed to fetch data from Strava with error` });
 	}
 
-	return response.json();
+	return await response.json();
 }
+
+const dateToUnixTimestamp = (date: Date): string => {
+	return Math.floor(date.getTime() / 1000).toString();
+};
 
 export async function updateActivityCache(userId: string) {
 	// Sync last two weeks of activities
 	const UPDATE_CYCLE_DAYS = 14;
 	const today = new Date();
+	today.setHours(today.getHours() - 1);
 	const results = await db
 		.select({ startDate: table.activity.startDate })
 		.from(table.activity)
@@ -47,32 +69,36 @@ export async function updateActivityCache(userId: string) {
 	let lastSynced = results.at(0)?.startDate;
 
 	if (!lastSynced) {
-		lastSynced = new Date(today.setDate(today.getDate() - UPDATE_CYCLE_DAYS));
+		lastSynced = new Date();
+		lastSynced.setDate(today.getDate() - UPDATE_CYCLE_DAYS);
 	}
 
 	const options = {
-		before: today.toISOString(),
-		after: lastSynced.toISOString()
+		before: dateToUnixTimestamp(today),
+		after: dateToUnixTimestamp(lastSynced)
 	};
 
 	const activities = await stravaFetch('athlete/activities', userId, options);
+	if (activities.length === 0) {
+		return true;
+	}
 	await db
 		.insert(table.activity)
 		.values(
-			activities.map((activity: table.Activity) => ({
+			activities.map((activity: StravaActivity) => ({
 				id: activity.id,
 				userId: userId,
-				uploadId: activity.uploadId,
+				uploadId: activity.upload_id,
 				name: activity.name,
 				distance: activity.distance,
-				movingTime: activity.movingTime,
-				elapsedTime: activity.elapsedTime,
-				totalElevationGain: activity.totalElevationGain,
+				movingTime: activity.moving_time,
+				elapsedTime: activity.elapsed_time,
+				totalElevationGain: activity.total_elevation_gain,
 				type: activity.type,
-				startDate: activity.startDate,
-				averageSpeed: activity.averageSpeed,
-				maxSpeed: activity.maxSpeed,
-				averageWatts: activity.averageSpeed
+				startDate: new Date(activity.start_date),
+				averageSpeed: activity.average_speed,
+				maxSpeed: activity.max_speed,
+				averageWatts: activity.average_watts
 			}))
 		)
 		.onConflictDoNothing();

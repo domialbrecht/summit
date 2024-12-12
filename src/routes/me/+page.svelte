@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
-	export let data: PageData;
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
 <h1>Hi, {data.user.stravaId}!</h1>
@@ -15,3 +15,6 @@
 <form action="?/sync" method="post" use:enhance>
 	<button>Sync my activities</button>
 </form>
+{#if form?.success}
+	<p>Successfully synced</p>
+{/if}

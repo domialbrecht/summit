@@ -5,7 +5,7 @@ import type { RequestEvent } from './$types';
 
 export function GET(event: RequestEvent): Response {
 	const state = generateState();
-	const scopes = ['read', 'activity:read'];
+	const scopes = ['activity:read,read'];
 	const url = strava.createAuthorizationURL(state, scopes);
 
 	event.cookies.set('strava_oauth_state', state, {

@@ -22,5 +22,5 @@
 		</div>
 	</div>
 	<Intro />
-	<Community />
+	<Community users={data.users} />
 </div>

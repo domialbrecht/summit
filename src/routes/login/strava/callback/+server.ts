@@ -96,7 +96,8 @@ async function storeTokens(userId: string, tokens: OAuth2Tokens) {
 
 	const exixtingTokens = results.at(0);
 	if (exixtingTokens) {
-		db.update(table.tokens)
+		await db
+			.update(table.tokens)
 			.set({
 				accessToken,
 				refreshToken,
@@ -104,7 +105,7 @@ async function storeTokens(userId: string, tokens: OAuth2Tokens) {
 			})
 			.where(eq(table.tokens.userId, userId));
 	} else {
-		db.insert(table.tokens).values({
+		await db.insert(table.tokens).values({
 			id: userId,
 			userId,
 			accessToken,

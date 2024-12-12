@@ -1,15 +1,22 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Card from './card.svelte';
 
 	export let data: PageData;
 </script>
 
-{#each data.userActivities as userActivity}
-	<div>
-		<p>Id: {userActivity.activity.id}</p>
-		<p>User: {userActivity.user.firstName} {userActivity.user.lastName}</p>
-		<p>Watts: {userActivity.activity.averageWatts}</p>
+{#await data.userActivities}
+	loading
+{:then activities}
+	<div
+		class="not-prose grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4"
+	>
+		{#each activities as userActivity}
+			<Card username={`${userActivity.user.firstName}`} activity={userActivity.activity} />
+		{:else}
+			<p>No activities found</p>
+		{/each}
 	</div>
-{:else}
-	<p>No activities found</p>
-{/each}
+{:catch error}
+	{error}
+{/await}

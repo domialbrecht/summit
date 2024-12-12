@@ -1,3 +1,9 @@
+<script lang="ts">
+	import type { User } from '$lib/server/db/schema';
+
+	let { users }: { users: Promise<User[]> } = $props();
+</script>
+
 <div class="w-full overflow-hidden px-2 py-24 lg:px-10">
 	<div class="text-center">
 		<div class="h-6"></div>
@@ -53,51 +59,25 @@
 		<div class="h-6"></div>
 		<div class="flex w-full justify-center">
 			<div class="flex w-full max-w-5xl flex-wrap justify-center gap-3 p-10">
-				<div class="tooltip" data-tip="saadeghi">
-					<div class="avatar">
-						<div class="mask mask-squircle w-12">
-							<img
-								loading="lazy"
-								width="64"
-								height="64"
-								class="pointer-events-none transition-all duration-500 ease-in-out"
-								srcset="https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=64 2x, https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=96 3x"
-								alt="saadeghi"
-								src="https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=64"
-							/>
+				{#await users then db_users}
+					{#each db_users as user}
+						<!-- content here -->
+						<div class="tooltip" data-tip={`${user.firstName} ${user.lastName}`}>
+							<div class="avatar">
+								<div class="mask mask-squircle w-12">
+									<img
+										loading="lazy"
+										width="64"
+										height="64"
+										class="pointer-events-none transition-all duration-500 ease-in-out"
+										alt={user.firstName}
+										src={user.profile}
+									/>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-				<div class="tooltip" data-tip="saadeghi">
-					<div class="avatar">
-						<div class="mask mask-squircle w-12">
-							<img
-								loading="lazy"
-								width="64"
-								height="64"
-								class="pointer-events-none transition-all duration-500 ease-in-out"
-								srcset="https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=64 2x, https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=96 3x"
-								alt="saadeghi"
-								src="https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=64"
-							/>
-						</div>
-					</div>
-				</div>
-				<div class="tooltip" data-tip="saadeghi">
-					<div class="avatar">
-						<div class="mask mask-squircle w-12">
-							<img
-								loading="lazy"
-								width="64"
-								height="64"
-								class="pointer-events-none transition-all duration-500 ease-in-out"
-								srcset="https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=64 2x, https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=96 3x"
-								alt="saadeghi"
-								src="https://avatars.githubusercontent.com/u/7342023?v=4&amp;s=64"
-							/>
-						</div>
-					</div>
-				</div>
+					{/each}
+				{/await}
 			</div>
 		</div>
 	</div>

@@ -39,7 +39,7 @@ export const activity = pgTable('strava_activity', {
 	elapsedTime: numeric('elapsed_time'),
 	totalElevationGain: numeric('total_elevation_gain'),
 	type: text('type'),
-	startDate: timestamp('start_date', { withTimezone: true, mode: 'date' }).notNull(),
+	startDate: timestamp('start_date', { withTimezone: true, mode: 'date-time' }).notNull(),
 	averageSpeed: numeric('average_speed'),
 	maxSpeed: numeric('max_speed'),
 	averageWatts: numeric('average_watts')
