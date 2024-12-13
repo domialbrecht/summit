@@ -54,7 +54,9 @@
 			class="font-title relative z-[2] mx-auto text-[clamp(2rem,6vw,4.5rem)] font-black leading-none text-neutral"
 		>
 			SolyVC Rennvelo Event<br />
-			<span class="font-light text-error">23 aktivi Mitglider</span>
+			{#await users then db_users}
+				<span class="font-light text-error">{db_users.length} aktivi Mitglider</span>
+			{/await}
 		</h2>
 		<div class="h-6"></div>
 		<div class="flex w-full justify-center">

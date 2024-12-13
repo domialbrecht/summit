@@ -20,12 +20,9 @@
 					class="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
 				>
 					<li>
-						<a href="/me" class="justify-between">
-							Profile
-							<span class="badge">New</span>
-						</a>
+						<a href="/me" class="justify-between">Mini Date</a>
 					</li>
-					<li><a href="/logout">Logout</a></li>
+					<li><a href="/logout">Uslogge</a></li>
 				</ul>
 			</div>
 			<!-- content here -->

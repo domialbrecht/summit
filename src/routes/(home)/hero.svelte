@@ -33,9 +33,9 @@
 		>
 			<a
 				data-sveltekit-preload-data=""
-				href="/me"
+				href="/summits"
 				class="group btn btn-primary grow rounded-full px-12 md:btn-lg"
-				>Zu mine Summits<svg
+				>Zude Summits<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"
