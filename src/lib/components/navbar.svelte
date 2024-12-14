@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { User } from '$lib/server/db/schema';
+	import Strava from './icons/strava.svelte';
 
 	let { user }: { user: User | null } = $props();
 </script>
@@ -26,6 +27,21 @@
 				</ul>
 			</div>
 			<!-- content here -->
+		{:else}
+			<div class="dropdown dropdown-end">
+				<div tabindex="0" role="button" class="btn btn-circle bg-orange-600">
+					<div class="flex w-10 items-center justify-center rounded-full">
+						<Strava class="h-6 w-6 fill-white" />
+					</div>
+				</div>
+				<ul
+					class="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
+				>
+					<li>
+						<a href="/me" class="justify-between">Login</a>
+					</li>
+				</ul>
+			</div>
 		{/if}
 	</div>
 </div>

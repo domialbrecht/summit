@@ -37,7 +37,8 @@ export async function validateSessionToken(token: string) {
 				lastName: table.user.lastName,
 				stravaId: table.user.stravaId,
 				profile: table.user.profile,
-				ftp: table.user.ftp
+				ftp: table.user.ftp,
+				isAdmin: table.user.isAdmin
 			},
 			session: table.session
 		})

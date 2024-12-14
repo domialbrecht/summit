@@ -1,4 +1,5 @@
-import { pgTable, text, timestamp, numeric } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { pgTable, text, timestamp, numeric, serial, boolean, integer } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -6,7 +7,8 @@ export const user = pgTable('user', {
 	lastName: text('last_name'),
 	stravaId: text('strava_id').notNull().unique(),
 	profile: text('profile'),
-	ftp: numeric('ftp')
+	ftp: numeric('ftp'),
+	isAdmin: boolean('is_admin').notNull().default(false)
 });
 
 export const session = pgTable('session', {
@@ -44,6 +46,36 @@ export const activity = pgTable('strava_activity', {
 	maxSpeed: numeric('max_speed'),
 	averageWatts: numeric('average_watts')
 });
+
+export const summit = pgTable('summit', {
+	id: serial('id').primaryKey(),
+	name: text('name').notNull(),
+	lat: numeric('lat').notNull(),
+	long: numeric('long').notNull(),
+	desc: text('desc')
+});
+
+export const summutRelations = relations(summit, ({ many }) => ({
+	summitAttempts: many(summit_attempt)
+}));
+
+export const summit_attempt = pgTable('summit_attempt', {
+	id: serial('id').primaryKey(),
+	summitId: integer('summit_id').notNull(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	activityId: text('activity_id')
+		.notNull()
+		.references(() => activity.id)
+});
+
+export const summitAttemptsRelations = relations(summit_attempt, ({ one }) => ({
+	summit: one(summit, {
+		fields: [summit_attempt.summitId],
+		references: [summit.id]
+	})
+}));
 
 export const map = pgTable('strava_map', {
 	id: text('id').primaryKey(),
