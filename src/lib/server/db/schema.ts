@@ -1,5 +1,7 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, text, timestamp, numeric, serial, boolean, integer } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, numeric, boolean, integer } from 'drizzle-orm/pg-core';
+// import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -48,7 +50,7 @@ export const activity = pgTable('strava_activity', {
 });
 
 export const summit = pgTable('summit', {
-	id: serial('id').primaryKey(),
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	name: text('name').notNull(),
 	lat: numeric('lat').notNull(),
 	long: numeric('long').notNull(),
@@ -60,7 +62,7 @@ export const summutRelations = relations(summit, ({ many }) => ({
 }));
 
 export const summit_attempt = pgTable('summit_attempt', {
-	id: serial('id').primaryKey(),
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	summitId: integer('summit_id').notNull(),
 	userId: text('user_id')
 		.notNull()
@@ -96,3 +98,13 @@ export type User = typeof user.$inferSelect;
 export type Activity = typeof activity.$inferSelect;
 export type Map = typeof map.$inferSelect;
 export type Stream = typeof stream.$inferSelect;
+
+export type SelectSummit = typeof summit.$inferSelect;
+export type InsertSummit = z.infer<typeof insertSummitSchema>;
+export const insertSummitSchema = z.object({
+	id: z.number().optional(),
+	name: z.string().nonempty(),
+	lat: z.string(),
+	long: z.string(),
+	desc: z.string().nullable()
+});
