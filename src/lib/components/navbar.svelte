@@ -11,7 +11,7 @@
 	</div>
 	<div class="flex flex-none items-center justify-center gap-4">
 		<div>
-			<Menu user />
+			<Menu {user} />
 		</div>
 	</div>
 </div>
