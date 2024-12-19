@@ -12,16 +12,16 @@
 		<div class="col-span-2 flex w-full">
 			<SummitMap />
 		</div>
-		<div class="flex flex-col justify-between">
-			<div>
-				{#each summits as summit}
-					{summit.name}
-				{:else}
-					<p>No summits found</p>
-				{/each}
-			</div>
-			<div>add</div>
-		</div>
+		<!-- <div class="flex flex-col justify-between"> -->
+		<!-- 	<div> -->
+		<!-- 		{#each summits as summit} -->
+		<!-- 			{summit.name} -->
+		<!-- 		{:else} -->
+		<!-- 			<p>No summits found</p> -->
+		<!-- 		{/each} -->
+		<!-- 	</div> -->
+		<!-- 	<div>add</div> -->
+		<!-- </div> -->
 	{:catch error}
 		{error}
 	{/await}

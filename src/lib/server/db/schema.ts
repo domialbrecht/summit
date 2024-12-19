@@ -1,6 +1,5 @@
 import { relations } from 'drizzle-orm';
 import { pgTable, text, timestamp, numeric, boolean, integer, smallint } from 'drizzle-orm/pg-core';
-// import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
 export const user = pgTable('user', {
@@ -50,7 +49,7 @@ export const activity = pgTable('strava_activity', {
 });
 
 export const summit = pgTable('summit', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: integer().primaryKey().notNull(),
 	name: text('name').notNull(),
 	lat: numeric('lat').notNull(),
 	long: numeric('long').notNull(),
