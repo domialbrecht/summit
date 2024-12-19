@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, text, timestamp, numeric, boolean, integer } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, numeric, boolean, integer, smallint } from 'drizzle-orm/pg-core';
 // import { createInsertSchema, createSelectSchema, createUpdateSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -54,6 +54,8 @@ export const summit = pgTable('summit', {
 	name: text('name').notNull(),
 	lat: numeric('lat').notNull(),
 	long: numeric('long').notNull(),
+	elevation: integer('elevation'),
+	category: smallint('category'),
 	desc: text('desc')
 });
 

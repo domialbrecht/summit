@@ -2,7 +2,6 @@
 	import Home from './home.svelte';
 	import Intro from './intro.svelte';
 	import Community from './community.svelte';
-	import Navbar from '$lib/components/navbar.svelte';
 	import Heroimg from './heroimg.svelte';
 
 	import type { PageData } from './$types';
@@ -12,10 +11,9 @@
 
 <div>
 	<div class="relative">
-		<Navbar user={data.user} />
 		<Home />
 
-		<div class="absolute -right-6 bottom-20 z-0 w-10/12">
+		<div class="absolute -right-6 bottom-0 z-0 w-10/12">
 			<div class="flex min-h-[calc(100vh-4rem)] items-center justify-center py-10 text-center">
 				<Heroimg />
 			</div>
