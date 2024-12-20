@@ -8,7 +8,7 @@
 
 <div>
 	<div>
-		<Navbar user={data.user} />
+		<Navbar />
 	</div>
 	<div class="flex flex-col">
 		<div class="flex flex-col">

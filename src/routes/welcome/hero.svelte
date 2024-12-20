@@ -33,7 +33,7 @@
 		>
 			<a
 				data-sveltekit-preload-data=""
-				href="/"
+				href="/login"
 				class="group btn btn-primary grow rounded-full px-12 md:btn-lg"
 				>Lezgoo<svg
 					xmlns="http://www.w3.org/2000/svg"
