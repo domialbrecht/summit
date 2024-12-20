@@ -1,6 +1,5 @@
-import { getUsers } from '$lib/strava/db';
-import type { PageServerLoad } from './$types';
-import type { RequestEvent } from './$types';
+import { getUsers } from '$lib/server/db/user';
+import type { PageServerLoad, RequestEvent } from './$types';
 
 export const load: PageServerLoad = (event: RequestEvent) => {
 	return {

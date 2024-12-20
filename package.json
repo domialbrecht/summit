@@ -24,6 +24,7 @@
 		"clsx": "^2.1.1",
 		"daisyui": "^4.12.20",
 		"drizzle-kit": "^0.30.0",
+		"embla-carousel-svelte": "^8.5.1",
 		"eslint": "^9.16.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.46.1",
@@ -33,6 +34,7 @@
 		"prettier-plugin-tailwindcss": "^0.6.9",
 		"svelte": "^5.10.0",
 		"svelte-check": "^4.1.1",
+		"svelte-sonner": "^0.3.28",
 		"tailwind-merge": "^2.5.5",
 		"tailwindcss": "^3.4.16",
 		"typescript": "^5.7.2",
@@ -49,10 +51,14 @@
 		"bits-ui": "1.0.0-next.71",
 		"drizzle-orm": "^0.38.0",
 		"drizzle-zod": "^0.6.0",
+		"lucide-svelte": "^0.468.0",
 		"maplibre-gl": "^4.7.1",
 		"postgres": "^3.4.5",
 		"svelte-maplibre": "1.0.0-next.8",
 		"sveltekit-superforms": "^2.21.1",
+		"tailwind-variants": "^0.3.0",
+		"tailwindcss-animate": "^1.0.7",
+		"vaul-svelte": "^1.0.0-next.2",
 		"zod": "^3.24.1"
 	}
 }

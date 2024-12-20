@@ -10,8 +10,8 @@
 	<div>
 		<Navbar user={data.user} />
 	</div>
-	<div class="flex flex-col gap-6">
-		<div class="flex flex-col gap-6 ps-6 pt-10">
+	<div class="flex flex-col">
+		<div class="flex flex-col">
 			{@render children()}
 		</div>
 	</div>

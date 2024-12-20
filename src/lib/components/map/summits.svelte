@@ -3,10 +3,17 @@
 	import summits from '$site/paesse.json?url';
 	import solyvc from '$site/solyvc.png';
 	import type { Feature, Geometry } from 'geojson';
+	import { goto } from '$app/navigation';
 
 	type SummitProperty = {
+		LocationID: number;
 		name: string;
 	};
+
+	function handleSummitClick(e: LayerClickInfo<Feature<Geometry, SummitProperty>>) {
+		const id = e.features[0].properties.LocationID;
+		goto(`/summits/${id}`);
+	}
 </script>
 
 <MapLibre
@@ -22,9 +29,7 @@
 				id="summit_symbols"
 				hoverCursor="pointer"
 				interactive={true}
-				onclick={(e: LayerClickInfo<Feature<Geometry, SummitProperty>>) => {
-					console.log(e.features[0].properties);
-				}}
+				onclick={handleSummitClick}
 				layout={{
 					'text-field': ['to-string', ['get', 'name']],
 					'text-size': 12,

@@ -12,7 +12,3 @@ export async function getActities() {
 		.innerJoin(table.user, eq(table.activity.userId, table.user.id))
 		.where(eq(table.activity.userId, table.user.id));
 }
-
-export function getUsers() {
-	return db.select().from(table.user);
-}

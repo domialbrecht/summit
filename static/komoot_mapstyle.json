@@ -8361,6 +8361,15 @@
 			}
 		},
 		{
+			"id": "coloring",
+			"type": "background",
+			"paint": {
+				"background-opacity": 0.5,
+				"background-color": "rgba(215, 215, 215, 1)"
+			},
+			"layout": { "visibility": "visible" }
+		},
+		{
 			"id": "hike-label-scale",
 			"type": "symbol",
 			"source": "thunderforest_outdoors",
@@ -16655,4 +16664,3 @@
 	],
 	"id": "kmt-test"
 }
-

@@ -5,13 +5,8 @@
 	let { user }: { user: User | null } = $props();
 </script>
 
-<div class="navbar relative z-10 px-2 py-10 xl:px-16">
-	<div class="flex-1">
-		<a href="/" class="btn btn-ghost text-xl">Summit</a>
-	</div>
-	<div class="flex flex-none items-center justify-center gap-4">
-		<div>
-			<Menu {user} />
-		</div>
+<div class="navbar fixed right-4 top-8 z-10 flex w-auto justify-end px-2">
+	<div>
+		<Menu {user} />
 	</div>
 </div>

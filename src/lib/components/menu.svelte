@@ -6,7 +6,9 @@
 	let { user }: { user: User | null } = $props();
 </script>
 
-<ul class="menu menu-horizontal rounded-box bg-slate-50 ring-2 ring-accent">
+<ul
+	class="menu menu-horizontal items-center justify-center rounded-box bg-slate-50 ring-2 ring-accent"
+>
 	<li>
 		<a
 			href="/"
@@ -78,21 +80,14 @@
 		>
 	</li>
 	<li>
-		<div class="dropdown dropdown-left tooltip" data-tip="Me">
-			<div tabindex="0" role="button">
-				<Strava class="h-5 w-5 fill-orange-500" />
-			</div>
-			<ul class="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
-				{#if user}
-					<li><a href="/me">Profil</a></li>
-					{#if user.isAdmin}
-						<li><a href="/admin">Admin</a></li>
-					{/if}
-					<li><a href="/logout">Logout</a></li>
-				{:else}
-					<li><a href="/login">Login</a></li>
-				{/if}
-			</ul>
-		</div>
+		<a
+			href="/me"
+			class="tooltip text-base leading-[1.2]"
+			class:active={$page.url.pathname === '/me'}
+			data-tip="Profil"
+			aria-label="Profil"
+		>
+			<Strava class="h-5 w-5 fill-orange-500" />
+		</a>
 	</li>
 </ul>
