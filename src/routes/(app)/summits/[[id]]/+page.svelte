@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { PageData } from './$types.js';
+	import Trophy from '$site/icons/trophy.png';
 
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
 
 	let { data }: { data: PageData } = $props();
 
@@ -23,26 +24,25 @@
 		<div class="mx-auto w-full max-w-sm">
 			{#if data.summit}
 				<Drawer.Header>
-					<Drawer.Title>{data.summit.id}</Drawer.Title>
-					<Drawer.Description>{data.summit.name}</Drawer.Description>
+					<Drawer.Title>{data.summit.name}</Drawer.Title>
+					<Drawer.Description>Pass Nr.{data.summit.id}</Drawer.Description>
 				</Drawer.Header>
-				<div class="p-4 pb-0">
-					<div class="flex items-center justify-center space-x-2">
-						<Button variant="outline" size="icon" class="size-8 shrink-0 rounded-full">
-							<span class="sr-only">Decrease</span>
-						</Button>
-						<div class="flex-1 text-center">
-							<div class="text-7xl font-bold tracking-tighter"></div>
-							<div class="text-muted-foreground text-[0.70rem] uppercase">Calories/day</div>
+				<div class="flex items-center gap-4 p-4 pb-0">
+					{#if data.summit.id === 660}
+						<!-- content here -->
+						<img src={Trophy} alt="trophy" class="h-12 w-12" />
+						<div>
+							<h2 class="font-title text-xl">Patrick Burki</h2>
+							<p>Am 01.01.2025</p>
 						</div>
-						<Button variant="outline" size="icon" class="size-8 shrink-0 rounded-full">
-							<span class="sr-only">Increase</span>
-						</Button>
-					</div>
-					<div class="mt-3 h-[120px]"></div>
+					{:else}
+						<div>
+							<h2 class="font-title text-xl">Kei Erklimmig</h2>
+							<p>Lezgo</p>
+						</div>
+					{/if}
 				</div>
 				<Drawer.Footer>
-					<Button>Submit</Button>
 					<Drawer.Close class={buttonVariants({ variant: 'outline' })}>Cancel</Drawer.Close>
 				</Drawer.Footer>
 			{/if}
