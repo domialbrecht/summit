@@ -5,7 +5,10 @@
 </script>
 
 <Toaster />
-
+<svelte:head>
+	<title>SolyVC Summits</title>
+	<meta name="description" content="SolyVC Summits Challange" />
+</svelte:head>
 <div>
 	{@render children()}
 </div>

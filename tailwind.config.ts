@@ -13,11 +13,11 @@ export default {
 		themes: [
 			{
 				solytheme: {
-					primary: '#f43f5e',
+					primary: '#e11d48',
+					accent: '#f43f5e',
 					'primary-content': '#fff',
 					secondary: '#d1d5db',
 					'secondary-content': '#101011',
-					accent: '#e11d48',
 					'accent-content': '#f3f4f6',
 					neutral: '#d1d5db',
 					'neutral-content': '#101011',

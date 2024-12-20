@@ -6,7 +6,7 @@
 		>
 			D Challange startet<br />
 			<span
-				class="bg-accent bg-clip-text [-webkit-text-fill-color:transparent] max-[1279px]:!tracking-normal"
+				class="bg-primary bg-clip-text [-webkit-text-fill-color:transparent] max-[1279px]:!tracking-normal"
 				>am 01.01.2025</span
 			>
 		</h2>

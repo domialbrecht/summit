@@ -40,8 +40,21 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	userRequest.headers.set('Authorization', `Bearer ${stravaAccessToken}`);
 	const userResponse = await fetch(userRequest);
 	const userResult = await userResponse.json();
-	const stravaId = userResult.id.toString();
+	const SOLYVC_CLUB = 1196981;
 
+	if (
+		!userResult.clubs ||
+		!userResult.clubs.some((club: { id: number }) => club.id === SOLYVC_CLUB)
+	) {
+		return new Response(null, {
+			status: 302,
+			headers: {
+				location: '/login?noclub'
+			}
+		});
+	}
+
+	const stravaId = userResult.id.toString();
 	const results = await db.select().from(table.user).where(eq(table.user.stravaId, stravaId));
 
 	const existingUser = results.at(0);

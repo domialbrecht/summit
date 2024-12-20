@@ -1,54 +1,92 @@
+<script lang="ts">
+	import HeroSection1 from './sections/hero1.svelte';
+	import HeroSection2 from './sections/hero2.svelte';
+	import Stelvio from '$site/stelvio.jpg?enhanced';
+	import Furka from '$site/furka.jpg?enhanced';
+	import Tremola from '$site/tremola.jpg?enhanced';
+
+	let scrollY = $state(0);
+	let innerHeight = $state(0);
+	function scaleValue(value: number, from: number[], to: number[]) {
+		let scale = (to[1] - to[0]) / (from[1] - from[0]);
+		let capped = Math.min(from[1], Math.max(from[0], value)) - from[0];
+		return capped * scale + to[0];
+	}
+	const animateValue = (
+		targetElement: HTMLDivElement,
+		scrollPercentage: number[],
+		animateRange: number[]
+	) => {
+		if (targetElement) {
+			return scaleValue(
+				((scrollY - targetElement.offsetTop) / targetElement.clientHeight) * 100,
+				scrollPercentage,
+				animateRange
+			);
+		}
+		return 0;
+	};
+
+	let hero: HTMLDivElement | undefined = $state();
+</script>
+
+<svelte:window bind:scrollY bind:innerHeight />
 <div>
-	<h1
-		class="font-title [:root[dir=rtl]_&amp;]:leading-[1.35] text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] [word-break:auto-phrase] xl:w-[115%] xl:text-start"
+	<div
+		bind:this={hero}
+		class="flex min-h-[350vh] max-w-[100vw] flex-col items-center justify-start xl:flex-row xl:items-start xl:justify-between"
 	>
-		<span
-			class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 brightness-150 contrast-150"
-			>SOLYVC presents<!----></span
-		> <br />
-		<span class="inline-grid"
-			><span
-				class="pointer-events-none col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.accent)_42%,theme(colors.accent)_47%,theme(colors.primary)_100%)] bg-clip-text blur-xl [-webkit-text-fill-color:transparent] [transform:translate3d(0,0,0)] before:content-[attr(data-text)] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--er)),oklch(var(--er)))_67%,oklch(var(--er))_100.2%)]"
-				aria-hidden="true"
-				data-text="SUMMITS Challange"
-			></span>
-			<span
-				class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 relative col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.accent)_42%,theme(colors.primary)_47%,theme(colors.primary)_100%)] bg-clip-text [-webkit-text-fill-color:transparent] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_67%,oklch(var(--p))_100.2%)]"
-				>SUMMITS Challange</span
-			></span
-		> <br />
-		<span
-			class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 brightness-150 contrast-150"
-			>2025 Edition</span
-		>
-	</h1>
-	<div class="h-4"></div>
-	<p class="font-title py-4 font-light text-base-content/70 md:text-lg xl:text-2xl">
-		Mir sammle so viu Päss wies geit! ⛰️
-	</p>
-	<div class="h-10"></div>
-	<div>
+		<div class="shrink xl:w-1/2">
+			<HeroSection1 />
+			<div class="xl:h-[calc(20vh)]"></div>
+			<HeroSection2 />
+		</div>
 		<div
-			class="inline-flex w-full flex-col items-stretch justify-center gap-2 px-4 md:flex-row xl:justify-start xl:px-0"
+			class="invisible sticky bottom-4 flex w-[calc(100%-2rem)] shrink duration-700 xl:visible xl:-end-32 xl:bottom-auto xl:top-16 xl:w-auto xl:!transform-none xl:overflow-x-hidden xl:overflow-y-clip xl:bg-transparent xl:pb-16 xl:pt-16"
+			style={`${
+				hero && scrollY > hero.clientHeight * 0.2 ? 'visibility: visible;' : ''
+			}transform:translateY(${animateValue(hero, [17, 25], [120, 0])}%)`}
 		>
-			<a
-				data-sveltekit-preload-data=""
-				href="/login"
-				class="group btn btn-primary grow rounded-full px-12 md:btn-lg"
-				>Lezgoo<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="hidden h-6 w-6 transition-transform duration-300 group-hover:translate-x-1 md:inline-block rtl:rotate-180 rtl:group-hover:-translate-x-1"
-					><path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-					></path></svg
-				></a
+			<div
+				class="mx-auto origin-top overflow-visible will-change-auto [--rtl-reverse:1] [transform:scale(1)] max-[1279px]:![transform:translate3d(0,0,0)] xl:h-[32rem] xl:w-[50rem] xl:rounded-e-none"
+				style={hero && `transform: scale(${animateValue(hero, [70, 100], [1, 1.5])})`}
 			>
+				<div class="inline-grid place-items-center items-end">
+					<div
+						class="z-[4] col-start-1 row-start-1 w-full shadow-sm will-change-auto max-[1279px]:![transform:translate3d(0,0,0)]"
+						style={`transform:translate(calc(${animateValue(
+							hero,
+							[0, 30],
+							[0, 250]
+						)}px * var(--rtl-reverse)),${animateValue(hero, [0, 30], [0, -800])}px)`}
+					>
+						<enhanced:img src={Stelvio} alt="Stelvio pass" class="" />
+					</div>
+					<div
+						class="z-[3] col-start-1 row-start-1 w-full translate-y-[5%] scale-95 shadow-sm will-change-auto max-[1279px]:![transform:translate3d(0,0,0)]"
+						style={`transform:translate(calc(${animateValue(
+							hero,
+							[25, 50],
+							[0, 250]
+						)}px * var(--rtl-reverse)),${animateValue(hero, [25, 50], [0, -800])}px)`}
+					>
+						<enhanced:img src={Tremola} alt="Stelvio pass" class="" />
+					</div>
+					<div
+						class=" z-[2] col-start-1 row-start-1 w-full shadow-sm will-change-auto max-[1279px]:![transform:translate3d(0,0,0)]"
+						style={`transform:translate(calc(${animateValue(
+							hero,
+							[45, 70],
+							[0, 250]
+						)}px * var(--rtl-reverse)),${animateValue(hero, [45, 70], [0, -800])}px)`}
+					>
+						<enhanced:img src={Stelvio} alt="Stelvio pass" class="" />
+					</div>
+					<div class="z-[1] col-start-1 row-start-1 w-full">
+						<enhanced:img src={Furka} alt="Furka pass" class="" />
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

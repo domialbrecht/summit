@@ -55,7 +55,7 @@
 		>
 			SolyVC Rennvelo Event<br />
 			{#await users then db_users}
-				<span class="font-light text-accent">{db_users.length} aktivi Mitglider</span>
+				<span class="font-light text-primary">{db_users.length} aktivi Mitglider</span>
 			{/await}
 		</h2>
 		<div class="h-6"></div>

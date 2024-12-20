@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Strava from '$lib/components/icons/strava.svelte';
+	import type { User } from '$lib/server/db/schema';
+	let { user }: { user: User | undefined } = $props();
 </script>
 
 <ul
-	class="menu menu-horizontal items-center justify-center rounded-box bg-slate-50 ring-2 ring-accent"
+	class="menu menu-horizontal items-center justify-center rounded-box bg-slate-50 ring-2 ring-primary"
 >
 	<li>
 		<a
@@ -53,7 +55,7 @@
 	<li>
 		<a
 			href="/leaderboard"
-			class="tooltip text-base leading-[1.2]"
+			class="tooltip"
 			class:active={$page.url.pathname === '/leaderboard'}
 			data-tip="Rangliste"
 			aria-label="Rangliste"
@@ -79,12 +81,16 @@
 	<li>
 		<a
 			href="/me"
-			class="tooltip text-base leading-[1.2]"
+			class="tooltip"
 			class:active={$page.url.pathname === '/me'}
 			data-tip="Profil"
 			aria-label="Profil"
 		>
-			<Strava class="h-5 w-5 fill-orange-500" />
+			{#if user}
+				<img class="h-5 w-5 rounded-full" src={user.profile} alt="User" />
+			{:else}
+				<Strava class="h-5 w-5 fill-orange-500" />
+			{/if}
 		</a>
 	</li>
 </ul>
