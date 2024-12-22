@@ -39,7 +39,7 @@ CREATE TABLE "summit" (
 	"location" geography(point) NOT NULL,
 	"elevation" integer,
 	"category" smallint,
-	"desc" text
+	"description" text
 );
 --> statement-breakpoint
 CREATE TABLE "summit_attempt" (

@@ -68,7 +68,7 @@ export const summit = pgTable(
 		location: geometry('location', { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
 		elevation: integer('elevation'),
 		category: smallint('category'),
-		desc: text('desc')
+		description: text('desc')
 	},
 	(t) => ({
 		spatialIndex: index('spatial_index').using('gist', t.location)

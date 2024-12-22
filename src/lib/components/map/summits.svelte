@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { MapLibre, GeoJSON, SymbolLayer, type LayerClickInfo } from 'svelte-maplibre';
-	import summits from '$site/paesse.json?url';
 	import solyvc from '$site/solyvc.png';
 	import type { Feature, Geometry } from 'geojson';
 	import { goto } from '$app/navigation';
@@ -24,7 +23,7 @@
 	zoom={13}
 >
 	{#snippet children({ allImagesLoaded })}
-		<GeoJSON id="summits" data={summits}>
+		<GeoJSON id="summits" data="/summits/geojson">
 			<SymbolLayer
 				id="summit_symbols"
 				hoverCursor="pointer"
@@ -42,7 +41,7 @@
 				paint={{
 					'text-color': [
 						'match',
-						['get', 'kat'],
+						['get', 'category'],
 						[1],
 						'#86efac',
 						[2],
