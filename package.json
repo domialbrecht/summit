@@ -12,6 +12,7 @@
 		"lint": "prettier --check . && eslint .",
 		"db:start": "docker compose up -d",
 		"db:push": "drizzle-kit push",
+		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio"
 	},
@@ -21,6 +22,7 @@
 		"@sveltejs/enhanced-img": "^0.4.4",
 		"@sveltejs/kit": "^2.10.1",
 		"@sveltejs/vite-plugin-svelte": "^5.0.1",
+		"@types/mapbox__polyline": "^1.0.5",
 		"autoprefixer": "^10.4.20",
 		"clsx": "^2.1.1",
 		"daisyui": "^4.12.20",

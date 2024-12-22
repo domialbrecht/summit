@@ -1,5 +1,15 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, text, timestamp, numeric, boolean, integer, smallint } from 'drizzle-orm/pg-core';
+import {
+	pgTable,
+	text,
+	timestamp,
+	numeric,
+	boolean,
+	integer,
+	smallint,
+	geometry,
+	index
+} from 'drizzle-orm/pg-core';
 import { z } from 'zod';
 
 export const user = pgTable('user', {
@@ -48,15 +58,22 @@ export const activity = pgTable('strava_activity', {
 	averageWatts: numeric('average_watts')
 });
 
-export const summit = pgTable('summit', {
-	id: integer().primaryKey().notNull(),
-	name: text('name').notNull(),
-	lat: numeric('lat').notNull(),
-	long: numeric('long').notNull(),
-	elevation: integer('elevation'),
-	category: smallint('category'),
-	desc: text('desc')
-});
+export const summit = pgTable(
+	'summit',
+	{
+		id: integer().primaryKey().notNull(),
+		name: text('name').notNull(),
+		lat: numeric('lat').notNull(),
+		long: numeric('long').notNull(),
+		location: geometry('location', { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
+		elevation: integer('elevation'),
+		category: smallint('category'),
+		desc: text('desc')
+	},
+	(t) => ({
+		spatialIndex: index('spatial_index').using('gist', t.location)
+	})
+);
 
 export const summutRelations = relations(summit, ({ many }) => ({
 	summitAttempts: many(summit_attempt)

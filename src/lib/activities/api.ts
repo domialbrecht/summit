@@ -3,7 +3,7 @@ import * as table from '$lib/server/db/schema';
 import { getTokensForUser } from '$lib/server/oauth';
 import { error } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
-import { updateActivities } from './activity_sync';
+import { updateActivities } from './activity_sync.js';
 
 export type StravaActivity = {
 	id: number;
@@ -18,6 +18,14 @@ export type StravaActivity = {
 	average_speed: number;
 	max_speed: number;
 	average_watts: number;
+};
+
+export type DetailedActivity = StravaActivity & {
+	map: {
+		id: string;
+		polyline: string;
+		summary_polyline: string;
+	};
 };
 
 async function stravaFetch(

@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { deleteSessionTokenCookie, invalidateSession } from '$lib/server/session';
 
 import type { Actions, RequestEvent } from './$types';
-import { StravaApi } from '$lib/strava';
+import { StravaApi } from '$lib/activities';
 
 export async function load(event: RequestEvent) {
 	if (event.locals.session === null || event.locals.user === null) {

@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 
-import type { StravaActivity } from './api';
+import type { StravaActivity } from './api.js';
 
 export async function updateActivities(userId: string, activities: StravaActivity[]) {
 	await db
