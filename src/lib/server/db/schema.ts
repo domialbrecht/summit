@@ -10,7 +10,6 @@ import {
 	geometry,
 	index
 } from 'drizzle-orm/pg-core';
-import { z } from 'zod';
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -55,8 +54,26 @@ export const activity = pgTable('strava_activity', {
 	startDate: timestamp('start_date', { withTimezone: true, mode: 'date' }).notNull(),
 	averageSpeed: numeric('average_speed'),
 	maxSpeed: numeric('max_speed'),
-	averageWatts: numeric('average_watts')
+	averageWatts: numeric('average_watts'),
+	summaryPolyline: text('summary_polyline').notNull(),
+	polyline: text('polyline')
 });
+
+export const parseActivityResults = pgTable(
+	'parse_activity_results',
+	{
+		id: text('id').primaryKey(),
+		activityId: text('activity_id')
+			.notNull()
+			.references(() => activity.id),
+		hasMatch: boolean('has_match').notNull()
+	},
+	(t) => {
+		return {
+			activityIdx: index('activity_idx').using('btree', t.activityId)
+		};
+	}
+);
 
 export const summit = pgTable(
 	'summit',
@@ -68,14 +85,14 @@ export const summit = pgTable(
 		location: geometry('location', { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
 		elevation: integer('elevation'),
 		category: smallint('category'),
-		description: text('desc')
+		description: text('description')
 	},
 	(t) => ({
 		spatialIndex: index('spatial_index').using('gist', t.location)
 	})
 );
 
-export const summutRelations = relations(summit, ({ many }) => ({
+export const summitRelations = relations(summit, ({ many }) => ({
 	summitAttempts: many(summit_attempt)
 }));
 
@@ -85,9 +102,10 @@ export const summit_attempt = pgTable('summit_attempt', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),
-	activityId: text('activity_id')
-		.notNull()
-		.references(() => activity.id)
+	activityId: text('activity_id').notNull(),
+	date: timestamp('date', { withTimezone: true, mode: 'date' }).notNull(),
+	published: boolean('published').notNull().default(false)
+	// .references(() => activity.id)
 });
 
 export const summitAttemptsRelations = relations(summit_attempt, ({ one }) => ({
@@ -97,32 +115,10 @@ export const summitAttemptsRelations = relations(summit_attempt, ({ one }) => ({
 	})
 }));
 
-export const map = pgTable('strava_map', {
-	id: text('id').primaryKey(),
-	polyline: text('polyline'),
-	summaryPolyline: text('summary_polyline')
-});
-
-export const stream = pgTable('strava_activity_stream', {
-	id: text('id').primaryKey(),
-	activityId: text('activity_id')
-		.notNull()
-		.references(() => activity.id)
-});
-
 export type Session = typeof session.$inferSelect;
 export type Tokens = typeof tokens.$inferSelect;
 export type User = typeof user.$inferSelect;
 export type Activity = typeof activity.$inferSelect;
-export type Map = typeof map.$inferSelect;
-export type Stream = typeof stream.$inferSelect;
+export type ParsedActivity = typeof parseActivityResults.$inferSelect;
 
 export type SelectSummit = typeof summit.$inferSelect;
-export type InsertSummit = z.infer<typeof insertSummitSchema>;
-export const insertSummitSchema = z.object({
-	id: z.number().optional(),
-	name: z.string().nonempty(),
-	lat: z.string(),
-	long: z.string(),
-	desc: z.string().nullable()
-});

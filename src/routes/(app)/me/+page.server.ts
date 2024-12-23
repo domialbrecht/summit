@@ -2,7 +2,6 @@ import { fail, redirect } from '@sveltejs/kit';
 import { deleteSessionTokenCookie, invalidateSession } from '$lib/server/session';
 
 import type { Actions, RequestEvent } from './$types';
-import { StravaApi } from '$lib/activities';
 
 export async function load(event: RequestEvent) {
 	if (event.locals.session === null || event.locals.user === null) {
@@ -31,6 +30,5 @@ async function sync(event: RequestEvent) {
 	if (event.locals.session === null || event.locals.user === null) {
 		return redirect(302, '/login');
 	}
-	StravaApi.updateActivityCache(event.locals.user.id);
 	return { success: true };
 }

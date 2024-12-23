@@ -1,11 +1,20 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
+	import Section from '$lib/components/ui/section';
 	import Furka from '$site/furka.jpg?enhanced';
 	import Dizzy from '$site/icons/dizzy.png';
-	import type { User } from '$lib/server/db/schema';
+	import Party from '$site/icons/party.png';
+	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
+	import type { PageServerData } from './$types';
 
-	const { user }: { user: User | null } = $props();
+	const { user } = page.data;
+
+	const { last_attempt }: PageServerData = $props();
+
 	const version = import.meta.env.VITE_APP_VERSION;
+
+	let syncing = $state(false);
 </script>
 
 <Section sectionId="welcome">
@@ -28,7 +37,7 @@
 						href="https://trello.com/invite/b/676877314cec746b00490b2c/ATTIb94d4fda688120db48b9eb3e6882f973C3FC143F/solyvc-summits"
 						target="_blank"
 						rel="nofollow"
-						data-tip="Aktuelle Fortschritt"
+						data-tip="Zum Projektplan"
 						><div
 							class="absolute -top-4 -translate-x-1/2 text-[0.6rem] italic rtl:translate-x-1/2"
 							style="inset-inline-start:79%"
@@ -41,7 +50,7 @@
 							value="79"
 						></progress>
 						<div class="absolute -bottom-4 text-[0.6rem] italic tracking-wide">
-							Aktueller Fortschritt zu 1.0
+							Aktuelle Fortschritt zu 1.0
 						</div></a
 					>
 				</div>
@@ -49,24 +58,49 @@
 			</div>
 		</div>
 		<div class="xl:col-span-7">
-			<Card.Root variant="border">
+			<Card.Root variant="border" class="min-h-44">
 				<Card.Body>
 					<Card.Title>Di letzt Pass</Card.Title>
 					<Card.Content>
-						<div class="flex items-center gap-4">
-							<img src={Dizzy} class="h-8 w-8" alt="Dizzy" />
-							<p>Leider no kene gfunde..</p>
-						</div>
+						{#if last_attempt}
+							<div class="flex items-center gap-4">
+								<img src={Party} class="h-8 w-8" alt="Party" />
+								<p>{last_attempt.summit.name}, {last_attempt.summit_attempt.date}</p>
+							</div>
+						{:else}
+							<div class="flex items-center gap-4">
+								<img src={Dizzy} class="h-8 w-8" alt="Dizzy" />
+								<p>Leider no kene gfunde..</p>
+							</div>
+						{/if}
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>
 		</div>
 		<div class="xl:col-span-5">
-			<Card.Root variant="primary">
+			<Card.Root class="min-h-44" variant={syncing ? 'info' : 'primary'}>
 				<Card.Body>
 					<Card.Title>Aktualisier dini Date</Card.Title>
 					<Card.Content>
-						<a href="/sync" class="btn btn-secondary">Synchronisiere</a>
+						{#if !syncing}
+							<form
+								action="?/sync"
+								method="POST"
+								use:enhance={() => {
+									syncing = true;
+									return async ({ update }) => {
+										await update();
+										syncing = false;
+									};
+								}}
+							>
+								<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
+							</form>
+						{:else}
+							<div class="flex items-center justify-center">
+								<progress class="progress w-full"></progress>
+							</div>
+						{/if}
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>

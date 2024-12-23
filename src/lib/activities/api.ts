@@ -18,13 +18,15 @@ export type StravaActivity = {
 	average_speed: number;
 	max_speed: number;
 	average_watts: number;
+	map: {
+		id: string;
+		summary_polyline: string;
+	};
 };
 
 export type DetailedActivity = StravaActivity & {
 	map: {
-		id: string;
 		polyline: string;
-		summary_polyline: string;
 	};
 };
 

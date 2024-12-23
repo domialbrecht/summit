@@ -42,13 +42,13 @@
 			<HeroSection2 />
 		</div>
 		<div
-			class="invisible sticky bottom-4 flex w-[calc(100%-2rem)] shrink duration-700 xl:visible xl:-end-32 xl:bottom-auto xl:top-16 xl:w-auto xl:!transform-none xl:overflow-x-hidden xl:overflow-y-clip xl:bg-transparent xl:pb-16 xl:pt-16"
+			class="invisible sticky bottom-4 flex w-[calc(100%-2rem)] shrink duration-700 lg:visible lg:-end-32 lg:bottom-auto lg:top-16 lg:w-auto lg:!transform-none lg:overflow-x-hidden lg:overflow-y-clip lg:bg-transparent lg:pb-16 lg:pt-16"
 			style={`${
 				hero && scrollY > hero.clientHeight * 0.2 ? 'visibility: visible;' : ''
 			}transform:translateY(${animateValue(hero, [17, 25], [120, 0])}%)`}
 		>
 			<div
-				class="mx-auto origin-top overflow-visible will-change-auto [--rtl-reverse:1] [transform:scale(1)] max-[1279px]:![transform:translate3d(0,0,0)] xl:h-[32rem] xl:w-[50rem] xl:rounded-e-none"
+				class="mx-auto origin-top overflow-visible will-change-auto [--rtl-reverse:1] [transform:scale(1)] max-[1279px]:![transform:translate3d(0,0,0)] lg:h-[32rem] lg:w-[50rem] lg:rounded-e-none"
 				style={hero && `transform: scale(${animateValue(hero, [70, 100], [1, 1.5])})`}
 			>
 				<div class="inline-grid place-items-center items-end">

@@ -1,9 +1,10 @@
 import { getUsers } from '$lib/server/db/user';
-import type { PageServerLoad, RequestEvent } from './$types';
+import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = (event: RequestEvent) => {
+export const prerender = true;
+
+export const load: PageServerLoad = () => {
 	return {
-		users: getUsers(),
-		user: event.locals.user
+		users: getUsers()
 	};
 };

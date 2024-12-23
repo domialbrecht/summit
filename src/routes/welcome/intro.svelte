@@ -18,9 +18,7 @@
 		</p>
 		<div class="h-12"></div>
 		<div class="flex w-full justify-center">
-			<a data-sveltekit-preload-data="" href="/components/" class="btn btn-primary btn-wide"
-				>Stickers afordere</a
-			>
+			<span class="btn btn-primary btn-wide">Stickers bim Villiger</span>
 		</div>
 	</div>
 </div>

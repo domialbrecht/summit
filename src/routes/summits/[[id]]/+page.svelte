@@ -1,15 +1,17 @@
 <script lang="ts">
-	import type { PageData } from './$types.js';
 	import Trophy from '$site/icons/trophy.png';
 
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import Navbar from '$lib/components/navbar.svelte';
+	import type { PageServerData } from './$types';
+	import { page } from '$app/state';
 
-	let { data }: { data: PageData } = $props();
+	let { summit_data }: PageServerData = $props();
+	const { user } = page.data;
 
-	let activeSummit = $derived(data.summit ? data.summit.id : null);
+	let activeSummit = $derived(summit_data ? summit_data.summit.id : null);
 	let open = $state(false);
 
 	$effect(() => {
@@ -19,7 +21,7 @@
 
 <div>
 	<div>
-		<Navbar user={data.user} />
+		<Navbar {user} />
 	</div>
 	<div class="flex flex-col">
 		<div class="flex flex-col">
@@ -29,18 +31,17 @@
 			<Drawer.Root bind:open>
 				<Drawer.Content>
 					<div class="mx-auto w-full max-w-sm">
-						{#if data.summit}
+						{#if summit_data}
 							<Drawer.Header>
-								<Drawer.Title>{data.summit.name}</Drawer.Title>
-								<Drawer.Description>Pass Nr.{data.summit.id}</Drawer.Description>
+								<Drawer.Title>{summit_data.summit.name}</Drawer.Title>
+								<Drawer.Description>Pass Nr.{summit_data.summit.id}</Drawer.Description>
 							</Drawer.Header>
 							<div class="flex items-center gap-4 p-4 pb-0">
-								{#if data.summit.id === 660}
-									<!-- content here -->
+								{#if summit_data.winAttempt}
 									<img src={Trophy} alt="trophy" class="h-12 w-12" />
 									<div>
-										<h2 class="font-title text-xl">Patrick Burki</h2>
-										<p>Am 01.01.2025</p>
+										<h2 class="font-title text-xl">{summit_data.username}</h2>
+										<p>{summit_data.winAttempt.date}</p>
 									</div>
 								{:else}
 									<div>

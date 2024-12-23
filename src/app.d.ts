@@ -6,6 +6,9 @@ declare global {
 			user: import('$lib/server/session').SessionValidationResult['user'];
 			session: import('$lib/server/session').SessionValidationResult['session'];
 		}
+		interface PageData {
+			user?: import('$lib/server/session').SessionValidationResult['user'];
+		}
 	}
 }
 

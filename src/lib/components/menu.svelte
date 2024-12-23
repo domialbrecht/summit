@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import Strava from '$lib/components/icons/strava.svelte';
 	import type { User } from '$lib/server/db/schema';
-	let { user }: { user: User | null } = $props();
+	let { user }: { user: User | undefined } = $props();
 </script>
 
 <ul

@@ -1,6 +1,6 @@
 {
-  "id": "516bd23b-990b-4594-b80f-72219e622c84",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "51cca73c-028d-4969-89b8-76530a8d11a8",
+  "prevId": "516bd23b-990b-4594-b80f-72219e622c84",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -121,6 +121,67 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.parse_activity_results": {
+      "name": "parse_activity_results",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "activity_id": {
+          "name": "activity_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "has_match": {
+          "name": "has_match",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "activity_idx": {
+          "name": "activity_idx",
+          "columns": [
+            {
+              "expression": "activity_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "parse_activity_results_activity_id_strava_activity_id_fk": {
+          "name": "parse_activity_results_activity_id_strava_activity_id_fk",
+          "tableFrom": "parse_activity_results",
+          "tableTo": "strava_activity",
+          "columnsFrom": [
+            "activity_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.session": {
       "name": "session",
       "schema": "",
@@ -212,8 +273,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "desc": {
-          "name": "desc",
+        "description": {
+          "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -279,6 +340,12 @@
         "activity_id": {
           "name": "activity_id",
           "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         },

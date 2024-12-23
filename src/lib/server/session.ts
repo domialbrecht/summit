@@ -47,14 +47,14 @@ export async function validateSessionToken(token: string) {
 		.where(eq(table.session.id, sessionId));
 
 	if (!result) {
-		return { session: null, user: null };
+		return { session: null, user: undefined };
 	}
 	const { session, user } = result;
 
 	const sessionExpired = Date.now() >= session.expiresAt.getTime();
 	if (sessionExpired) {
 		await db.delete(table.session).where(eq(table.session.id, session.id));
-		return { session: null, user: null };
+		return { session: null, user: undefined };
 	}
 
 	const renewSession = Date.now() >= session.expiresAt.getTime() - DAY_IN_MS * 15;

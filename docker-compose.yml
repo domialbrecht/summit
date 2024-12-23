@@ -13,16 +13,5 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./drizzle/:/docker-entrypoint-initdb.d
 
-  sveltekit:
-    build: .
-    container_name: sveltekit_app
-    restart: always
-    ports:
-      - '3000:3000'
-    environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/local
-    depends_on:
-      - postgres
-
 volumes:
   postgres-data:

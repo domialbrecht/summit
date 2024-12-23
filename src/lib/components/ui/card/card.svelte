@@ -9,6 +9,7 @@
 			variant: {
 				default: 'bg-base-100',
 				primary: 'bg-primary text-base-100',
+				info: 'bg-info',
 				border: 'card-bordered',
 				image: 'image-full',
 				side: 'card-side',
