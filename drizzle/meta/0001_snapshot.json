@@ -1,5 +1,5 @@
 {
-  "id": "51cca73c-028d-4969-89b8-76530a8d11a8",
+  "id": "4bd2df2b-c152-4a01-a5db-3a18ad9f18d1",
   "prevId": "516bd23b-990b-4594-b80f-72219e622c84",
   "version": "7",
   "dialect": "postgresql",
@@ -34,7 +34,7 @@
         },
         "distance": {
           "name": "distance",
-          "type": "numeric",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -127,9 +127,20 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "parse_activity_results_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "activity_id": {
           "name": "activity_id",

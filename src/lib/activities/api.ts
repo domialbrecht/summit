@@ -4,6 +4,7 @@ import { getTokensForUser } from '$lib/server/oauth';
 import { error } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import { updateActivities } from './activity_sync.js';
+import logger from '$lib/logger.js';
 
 export type StravaActivity = {
 	id: number;
@@ -90,12 +91,16 @@ export async function updateActivityCache(userId: string) {
 		after: dateToUnixTimestamp(lastSynced)
 	};
 
+	logger.info({ message: 'Fetch strava activities', data: { user: userId, options: options } });
 	let activities: StravaActivity[] = await stravaFetch('athlete/activities', userId, options);
 	if (activities.length === 0) {
 		return 0;
 	}
 
 	activities = filterActivities(activities);
+	if (activities.length === 0) {
+		return 0;
+	}
 
 	await updateActivities(userId, activities);
 

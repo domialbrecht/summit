@@ -4,8 +4,9 @@ import * as table from '$lib/server/db/schema';
 import { redirect } from '@sveltejs/kit';
 import { StravaApi } from '$lib/activities';
 import type { Actions, PageServerLoad } from './$types';
-import { getUnparsedActivities } from '$lib/activities/activity_sync';
+import { getUnparsedActivities, setParsedActivities } from '$lib/activities/activity_sync';
 import { summitAttemptsFromActivity } from '$lib/activities/attempt';
+import logger from '$lib/logger';
 
 export const load: PageServerLoad = async (event) => {
 	const { user } = await event.parent();
@@ -33,12 +34,19 @@ export const actions = {
 		const updated = await StravaApi.updateActivityCache(user.id);
 
 		const unparsed = await getUnparsedActivities(user.id);
+		logger.info({
+			message: 'Unparsed activiies',
+			data: { user: user.id, unparsed: unparsed.length }
+		});
 		const summitMatches = await Promise.all(
 			unparsed.map(async ({ id, date, sum_line }) => {
 				const summits = await summitAttemptsFromActivity(sum_line);
 				return { id: id, date: date, summits: summits.flatMap((s) => s.id) };
 			})
 		);
+
+		logger.info({ message: 'Updating matches', data: { user: user.id, matches: summitMatches } });
+		await setParsedActivities(summitMatches);
 
 		const attempts = summitMatches
 			.filter((m) => m.summits.length > 0)
@@ -53,12 +61,14 @@ export const actions = {
 			});
 
 		if (attempts.length === 0) {
+			logger.info({ message: 'No attempts matched' });
 			return {
 				success: true,
 				message: { updated: updated, unparsed: unparsed.length, attempts: 0 }
 			};
 		}
 
+		logger.info({ message: 'Inserting attempts', data: attempts.length });
 		await db.insert(table.summit_attempt).values(
 			attempts.map((a) => {
 				return {

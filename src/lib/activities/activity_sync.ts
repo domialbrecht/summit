@@ -13,7 +13,7 @@ export async function updateActivities(userId: string, activities: StravaActivit
 				userId: userId,
 				uploadId: activity.upload_id.toString(),
 				name: activity.name,
-				distance: activity.distance.toString(),
+				distance: activity.distance,
 				movingTime: activity.moving_time.toString(),
 				elapsedTime: activity.elapsed_time.toString(),
 				totalElevationGain: activity.total_elevation_gain.toString(),
@@ -41,4 +41,28 @@ export async function getUnparsedActivities(userId: string) {
 			eq(table.activity.id, table.parseActivityResults.activityId)
 		)
 		.where(and(isNull(table.parseActivityResults.id), eq(table.activity.userId, userId)));
+}
+
+export async function setParsedActivities(
+	matches: Array<{
+		id: string;
+		date: Date;
+		summits: number[];
+	}>
+) {
+	const values = matches.map((a) => {
+		return {
+			id: a.id,
+			match: a.summits.length > 0
+		};
+	});
+
+	await db.insert(table.parseActivityResults).values(
+		values.map((v) => {
+			return {
+				activityId: v.id,
+				hasMatch: v.match
+			};
+		})
+	);
 }

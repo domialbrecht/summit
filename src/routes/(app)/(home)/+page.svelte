@@ -92,10 +92,15 @@
 								}}
 							>
 								{#if form?.message}
-									Aktualisiert. {form.message.updated} neui Aktivitäte, {form.message.unparsed} verarbeitet,
-									{form.message.attempts} Päss
+									<div class="mb-4">
+										<div class="badge badge-secondary">{form.message.updated} neui Aktivitäte</div>
+										<div class="badge badge-secondary">{form.message.unparsed} Verarbeitet</div>
+										<div class="badge badge-secondary">{form.message.attempts} Päss</div>
+									</div>
+									<a href="/activities" class="btn btn-secondary"> Aktivitäte checke </a>
+								{:else}
+									<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
 								{/if}
-								<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
 							</form>
 						{:else}
 							<div class="flex items-center justify-center">

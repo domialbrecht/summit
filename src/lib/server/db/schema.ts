@@ -46,7 +46,7 @@ export const activity = pgTable('strava_activity', {
 		.references(() => user.id),
 	uploadId: text('upload_id'),
 	name: text('name'),
-	distance: numeric('distance'),
+	distance: integer('distance'),
 	movingTime: numeric('moving_time'),
 	elapsedTime: numeric('elapsed_time'),
 	totalElevationGain: numeric('total_elevation_gain'),
@@ -62,7 +62,7 @@ export const activity = pgTable('strava_activity', {
 export const parseActivityResults = pgTable(
 	'parse_activity_results',
 	{
-		id: text('id').primaryKey(),
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
 		activityId: text('activity_id')
 			.notNull()
 			.references(() => activity.id),
