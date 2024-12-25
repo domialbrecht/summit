@@ -13,8 +13,9 @@
 		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
 			<span class="text-primary">Aktivitäte</span> im System
 		</div>
-		<p class="mb-2">
-			Gseht aues guet us? Falls ja spichere dini neue Data. Falls nid nim Kontakt mit nis uf.
+		<p class="mb-2 mt-2 max-w-xl">
+			Hie gsehsch aui Aktivitäte womer gsynched hei. Und die wo e Pass isch erkennt worde hei es
+			"Pass erledigt" Zeiche. Falls was dire Meinig nach nid stimmt nim Kontakt uf.
 		</p>
 		<div class="mt-6 grid gap-6 xl:grid-cols-12">
 			{#each data.activities as activity}

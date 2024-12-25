@@ -25,7 +25,7 @@ export const actions = {
 	default: async (event) => {
 		const user = event.locals.user;
 		if (!user) {
-			redirect(304, '/login');
+			redirect(303, '/login');
 		}
 
 		await db
@@ -34,6 +34,7 @@ export const actions = {
 			.where(
 				and(eq(table.summit_attempt.userId, user.id), eq(table.summit_attempt.published, false))
 			);
-		redirect(304, '/');
+
+		redirect(303, '/');
 	}
 } satisfies Actions;

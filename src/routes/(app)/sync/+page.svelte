@@ -4,6 +4,7 @@
 	import Section from '$lib/components/ui/section';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
+	import { dt, hr, km } from '$lib/utils';
 
 	const lastParse = {
 		updated: page.url.searchParams.get('updated'),
@@ -21,7 +22,7 @@
 		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
 			<span class="text-primary">Nice!</span> Neui Päss ready
 		</div>
-		<form method="POST">
+		<form method="POST" action="/sync">
 			<div class="mt-6 grid gap-6 xl:grid-cols-12">
 				{#each Object.entries(attempts) as [activityId, entries]}
 					<div class="col-span-12">
@@ -32,13 +33,19 @@
 									<Card.Body>
 										<Card.Title>
 											{entry.summit.name}
-											<div class="badge badge-secondary">NEU</div>
+											<div class="badge badge-primary">NEU</div>
 										</Card.Title>
 										<Card.Content>
-											<p>Datum: {entry.strava_activity.startDate}</p>
+											<p>Datum: {dt(entry.strava_activity.startDate)}</p>
 											<div class="card-actions justify-end">
-												<div class="badge badge-outline">{entry.strava_activity.distance}</div>
-												<div class="badge badge-outline">{entry.strava_activity.movingTime}</div>
+												{#if entry.strava_activity.distance}
+													<div class="badge badge-outline">
+														{km(entry.strava_activity.distance)}
+													</div>
+												{/if}
+												<div class="badge badge-outline">
+													{hr(entry.strava_activity.movingTime)}
+												</div>
 											</div>
 										</Card.Content>
 									</Card.Body>
@@ -48,10 +55,10 @@
 					</div>
 				{/each}
 			</div>
-			<p class="mb-2">
-				Gseht aues guet us? Falls ja spichere dini neue Data. Falls nid nim Kontakt mit nis uf.
+			<p class="mb-6 mt-8">
+				Gseht aues guet us? Falls ja spichere dini neue Date. Falls nid nim Kontakt mit nis uf.
 			</p>
-			<Button>Spichere</Button>
+			<Button type="submit">Spichere</Button>
 		</form>
 	{:else}
 		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
@@ -61,7 +68,7 @@
 		<div class=""><Button href="/">Zrügg zur Homesite</Button></div>
 	{/if}
 	{#if lastParse.updated || lastParse.unparsed}
-		<div role="alert" class="alert">
+		<div role="alert" class="alert mt-8">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -75,7 +82,7 @@
 					d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 				></path>
 			</svg>
-			<span>{lastParse.updated} updated, {lastParse.unparsed} unparsed</span>
+			<span>Testlog: {lastParse.updated} updated, {lastParse.unparsed} unparsed</span>
 		</div>
 	{/if}
 </Section>

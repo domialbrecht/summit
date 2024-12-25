@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ params }) => {
 				username: table.user.firstName
 			})
 			.from(table.summit)
-			.leftJoin(table.summit_attempt, eq(table.summit_attempt.id, table.summit.id))
+			.leftJoin(table.summit_attempt, eq(table.summit_attempt.summitId, table.summit.id))
 			.leftJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
 			.where(eq(table.summit.id, parseInt(params.id)))
 			.orderBy(asc(table.summit_attempt.date))

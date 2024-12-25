@@ -7,6 +7,7 @@
 	import Navbar from '$lib/components/navbar.svelte';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
+	import { dt } from '$lib/utils';
 
 	const { data }: { data: PageServerData } = $props();
 	const { user } = page.data;
@@ -41,7 +42,7 @@
 									<img src={Trophy} alt="trophy" class="h-12 w-12" />
 									<div>
 										<h2 class="font-title text-xl">{data.summit_data.username}</h2>
-										<p>{data.summit_data.winAttempt.date}</p>
+										<p>{dt(data.summit_data.winAttempt.date)}</p>
 									</div>
 								{:else}
 									<div>

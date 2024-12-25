@@ -8,6 +8,8 @@ import { getUnparsedActivities, setParsedActivities } from '$lib/activities/acti
 import { summitAttemptsFromActivity } from '$lib/activities/attempt';
 import logger from '$lib/logger';
 
+const FETCHED_COOKIE_NAME = 'strava_fetched';
+
 export const load: PageServerLoad = async (event) => {
 	const { user } = await event.parent();
 
@@ -31,7 +33,17 @@ export const actions = {
 			redirect(401, '/login');
 		}
 
-		const updated = await StravaApi.updateActivityCache(user.id);
+		let updated = 0;
+		if (!event.cookies.get(FETCHED_COOKIE_NAME)) {
+			updated = await StravaApi.updateActivityCache(user.id);
+			const expires = new Date(Date.now() + 1000 * 60 * 60);
+			event.cookies.set(FETCHED_COOKIE_NAME, 'true', {
+				expires: expires,
+				path: '/'
+			});
+		} else {
+			logger.info({ message: 'Skipping activity fetch, recently fetched' });
+		}
 
 		const unparsed = await getUnparsedActivities(user.id);
 		logger.info({
@@ -45,8 +57,10 @@ export const actions = {
 			})
 		);
 
-		logger.info({ message: 'Updating matches', data: { user: user.id, matches: summitMatches } });
-		await setParsedActivities(summitMatches);
+		if (summitMatches.length > 0) {
+			logger.info({ message: 'Updating matches', data: { user: user.id, matches: summitMatches } });
+			await setParsedActivities(summitMatches);
+		}
 
 		const attempts = summitMatches
 			.filter((m) => m.summits.length > 0)
@@ -61,11 +75,8 @@ export const actions = {
 			});
 
 		if (attempts.length === 0) {
-			logger.info({ message: 'No attempts matched' });
-			return {
-				success: true,
-				message: { updated: updated, unparsed: unparsed.length, attempts: 0 }
-			};
+			logger.info({ message: 'No new attempts matched' });
+			redirect(303, `/sync?updated=${updated}&unparsed=${unparsed.length}&attempts=${0}`);
 		}
 
 		logger.info({ message: 'Inserting attempts', data: attempts.length });
@@ -81,7 +92,7 @@ export const actions = {
 		);
 
 		redirect(
-			304,
+			303,
 			`/sync?updated=${updated}&unparsed=${unparsed.length}&attempts=${attempts.length}`
 		);
 	}

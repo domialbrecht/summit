@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { getTokensForUser } from '$lib/server/oauth';
-import { error } from '@sveltejs/kit';
+import { getTokensForUser } from '$lib/server/strava_auth';
+import { error, redirect } from '@sveltejs/kit';
 import { desc, eq } from 'drizzle-orm';
 import { updateActivities } from './activity_sync.js';
 import logger from '$lib/logger.js';
@@ -39,7 +39,7 @@ async function stravaFetch(
 ) {
 	const tokens = await getTokensForUser(userId);
 	if (!tokens) {
-		error(401, { message: 'No tokens found for user' });
+		redirect(304, 'logout/direct');
 	}
 
 	const url = new URL(`https://www.strava.com/api/v3/${endpoint}`);

@@ -1,12 +1,13 @@
-import { strava } from '$lib/server/oauth';
+import { storeTokens, stravaClient, tokenEndpoint } from '$lib/server/strava_auth';
 import { createSession, generateSessionToken, setSessionTokenCookie } from '$lib/server/session';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
-import type { OAuth2Tokens } from 'arctic';
+import type { OAuth2Tokens } from '$lib/server/oauth';
 import type { RequestEvent } from './$types';
 import { error } from '@sveltejs/kit';
+import logger from '$lib/logger';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const storedState = event.cookies.get('strava_oauth_state');
@@ -26,15 +27,17 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	}
 
 	let tokens: OAuth2Tokens;
+	let stravaAccessToken;
 	try {
-		tokens = await strava.validateAuthorizationCode(code);
-	} catch {
+		tokens = await stravaClient.validateAuthorizationCode(tokenEndpoint, code, null);
+		console.log(tokens.data);
+		stravaAccessToken = tokens.accessToken();
+	} catch (e) {
+		logger.error({ message: 'Failed to get access tokens', data: e });
 		error(400, {
 			message: 'Failed to validate authorization code'
 		});
 	}
-
-	const stravaAccessToken = tokens.accessToken();
 
 	const userRequest = new Request('https://www.strava.com/api/v3/athlete');
 	userRequest.headers.set('Authorization', `Bearer ${stravaAccessToken}`);
@@ -96,34 +99,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		console.error(e);
 		error(404, {
 			message: 'An error has occurred'
-		});
-	}
-}
-
-async function storeTokens(userId: string, tokens: OAuth2Tokens) {
-	const accessToken = tokens.accessToken();
-	const refreshToken = tokens.refreshToken();
-	const expiresAt = tokens.accessTokenExpiresAt();
-
-	const results = await db.select().from(table.tokens).where(eq(table.tokens.userId, userId));
-
-	const exixtingTokens = results.at(0);
-	if (exixtingTokens) {
-		await db
-			.update(table.tokens)
-			.set({
-				accessToken,
-				refreshToken,
-				expiresAt
-			})
-			.where(eq(table.tokens.userId, userId));
-	} else {
-		await db.insert(table.tokens).values({
-			id: userId,
-			userId,
-			accessToken,
-			refreshToken,
-			expiresAt
 		});
 	}
 }

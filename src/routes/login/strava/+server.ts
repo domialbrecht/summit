@@ -1,12 +1,11 @@
-import { strava } from '$lib/server/oauth';
-import { generateState } from 'arctic';
+import { authorizationEndpoint, stravaClient, scopes } from '$lib/server/strava_auth';
+import { generateState } from '$lib/server/oauth';
 
 import type { RequestEvent } from './$types';
 
 export function GET(event: RequestEvent): Response {
 	const state = generateState();
-	const scopes = ['activity:read,read,profile:read_all'];
-	const url = strava.createAuthorizationURL(state, scopes);
+	const url = stravaClient.createAuthorizationURL(authorizationEndpoint, state, scopes);
 
 	event.cookies.set('strava_oauth_state', state, {
 		httpOnly: true,

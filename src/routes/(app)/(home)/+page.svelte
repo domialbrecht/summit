@@ -6,8 +6,9 @@
 	import Party from '$site/icons/party.png';
 	import { enhance } from '$app/forms';
 	import type { ActionData, PageData } from './$types';
+	import { dt } from '$lib/utils';
 
-	const { data, form }: { data: PageData; form: ActionData } = $props();
+	const { data }: { data: PageData; form: ActionData } = $props();
 
 	const version = import.meta.env.VITE_APP_VERSION;
 
@@ -62,7 +63,7 @@
 						{#if data.last_attempt}
 							<div class="flex items-center gap-4">
 								<img src={Party} class="h-8 w-8" alt="Party" />
-								<p>{data.last_attempt.summit.name}, {data.last_attempt.summit_attempt.date}</p>
+								<p>{data.last_attempt.summit.name}, {dt(data.last_attempt.summit_attempt.date)}</p>
 							</div>
 						{:else}
 							<div class="flex items-center gap-4">
@@ -91,16 +92,7 @@
 									};
 								}}
 							>
-								{#if form?.message}
-									<div class="mb-4">
-										<div class="badge badge-secondary">{form.message.updated} neui Aktivitäte</div>
-										<div class="badge badge-secondary">{form.message.unparsed} Verarbeitet</div>
-										<div class="badge badge-secondary">{form.message.attempts} Päss</div>
-									</div>
-									<a href="/activities" class="btn btn-secondary"> Aktivitäte checke </a>
-								{:else}
-									<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
-								{/if}
+								<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
 							</form>
 						{:else}
 							<div class="flex items-center justify-center">
