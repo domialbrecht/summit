@@ -14,7 +14,7 @@
 			S Ziel isch simpel. So viu Päss wie no nie z'überwindä! Ei Pass cha nur es einzigs mal
 			registriert wärde. Die Person het ner s ganze Jahr der Badge.<br />
 			E Pass wird zerst direkt ufem Velo zoberst mitmene Sticker markiert. Denn loggisch di ufem App
-			i u <a href="/me" class="link link-primary">synchronisiersch</a> dini Date.
+			i u <a href="/" class="link link-primary">synchronisiersch</a> dini Date.
 		</p>
 		<div class="h-12"></div>
 		<div class="flex w-full justify-center">

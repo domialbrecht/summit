@@ -30,7 +30,7 @@ export const actions = {
 			redirect(401, '/login');
 		}
 
-		await StravaApi.updateActivityCache(user.id);
+		const updated = await StravaApi.updateActivityCache(user.id);
 
 		const unparsed = await getUnparsedActivities(user.id);
 		const summitMatches = await Promise.all(
@@ -53,7 +53,10 @@ export const actions = {
 			});
 
 		if (attempts.length === 0) {
-			return { success: true, message: 'no_match' };
+			return {
+				success: true,
+				message: { updated: updated, unparsed: unparsed.length, attempts: 0 }
+			};
 		}
 
 		await db.insert(table.summit_attempt).values(
@@ -67,6 +70,9 @@ export const actions = {
 			})
 		);
 
-		redirect(304, '/sync');
+		redirect(
+			304,
+			`/sync?updated=${updated}&unparsed=${unparsed.length}&attempts=${attempts.length}`
+		);
 	}
 } satisfies Actions;

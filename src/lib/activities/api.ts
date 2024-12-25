@@ -14,6 +14,7 @@ export type StravaActivity = {
 	elapsed_time: number;
 	total_elevation_gain: number;
 	type: string;
+	trainer: boolean;
 	start_date: string;
 	average_speed: number;
 	max_speed: number;
@@ -89,12 +90,18 @@ export async function updateActivityCache(userId: string) {
 		after: dateToUnixTimestamp(lastSynced)
 	};
 
-	const activities = await stravaFetch('athlete/activities', userId, options);
+	let activities: StravaActivity[] = await stravaFetch('athlete/activities', userId, options);
 	if (activities.length === 0) {
-		return true;
+		return 0;
 	}
+
+	activities = filterActivities(activities);
 
 	await updateActivities(userId, activities);
 
-	return true;
+	return activities.length;
+}
+
+function filterActivities(activities: StravaActivity[]): StravaActivity[] {
+	return activities.filter((a) => a.trainer === false);
 }

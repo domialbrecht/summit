@@ -3,7 +3,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import Section from '$lib/components/ui/section';
 	import type { PageServerData } from './$types';
+	import { page } from '$app/state';
 
+	const lastParse = {
+		updated: page.url.searchParams.get('updated'),
+		unparsed: page.url.searchParams.get('unparsed')
+	};
 	const { data }: { data: PageServerData } = $props();
 	const attempts = Object.groupBy(
 		data.attempts,
@@ -54,5 +59,23 @@
 		</div>
 		<p class="mb-8 mt-12">Falls was dire Mieinig nach nid stimmt, bitte nimm Kontakt mit nis uf.</p>
 		<div class=""><Button href="/">Zrügg zur Homesite</Button></div>
+	{/if}
+	{#if lastParse.updated || lastParse.unparsed}
+		<div role="alert" class="alert">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				class="h-6 w-6 shrink-0 stroke-info"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+				></path>
+			</svg>
+			<span>{lastParse.updated} updated, {lastParse.unparsed} unparsed</span>
+		</div>
 	{/if}
 </Section>

@@ -24,8 +24,8 @@
 		<a
 			href="/summits"
 			class="tooltip"
-			class:active={$page.url.pathname === '/summits'}
-			data-tip="Summits"
+			class:active={$page.url.pathname.includes('/summits')}
+			data-tip="Päss"
 			aria-label="Summits"
 		>
 			<svg
@@ -68,11 +68,10 @@
 	</li>
 	<li>
 		<a
-			href="/me"
+			href={user ? '/logout' : '/login'}
 			class="tooltip"
-			class:active={$page.url.pathname === '/me'}
-			data-tip="Profil"
-			aria-label="Profil"
+			data-tip={user ? 'Logout' : 'Login'}
+			aria-label={user ? 'Logout' : 'Login'}
 		>
 			{#if user}
 				<img class="h-5 w-5 rounded-full" src={user.profile} alt="User" />

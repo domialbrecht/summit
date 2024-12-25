@@ -8,10 +8,10 @@
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
 
-	let { summit_data }: PageServerData = $props();
+	const { data }: { data: PageServerData } = $props();
 	const { user } = page.data;
 
-	let activeSummit = $derived(summit_data ? summit_data.summit.id : null);
+	let activeSummit = $derived(data.summit_data ? data.summit_data.summit.id : null);
 	let open = $state(false);
 
 	$effect(() => {
@@ -26,22 +26,22 @@
 	<div class="flex flex-col">
 		<div class="flex flex-col">
 			<div class="h-screen w-full">
-				<SummitMap />
+				<SummitMap handleClick={() => (open = true)} />
 			</div>
 			<Drawer.Root bind:open>
 				<Drawer.Content>
 					<div class="mx-auto w-full max-w-sm">
-						{#if summit_data}
+						{#if data.summit_data}
 							<Drawer.Header>
-								<Drawer.Title>{summit_data.summit.name}</Drawer.Title>
-								<Drawer.Description>Pass Nr.{summit_data.summit.id}</Drawer.Description>
+								<Drawer.Title>{data.summit_data.summit.name}</Drawer.Title>
+								<Drawer.Description>Pass Nr.{data.summit_data.summit.id}</Drawer.Description>
 							</Drawer.Header>
 							<div class="flex items-center gap-4 p-4 pb-0">
-								{#if summit_data.winAttempt}
+								{#if data.summit_data.winAttempt}
 									<img src={Trophy} alt="trophy" class="h-12 w-12" />
 									<div>
-										<h2 class="font-title text-xl">{summit_data.username}</h2>
-										<p>{summit_data.winAttempt.date}</p>
+										<h2 class="font-title text-xl">{data.summit_data.username}</h2>
+										<p>{data.summit_data.winAttempt.date}</p>
 									</div>
 								{:else}
 									<div>

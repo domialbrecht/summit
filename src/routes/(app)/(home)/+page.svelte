@@ -5,12 +5,9 @@
 	import Dizzy from '$site/icons/dizzy.png';
 	import Party from '$site/icons/party.png';
 	import { enhance } from '$app/forms';
-	import { page } from '$app/state';
-	import type { PageServerData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
-	const { user } = page.data;
-
-	const { last_attempt }: PageServerData = $props();
+	const { data, form }: { data: PageData; form: ActionData } = $props();
 
 	const version = import.meta.env.VITE_APP_VERSION;
 
@@ -21,7 +18,7 @@
 	<div class="mt-6 grid gap-6 xl:grid-cols-12">
 		<div class="col-span-12">
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
-				Hey, <span class="text-primary">{user?.firstName}</span>
+				Hey, <span class="text-primary">{data.user?.firstName}</span>
 			</div>
 		</div>
 		<div class="col-span-12">
@@ -62,10 +59,10 @@
 				<Card.Body>
 					<Card.Title>Di letzt Pass</Card.Title>
 					<Card.Content>
-						{#if last_attempt}
+						{#if data.last_attempt}
 							<div class="flex items-center gap-4">
 								<img src={Party} class="h-8 w-8" alt="Party" />
-								<p>{last_attempt.summit.name}, {last_attempt.summit_attempt.date}</p>
+								<p>{data.last_attempt.summit.name}, {data.last_attempt.summit_attempt.date}</p>
 							</div>
 						{:else}
 							<div class="flex items-center gap-4">
@@ -94,6 +91,10 @@
 									};
 								}}
 							>
+								{#if form?.message}
+									Aktualisiert. {form.message.updated} neui Aktivitäte, {form.message.unparsed} verarbeitet,
+									{form.message.attempts} Päss
+								{/if}
 								<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
 							</form>
 						{:else}

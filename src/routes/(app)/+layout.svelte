@@ -11,7 +11,7 @@
 		<Navbar user={data.user} />
 	</div>
 	<div
-		class="mb-20 flex flex-col gap-y-20 overflow-hidden pt-20 sm:mb-32 sm:gap-y-32 sm:pt-28 md:mb-40 md:gap-y-40 md:pt-32"
+		class="md:gap-y-30 mb-20 flex flex-col gap-y-20 overflow-hidden pt-20 sm:mb-32 sm:gap-y-32 sm:pt-28 md:mb-40 md:pt-32"
 	>
 		{@render children()}
 	</div>

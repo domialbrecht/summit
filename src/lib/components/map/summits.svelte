@@ -5,14 +5,20 @@
 	import { goto } from '$app/navigation';
 
 	type SummitProperty = {
-		LocationID: number;
+		id: number;
 		name: string;
+		elevation: number;
+		category: number;
+		desc: string;
 	};
 
 	function handleSummitClick(e: LayerClickInfo<Feature<Geometry, SummitProperty>>) {
-		const id = e.features[0].properties.LocationID;
+		const id = e.features[0].properties.id;
 		goto(`/summits/${id}`);
+		handleClick();
 	}
+
+	let { handleClick } = $props();
 </script>
 
 <MapLibre

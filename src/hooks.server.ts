@@ -1,8 +1,9 @@
 import { TokenBucket } from '$lib/server/rate-limit';
-import { error, type Handle } from '@sveltejs/kit';
+import { error, type Handle, type HandleServerError } from '@sveltejs/kit';
 import * as auth from '$lib/server/session.js';
 import { sequence } from '@sveltejs/kit/hooks';
 import { dev } from '$app/environment';
+import logger from '$lib/logger';
 
 const bucket = new TokenBucket<string>(100, 1);
 
@@ -46,7 +47,7 @@ const authHandle: Handle = async ({ event, resolve }) => {
 
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 	if (!sessionToken) {
-		event.locals.user = null;
+		event.locals.user = undefined;
 		event.locals.session = null;
 		return resolve(event);
 	}
@@ -65,3 +66,16 @@ const authHandle: Handle = async ({ event, resolve }) => {
 };
 
 export const handle: Handle = sequence(rateLimitHandle, authHandle);
+
+export const handleError: HandleServerError = async ({ error, event, status, message }) => {
+	logger.error({
+		message: message,
+		error: error,
+		url: event.url.pathname,
+		status: status
+	});
+
+	return {
+		message: 'Server Error'
+	};
+};

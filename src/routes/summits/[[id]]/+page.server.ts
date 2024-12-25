@@ -6,20 +6,24 @@ import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
-	let summit_data = null;
+	let summit_data = undefined;
 	if (params.id) {
 		const result = await db
 			.select({
-				summit: table.summit,
+				summit: {
+					id: table.summit.id,
+					name: table.summit.name
+				},
 				winAttempt: table.summit_attempt,
 				username: table.user.firstName
 			})
 			.from(table.summit)
 			.leftJoin(table.summit_attempt, eq(table.summit_attempt.id, table.summit.id))
-			.leftJoin(table.user, eq(table.user.id, table.summit_attempt.id))
+			.leftJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
 			.where(eq(table.summit.id, parseInt(params.id)))
 			.orderBy(asc(table.summit_attempt.date))
 			.limit(1);
+
 		summit_data = result.at(0);
 	}
 
