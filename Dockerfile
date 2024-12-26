@@ -1,17 +1,33 @@
-FROM node:22-alpine AS builder
+# Base stage - set up pnpm and the environment
+FROM node:22-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-RUN npm prune --production
 
-FROM node:22-alpine
+# Install production dependencies
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+
+# Build stage - install all dependencies and build the app
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
+
+# Final stage - minimal production image
+FROM node:22-alpine AS production
 WORKDIR /app
-COPY --from=builder /app/build build/
-COPY --from=builder /app/node_modules node_modules/
-COPY package.json .
+
+# Copy production dependencies and build output from previous stages
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/build /app/build
+COPY package.json ./
+
+# Expose port and set environment
 EXPOSE 3000
 ENV NODE_ENV=production
+
+# Start the app
 CMD [ "node", "build" ]
 
