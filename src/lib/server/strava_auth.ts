@@ -1,5 +1,5 @@
 import { OAuth2Client, OAuth2Tokens } from '$lib/server/oauth';
-import { AUTH_STRAVA_CLIENT_ID, AUTH_STRAVA_CLIENT_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
@@ -11,8 +11,8 @@ export const tokenEndpoint = 'https://www.strava.com/oauth/token';
 export const scopes = ['activity:read,read,profile:read_all'];
 
 export const stravaClient = new OAuth2Client(
-	AUTH_STRAVA_CLIENT_ID,
-	AUTH_STRAVA_CLIENT_SECRET,
+	env.AUTH_STRAVA_CLIENT_ID,
+	env.AUTH_STRAVA_CLIENT_SECRET,
 	'http://localhost:5173/login/strava/callback'
 );
 
