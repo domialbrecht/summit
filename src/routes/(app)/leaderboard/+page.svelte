@@ -18,13 +18,13 @@
 </script>
 
 <Section sectionId="welcome">
-	<div class="mt-6 grid gap-6 gap-y-10 xl:grid-cols-12">
-		<div class="col-span-12">
+	<div class="mt-6 grid gap-x-6 gap-y-4 xl:grid-cols-12 xl:gap-y-10">
+		<div class="xl:col-span-12">
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
 				Leaderboard
 			</div>
 		</div>
-		<div class="order-3 pt-10 xl:order-1 xl:col-span-4">
+		<div class="order-3 pt-4 xl:order-1 xl:col-span-4 xl:pt-10">
 			<Card.Root variant="border" class="min-h-44">
 				<Card.Body>
 					<Card.Title class="flex justify-center"
@@ -52,7 +52,7 @@
 				</Card.Body>
 			</Card.Root>
 		</div>
-		<div class="order-2 pt-10 xl:order-3 xl:col-span-4">
+		<div class="order-2 pt-4 xl:order-3 xl:col-span-4 xl:pt-10">
 			<Card.Root variant="border" class="min-h-44">
 				<Card.Body>
 					<Card.Title class="flex justify-center"
@@ -69,6 +69,7 @@
 	</div>
 </Section>
 <Section sectionId="welcome">
+	<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">Aui Teilnehmer</div>
 	<div>
 		<Table leaderboard={data.leaderboard} />
 	</div>

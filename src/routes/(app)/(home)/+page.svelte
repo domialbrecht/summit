@@ -18,13 +18,13 @@
 
 <Section sectionId="welcome">
 	<div class="mt-6 grid gap-6 xl:grid-cols-12">
-		<div class="col-span-12">
+		<div class="xl:col-span-12">
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
 				Hey, <span class="text-primary">{data.user?.firstName}</span>
 			</div>
 		</div>
-		<div class="col-span-12">
-			<div class="flex flex-col items-center gap-6 xl:flex-row">
+		<div class="xl:col-span-12">
+			<div class="flex flex-row items-center gap-4 xl:items-center xl:gap-6">
 				<div>
 					<button class="btn btn-sm rounded-full font-mono font-light"
 						><pre><code>Beta Version {version}</code></pre></button

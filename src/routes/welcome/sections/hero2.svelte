@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Hundred from '$site/icons/hundred.png';
 	import Party from '$site/icons/party.png';
+	import Stelvio from '$site/stelvio.jpg?enhanced';
+	import Furka from '$site/furka.jpg?enhanced';
 </script>
 
 <div>
@@ -33,6 +35,7 @@
 					<p class="font-title py-4 font-light text-base-content/70 md:text-2xl">
 						<!--[-->Mir si froh um cooli Fotis vo dine Route...
 						<a class="link-primary" href="/">Ufelade</a>
+						<enhanced:img src={Stelvio} alt="Stelvio pass" class="mt-4 lg:hidden" />
 					</p>
 					<div class="h-24"></div>
 				</div>
@@ -55,6 +58,7 @@
 					<p class="font-title py-4 font-light text-base-content/70 md:text-2xl">
 						Umso meh Lüt, umso meh Spass. Mir freue nis uf dini Aktivitäte.
 					</p>
+					<enhanced:img src={Furka} alt="Stelvio pass" class="mt-4 lg:hidden" />
 					<div class="h-20"></div>
 				</div>
 			</div>

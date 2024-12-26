@@ -4,8 +4,8 @@
 	import Banner from '$site/banner.jpg?enhanced';
 </script>
 
-<div class="flex h-screen gap-20">
-	<div class="flex w-1/2 flex-col items-center gap-8 px-24 pt-28 text-center">
+<div class="flex h-screen flex-col gap-20 lg:flex-row">
+	<div class="flex flex-col items-center gap-8 px-24 pt-28 text-center lg:w-1/2">
 		<enhanced:img src={Banner} alt="Stelvio pass" class="" />
 		<h1 class="text-5xl font-bold">Strava Login</h1>
 		<p class="mb-5">
@@ -16,7 +16,7 @@
 			<img src={Strava} alt="Strava Connect" />
 		</a>
 	</div>
-	<div class="h-full w-1/2 overflow-hidden">
+	<div class="hidden h-full w-1/2 overflow-hidden lg:flex">
 		<enhanced:img src={Tourmalet} alt="Logout image" class="min-h-full w-auto max-w-none" />
 	</div>
 </div>

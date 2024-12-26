@@ -42,9 +42,9 @@
 			<HeroSection2 />
 		</div>
 		<div
-			class="invisible sticky bottom-4 flex w-[calc(100%-2rem)] shrink duration-700 lg:visible lg:-end-32 lg:bottom-auto lg:top-16 lg:w-auto lg:!transform-none lg:overflow-x-hidden lg:overflow-y-clip lg:bg-transparent lg:pb-16 lg:pt-16"
+			class="invisible sticky bottom-4 hidden w-[calc(100%-2rem)] shrink duration-700 lg:visible lg:-end-32 lg:bottom-auto lg:top-16 lg:flex lg:w-auto lg:!transform-none lg:overflow-x-hidden lg:overflow-y-clip lg:bg-transparent lg:pb-16 lg:pt-16"
 			style={`${
-				hero && scrollY > hero.clientHeight * 0.2 ? 'visibility: visible;' : ''
+				hero && scrollY < hero.clientHeight * 0.2 ? 'visibility: visible;' : ''
 			}transform:translateY(${animateValue(hero, [17, 25], [120, 0])}%)`}
 		>
 			<div

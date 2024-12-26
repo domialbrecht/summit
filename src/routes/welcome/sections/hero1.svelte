@@ -3,7 +3,7 @@
 >
 	<div class="relative z-50">
 		<h1
-			class="font-title [:root[dir=rtl]_&amp;]:leading-[1.35] text-center text-[clamp(2rem,6vw,4.2rem)] font-black leading-[1.1] [word-break:auto-phrase] xl:w-[115%] xl:text-start"
+			class="font-title [:root[dir=rtl]_&amp;]:leading-[1.35] text-center text-[clamp(3.5rem,6vw,4.2rem)] font-black leading-[1.1] [word-break:auto-phrase] xl:w-[115%] xl:text-start"
 		>
 			<span
 				class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 brightness-150 contrast-150"
@@ -26,7 +26,7 @@
 			>
 		</h1>
 		<div class="h-4"></div>
-		<p class="font-title py-4 font-light text-base-content/70 md:text-lg xl:text-2xl">
+		<p class="font-title py-4 text-2xl font-light text-base-content/70 md:text-lg">
 			Mir sammle so viu Päss wies geit! ⛰️
 		</p>
 		<div class="h-10"></div>
