@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SolYVC from '$site/solyvc.svg';
 	import { page } from '$app/stores';
-	import Strava from '$lib/components/icons/strava.svelte';
+	import { LogIn } from 'lucide-svelte';
 	import type { User } from '$lib/server/db/schema';
 	let { user }: { user: User | undefined } = $props();
 </script>
@@ -76,7 +76,7 @@
 			{#if user}
 				<img class="h-5 w-5 rounded-full" src={user.profile} alt="User" />
 			{:else}
-				<Strava class="h-5 w-5 fill-orange-500" />
+				<LogIn class="h-5 w-5" />
 			{/if}
 		</a>
 	</li>
