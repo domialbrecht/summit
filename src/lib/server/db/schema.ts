@@ -93,7 +93,8 @@ export const summit = pgTable(
 );
 
 export const summitRelations = relations(summit, ({ many }) => ({
-	summitAttempts: many(summit_attempt)
+	summitAttempts: many(summit_attempt),
+	summitUploads: many(summit_uploads)
 }));
 
 export const summit_attempt = pgTable('summit_attempt', {
@@ -107,10 +108,21 @@ export const summit_attempt = pgTable('summit_attempt', {
 	published: boolean('published').notNull().default(false)
 	// .references(() => activity.id)
 });
-
 export const summitAttemptsRelations = relations(summit_attempt, ({ one }) => ({
 	summit: one(summit, {
 		fields: [summit_attempt.summitId],
+		references: [summit.id]
+	})
+}));
+
+export const summit_uploads = pgTable('summit_uploads', {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	url: text('url').notNull(),
+	summitId: integer('summit_id').notNull()
+});
+export const summitUploadsRelations = relations(summit_uploads, ({ one }) => ({
+	summit: one(summit, {
+		fields: [summit_uploads.summitId],
 		references: [summit.id]
 	})
 }));

@@ -3,6 +3,9 @@ import { eq, and } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
+import { superValidate, fail, message } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import schema from './schema';
 
 export const load: PageServerLoad = async (event) => {
 	const { user } = await event.parent();
@@ -17,12 +20,13 @@ export const load: PageServerLoad = async (event) => {
 		);
 
 	return {
-		attempts: results
+		attempts: results,
+		uploadForm: await superValidate(zod(schema))
 	};
 };
 
 export const actions = {
-	default: async (event) => {
+	publish: async (event) => {
 		const user = event.locals.user;
 		if (!user) {
 			redirect(303, '/login');
@@ -36,5 +40,17 @@ export const actions = {
 			);
 
 		redirect(303, '/');
+	},
+	upload: async ({ request }) => {
+		const form = await superValidate(request, zod(schema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		// TODO: Do something with the image
+		console.log(form.data.images);
+
+		return message(form, 'You have uploaded a valid file!');
 	}
 } satisfies Actions;
