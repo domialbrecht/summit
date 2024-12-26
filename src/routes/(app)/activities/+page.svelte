@@ -20,7 +20,7 @@
 		<div class="mt-6 grid gap-6 xl:grid-cols-12">
 			{#each data.activities as activity}
 				<div class="xl:col-span-4">
-					<Card.Root variant={activity.match ? 'border' : 'default'}>
+					<Card.Root variant={activity.match ? 'primary' : 'border'}>
 						<Card.Body>
 							<Card.Title>
 								{activity.name}

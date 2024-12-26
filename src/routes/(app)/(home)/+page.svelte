@@ -7,6 +7,7 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData, PageData } from './$types';
 	import { dt } from '$lib/utils';
+	import { Button } from '$lib/components/ui/button';
 
 	const { data }: { data: PageData; form: ActionData } = $props();
 
@@ -55,7 +56,7 @@
 				<!---->
 			</div>
 		</div>
-		<div class="xl:col-span-7">
+		<div class="xl:col-span-5">
 			<Card.Root variant="border" class="min-h-44">
 				<Card.Body>
 					<Card.Title>Di letzt Pass</Card.Title>
@@ -75,7 +76,17 @@
 				</Card.Body>
 			</Card.Root>
 		</div>
-		<div class="xl:col-span-5">
+		<div class="xl:col-span-3">
+			<Card.Root variant="border" class="min-h-44">
+				<Card.Body>
+					<Card.Title>Dini Aktivitäte</Card.Title>
+					<Card.Content>
+						<Button href="/activities">Link</Button>
+					</Card.Content>
+				</Card.Body>
+			</Card.Root>
+		</div>
+		<div class="xl:col-span-4">
 			<Card.Root class="min-h-44" variant={syncing ? 'info' : 'primary'}>
 				<Card.Body>
 					<Card.Title>Aktualisier dini Date</Card.Title>
