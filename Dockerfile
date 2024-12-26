@@ -22,12 +22,16 @@ WORKDIR /app
 # Copy production dependencies and build output from previous stages
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build /app/build
-COPY --from=build /app/static /app/static  # Copy static folder
+# Copy static assets directly from the base stage (not build stage)
+COPY --from=base /app/static /app/static
 COPY package.json ./
 
 # Expose port and set environment
 EXPOSE 3000
 ENV NODE_ENV=production
+
+# Create volume for logs
+VOLUME /app/logs
 
 # Start the app
 CMD [ "node", "build" ]
