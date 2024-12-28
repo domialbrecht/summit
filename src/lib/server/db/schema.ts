@@ -8,7 +8,8 @@ import {
 	integer,
 	smallint,
 	geometry,
-	index
+	index,
+	primaryKey
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
@@ -75,11 +76,30 @@ export const parseActivityResults = pgTable(
 	}
 );
 
+export const area = pgTable(
+	'area',
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		name: text('name').notNull()
+	},
+	(t) => {
+		return {
+			nameIdx: index('name_idx').using('btree', t.name)
+		};
+	}
+);
+
+export const areaRelations = relations(area, ({ many }) => ({
+	summitsToAreas: many(summitsToAreas)
+}));
+
 export const summit = pgTable(
 	'summit',
 	{
 		id: integer().primaryKey().notNull(),
+		slug: text('slug').notNull(),
 		name: text('name').notNull(),
+		alias: text('alias'),
 		lat: numeric('lat').notNull(),
 		long: numeric('long').notNull(),
 		location: geometry('location', { type: 'point', mode: 'xy', srid: 4326 }).notNull(),
@@ -93,7 +113,58 @@ export const summit = pgTable(
 );
 
 export const summitRelations = relations(summit, ({ many }) => ({
-	summitAttempts: many(summit_attempt)
+	summitAttempts: many(summit_attempt),
+	summitProfiles: many(summit_profile),
+	summitsToAreas: many(summitsToAreas)
+}));
+
+export const summitsToAreas = pgTable(
+	'summits_to_areas',
+	{
+		summitId: integer('summit_id')
+			.notNull()
+			.references(() => summit.id),
+		areaId: integer('area_id')
+			.notNull()
+			.references(() => area.id)
+	},
+	(t) => ({
+		pk: primaryKey({ columns: [t.summitId, t.areaId] })
+	})
+);
+
+export const summitsToAreasRelations = relations(summitsToAreas, ({ one }) => ({
+	area: one(area, {
+		fields: [summitsToAreas.areaId],
+		references: [area.id]
+	}),
+	summit: one(summit, {
+		fields: [summitsToAreas.summitId],
+		references: [summit.id]
+	})
+}));
+
+export const summit_profile = pgTable(
+	'summit_profile',
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		summitId: integer('summit_id').notNull(),
+		slug: text('slug').notNull(),
+		name: text('name').notNull(),
+		linestring: geometry('linestring', { type: undefined, srid: 4326 }).notNull(),
+		segment: text('segment'),
+		description: text('description')
+	},
+	(t) => ({
+		spatialProfileIndex: index('spatial_profile_index').using('gist', t.linestring)
+	})
+);
+
+export const summitProfilesRelations = relations(summit_profile, ({ one }) => ({
+	summit: one(summit, {
+		fields: [summit_profile.summitId],
+		references: [summit.id]
+	})
 }));
 
 export const summit_attempt = pgTable('summit_attempt', {
@@ -105,7 +176,6 @@ export const summit_attempt = pgTable('summit_attempt', {
 	activityId: text('activity_id').notNull(),
 	date: timestamp('date', { withTimezone: true, mode: 'date' }).notNull(),
 	published: boolean('published').notNull().default(false)
-	// .references(() => activity.id)
 });
 
 export const summitAttemptsRelations = relations(summit_attempt, ({ one }) => ({
