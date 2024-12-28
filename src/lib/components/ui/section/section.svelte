@@ -4,13 +4,14 @@
 	import { type VariantProps, tv } from 'tailwind-variants';
 
 	export const sectionVariants = tv({
-		base: 'pb-8 mx-auto max-w-7xl px-4 sm:px-6 md:px-8',
+		base: 'pb-8 mx-auto w-full px-4 sm:px-6 md:px-8',
 		variants: {
 			variant: {
 				default: 'bg-base-100'
 			},
 			size: {
-				default: 'w-full'
+				default: 'max-w-7xl ',
+				small: 'max-w-4xl'
 			},
 			spacing: {
 				default: 'section-normal'

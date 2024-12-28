@@ -4,7 +4,7 @@
 			class="font-title relative z-[2] mx-auto text-[clamp(2rem,6vw,4.5rem)] font-black leading-none max-[1279px]:!tracking-normal"
 			style="letter-spacing:0.23rem"
 		>
-			D Challange startet<br />
+			D Challenge startet<br />
 			<span
 				class="bg-primary bg-clip-text [-webkit-text-fill-color:transparent] max-[1279px]:!tracking-normal"
 				>am 01.01.2025</span

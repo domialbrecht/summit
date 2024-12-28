@@ -7,7 +7,7 @@
 <Toaster />
 <svelte:head>
 	<title>SolyVC Summits</title>
-	<meta name="description" content="SolyVC Summits Challange" />
+	<meta name="description" content="SolyVC Summits Challenge" />
 </svelte:head>
 <div>
 	{@render children()}
