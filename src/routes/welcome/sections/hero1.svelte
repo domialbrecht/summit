@@ -31,13 +31,11 @@
 		</p>
 		<div class="h-10"></div>
 		<div>
-			<div
-				class="inline-flex min-w-64 flex-col items-stretch justify-center gap-8 px-4 xl:justify-start xl:px-0"
-			>
+			<div class="inline-flex justify-center gap-8 px-4 xl:justify-start xl:px-0">
 				<a
 					data-sveltekit-preload-data=""
 					href="/login"
-					class="group btn btn-primary grow rounded-full px-12 md:btn-lg"
+					class="group btn btn-primary min-w-64 rounded-full px-12 md:btn-lg"
 					>Lezgoo<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -55,8 +53,8 @@
 				<a
 					data-sveltekit-preload-data=""
 					href="/rules"
-					class="group btn btn-outline btn-primary grow rounded-full px-12 md:btn-lg"
-					>Zude Regle..<svg
+					class="group btn btn-outline btn-primary rounded-full px-12 md:btn-lg"
+					>Zude Regle<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"
