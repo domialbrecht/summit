@@ -1,11 +1,12 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, notExists } from 'drizzle-orm';
 
 import type { StravaActivity } from './api.js';
 import logger from '$lib/logger.js';
 
 export async function updateActivities(userId: string, activities: StravaActivity[]) {
+	//TODO: Use proper validation
 	try {
 		await db
 			.insert(table.activity)
@@ -15,15 +16,15 @@ export async function updateActivities(userId: string, activities: StravaActivit
 					userId: userId,
 					uploadId: activity.upload_id.toString(),
 					name: activity.name,
-					distance: Math.round(activity.distance),
+					distance: activity.distance ? Math.round(activity.distance) : 0,
 					movingTime: activity.moving_time.toString(),
 					elapsedTime: activity.elapsed_time.toString(),
 					totalElevationGain: activity.total_elevation_gain.toString(),
 					type: activity.type,
 					startDate: new Date(activity.start_date),
-					averageSpeed: activity.average_speed.toString(),
+					averageSpeed: activity.average_speed ? activity.average_speed.toString() : undefined,
 					maxSpeed: activity.max_speed.toString(),
-					averageWatts: activity.average_watts.toString(),
+					averageWatts: activity.average_watts ? activity.average_watts.toString() : undefined,
 					summaryPolyline: activity.map.summary_polyline
 				}))
 			)
@@ -42,11 +43,17 @@ export async function getUnparsedActivities(userId: string) {
 			date: table.activity.startDate
 		})
 		.from(table.activity)
-		.leftJoin(
-			table.parseActivityResults,
-			eq(table.activity.id, table.parseActivityResults.activityId)
-		)
-		.where(and(isNull(table.parseActivityResults.id), eq(table.activity.userId, userId)));
+		.where(
+			and(
+				eq(table.activity.userId, userId),
+				notExists(
+					db
+						.select()
+						.from(table.parseActivityResults)
+						.where(eq(table.parseActivityResults.activityId, table.activity.id))
+				)
+			)
+		);
 }
 
 export async function setParsedActivities(
@@ -56,6 +63,10 @@ export async function setParsedActivities(
 		summits: number[];
 	}>
 ) {
+	if (matches.length === 0) {
+		return;
+	}
+
 	const values = matches.map((a) => {
 		return {
 			id: a.id,

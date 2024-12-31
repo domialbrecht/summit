@@ -6,6 +6,58 @@ import { desc, eq, sql } from 'drizzle-orm';
 import { updateActivities } from './activity_sync.js';
 import logger from '$lib/logger.js';
 
+type SportType =
+	| 'AlpineSki'
+	| 'BackcountrySki'
+	| 'Badminton'
+	| 'Canoeing'
+	| 'Crossfit'
+	| 'EBikeRide'
+	| 'Elliptical'
+	| 'EMountainBikeRide'
+	| 'Golf'
+	| 'Handcycle'
+	| 'HighIntensityIntervalTraining'
+	| 'Hike'
+	| 'IceSkate'
+	| 'InlineSkate'
+	| 'Kayaking'
+	| 'Kitesurf'
+	| 'NordicSki'
+	| 'Pickleball'
+	| 'Pilates'
+	| 'Racquetball'
+	| 'RockClimbing'
+	| 'RollerSki'
+	| 'Rowing'
+	| 'Run'
+	| 'GravelRide'
+	| 'MountainBikeRide'
+	| 'Ride'
+	| 'Sail'
+	| 'Skateboard'
+	| 'Snowboard'
+	| 'Snowshoe'
+	| 'Soccer'
+	| 'Squash'
+	| 'StairStepper'
+	| 'StandUpPaddling'
+	| 'Surfing'
+	| 'Swim'
+	| 'TableTennis'
+	| 'Tennis'
+	| 'TrailRun'
+	| 'Velomobile'
+	| 'VirtualRide'
+	| 'VirtualRow'
+	| 'VirtualRun'
+	| 'Walk'
+	| 'WeightTraining'
+	| 'Wheelchair'
+	| 'Windsurf'
+	| 'Workout'
+	| 'Yoga';
+
 export type StravaActivity = {
 	id: number;
 	upload_id: number;
@@ -20,6 +72,7 @@ export type StravaActivity = {
 	average_speed: number;
 	max_speed: number;
 	average_watts: number;
+	sport_type: SportType;
 	map: {
 		id: string;
 		summary_polyline: string;
@@ -141,6 +194,15 @@ export async function updateActivityDetail(userId: string, activityId: string) {
 	await query.execute();
 }
 
+//TODO: Adjust this with proper validatoin
 function filterActivities(activities: StravaActivity[]): StravaActivity[] {
-	return activities.filter((a) => a.trainer === false);
+	const allowedSportTypes = ['GravelRide', 'MountainBikeRide', 'Ride'];
+	return activities.filter(
+		(a) =>
+			allowedSportTypes.includes(a.sport_type) &&
+			a.trainer === false &&
+			a.map &&
+			a.map.summary_polyline &&
+			a.elapsed_time
+	);
 }
