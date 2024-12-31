@@ -26,6 +26,9 @@ COPY --from=build /app/build /app/build
 COPY --from=base /app/static /app/static
 COPY package.json ./
 
+# Copy script folder
+COPY scripts /app/scripts
+
 # Expose port and set environment
 EXPOSE 3000
 ENV NODE_ENV=production
