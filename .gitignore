@@ -26,6 +26,7 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 doc/sample_activity.json
 doc/activities.json
+doc/response_stream.json
 /test-results/
 /playwright-report/
 /blob-report/

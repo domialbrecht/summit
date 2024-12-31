@@ -1,37 +1,50 @@
 import type { PageServerLoad } from './$types.js';
 import * as table from '$lib/server/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { gte, lt, min, and, sql, eq } from 'drizzle-orm';
 
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
+import type { SummitWin } from '$lib/types/index.js';
 
 export const load: PageServerLoad = async ({ params }) => {
-	let summit_data = undefined;
+	let summit_wins: SummitWin[] = [];
+	let summit_data: table.SelectSummit | undefined = undefined;
 	if (params.id) {
-		const result = await db
+		const summit_result = await db
+			.select()
+			.from(table.summit)
+			.where(eq(table.summit.id, parseInt(params.id)));
+		summit_data = summit_result.at(0);
+
+		const earliestAttempt = db
+			.select({ minDate: min(table.summit_attempt.date) })
+			.from(table.summit_attempt)
+			.where(eq(table.summit_attempt.summitId, parseInt(params.id)))
+			.limit(1);
+		const win_result = await db
 			.select({
-				summit: {
-					id: table.summit.id,
-					name: table.summit.name
-				},
 				winAttempt: table.summit_attempt,
 				username: table.user.firstName
 			})
-			.from(table.summit)
-			.leftJoin(table.summit_attempt, eq(table.summit_attempt.summitId, table.summit.id))
+			.from(table.summit_attempt)
 			.leftJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
-			.where(eq(table.summit.id, parseInt(params.id)))
-			.orderBy(asc(table.summit_attempt.date))
-			.limit(1);
+			.where(
+				and(
+					eq(table.summit_attempt.summitId, parseInt(params.id)),
+					gte(table.summit_attempt.date, earliestAttempt),
+					lt(table.summit_attempt.date, sql`${earliestAttempt} + interval '1 minute'`)
+				)
+			);
 
-		summit_data = result.at(0);
+		summit_wins = win_result;
 	}
 
-	if (params.id && !summit_data) {
+	if (params.id && !summit_wins) {
 		error(404, { message: 'Summit not found' });
 	}
 
 	return {
+		summit_wins: summit_wins,
 		summit_data: summit_data
 	};
 };

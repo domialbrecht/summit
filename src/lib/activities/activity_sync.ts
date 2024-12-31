@@ -13,7 +13,7 @@ export async function updateActivities(userId: string, activities: StravaActivit
 				userId: userId,
 				uploadId: activity.upload_id.toString(),
 				name: activity.name,
-				distance: activity.distance,
+				distance: Math.round(activity.distance),
 				movingTime: activity.moving_time.toString(),
 				elapsedTime: activity.elapsed_time.toString(),
 				totalElevationGain: activity.total_elevation_gain.toString(),

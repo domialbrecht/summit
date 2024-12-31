@@ -2,7 +2,7 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { getTokensForUser } from '$lib/server/strava_auth';
 import { error, redirect } from '@sveltejs/kit';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { updateActivities } from './activity_sync.js';
 import logger from '$lib/logger.js';
 
@@ -26,10 +26,14 @@ export type StravaActivity = {
 	};
 };
 
-export type DetailedActivity = StravaActivity & {
-	map: {
-		polyline: string;
-	};
+export type Stream<T> = {
+	data: T[];
+};
+
+export type ActivityStreams = {
+	latlng: Stream<number[][]>;
+	time: Stream<number[]>;
+	distance: Stream<number[]>;
 };
 
 async function stravaFetch(
@@ -105,6 +109,30 @@ export async function updateActivityCache(userId: string) {
 	await updateActivities(userId, activities);
 
 	return activities.length;
+}
+
+export async function updateActivityDetail(userId: string, activityId: string) {
+	const stream: ActivityStreams = await stravaFetch(
+		`activities/${activityId}/streams?keys=latlng,time&key_by_type=true`,
+		userId
+	);
+	const points = stream.latlng.data.map((coord, index) => {
+		const [lat, lon] = coord;
+		const t = stream.time.data[index];
+
+		return `${lon} ${lat} ${t}`;
+	});
+
+	const linestringM = `LINESTRINGM(${points.join(', ')})`;
+	const ewkt = `SRID=4326;${linestringM}`;
+	const query = db
+		.update(table.activity)
+		.set({
+			linestring: sql`ST_GeomFromEWKT(${ewkt})`
+		})
+		.where(eq(table.activity.id, activityId))
+		.prepare('query');
+	await query.execute();
 }
 
 function filterActivities(activities: StravaActivity[]): StravaActivity[] {

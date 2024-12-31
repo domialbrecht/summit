@@ -12,7 +12,7 @@
 	const { data }: { data: PageServerData } = $props();
 	const { user } = page.data;
 
-	let activeSummit = $derived(data.summit_data ? data.summit_data.summit.id : null);
+	let activeSummit = $derived(data.summit_data ? data.summit_data.id : null);
 	let open = $state(false);
 
 	$effect(() => {
@@ -34,22 +34,23 @@
 					<div class="mx-auto w-full max-w-sm">
 						{#if data.summit_data}
 							<Drawer.Header>
-								<Drawer.Title>{data.summit_data.summit.name}</Drawer.Title>
-								<Drawer.Description>Pass Nr.{data.summit_data.summit.id}</Drawer.Description>
+								<Drawer.Title>{data.summit_data.name}</Drawer.Title>
+								<Drawer.Description>Pass Nr.{data.summit_data.id}</Drawer.Description>
 							</Drawer.Header>
 							<div class="flex items-center gap-4 p-4 pb-0">
-								{#if data.summit_data.winAttempt}
+								{#each data.summit_wins as win}
+									<!-- content here -->
 									<img src={Trophy} alt="trophy" class="h-12 w-12" />
 									<div>
-										<h2 class="font-title text-xl">{data.summit_data.username}</h2>
-										<p>{dt(data.summit_data.winAttempt.date)}</p>
+										<h2 class="font-title text-xl">{win.username}</h2>
+										<p>{dt(win.winAttempt.date)}</p>
 									</div>
 								{:else}
 									<div>
 										<h2 class="font-title text-xl">Kei Erklimmig</h2>
 										<p>Lezgo</p>
 									</div>
-								{/if}
+								{/each}
 							</div>
 							<Drawer.Footer>
 								<Drawer.Close class={buttonVariants({ variant: 'outline' })}>Cancel</Drawer.Close>

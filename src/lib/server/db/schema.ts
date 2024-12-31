@@ -40,25 +40,31 @@ export const tokens = pgTable('strava_tokens', {
 	expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'date' }).notNull()
 });
 
-export const activity = pgTable('strava_activity', {
-	id: text('id').primaryKey(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id),
-	uploadId: text('upload_id'),
-	name: text('name'),
-	distance: integer('distance'),
-	movingTime: numeric('moving_time'),
-	elapsedTime: numeric('elapsed_time'),
-	totalElevationGain: numeric('total_elevation_gain'),
-	type: text('type'),
-	startDate: timestamp('start_date', { withTimezone: true, mode: 'date' }).notNull(),
-	averageSpeed: numeric('average_speed'),
-	maxSpeed: numeric('max_speed'),
-	averageWatts: numeric('average_watts'),
-	summaryPolyline: text('summary_polyline').notNull(),
-	polyline: text('polyline')
-});
+export const activity = pgTable(
+	'strava_activity',
+	{
+		id: text('id').primaryKey(),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id),
+		uploadId: text('upload_id'),
+		name: text('name'),
+		distance: integer('distance'),
+		movingTime: numeric('moving_time'),
+		elapsedTime: numeric('elapsed_time'),
+		totalElevationGain: numeric('total_elevation_gain'),
+		type: text('type'),
+		startDate: timestamp('start_date', { withTimezone: true, mode: 'date' }).notNull(),
+		averageSpeed: numeric('average_speed'),
+		maxSpeed: numeric('max_speed'),
+		averageWatts: numeric('average_watts'),
+		summaryPolyline: text('summary_polyline').notNull(),
+		linestring: text('linestring')
+	},
+	(t) => ({
+		activitySptialIndex: index('activity_spatial_index').using('gist', t.linestring)
+	})
+);
 
 export const parseActivityResults = pgTable(
 	'parse_activity_results',
@@ -80,7 +86,7 @@ export const area = pgTable(
 	'area',
 	{
 		id: integer().primaryKey().generatedAlwaysAsIdentity(),
-		name: text('name').notNull()
+		name: text('name').notNull().unique()
 	},
 	(t) => {
 		return {

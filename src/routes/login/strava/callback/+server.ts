@@ -30,7 +30,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	let stravaAccessToken;
 	try {
 		tokens = await stravaClient.validateAuthorizationCode(tokenEndpoint, code, null);
-		console.log(tokens.data);
 		stravaAccessToken = tokens.accessToken();
 	} catch (e) {
 		logger.error({ message: 'Failed to get access tokens', data: e });

@@ -10,7 +10,7 @@ const toWKT = (decoded: [number, number][]) => {
 	return `LINESTRING(${wkt})`;
 };
 
-async function summitsMatchPolyline(line: string): Promise<{ id: number }[]> {
+async function summitsMatchPolyline(line: string) {
 	const p = polyline.decode(line);
 	const wkt = toWKT(p);
 	const sqlLine = sql`ST_GeographyFromText(${wkt})`;
@@ -19,14 +19,45 @@ async function summitsMatchPolyline(line: string): Promise<{ id: number }[]> {
 			id: table.summit.id,
 			name: table.summit.name,
 			location: table.summit.location,
-			distance: sql`ST_Distance(${table.summit.location},${sqlLine})`
+			matchPoint: sql`ST_ClosestPoint(${table.summit.location},${sqlLine})`
 		})
 		.from(table.summit)
 		.where(sql`ST_DWithin(${table.summit.location},${sqlLine},${THRESHHOLD_METERS})`);
 	return summits;
 }
 
-export async function summitAttemptsFromActivity(line: string): Promise<{ id: number }[]> {
+export async function summitDetailMatch(activityId: string) {
+	const summits = await db
+		.select({
+			id: table.summit.id,
+			name: table.summit.name,
+			matchTime: sql<number>`
+      ST_M(
+        ST_LineInterpolatePoint(
+          (SELECT linestring FROM ${table.activity} WHERE id = ${activityId}),
+          ST_LineLocatePoint(
+            (SELECT linestring FROM ${table.activity} WHERE id = ${activityId}),
+            ${table.summit.location}::geometry
+          )
+        )
+      )
+			     `
+		})
+		.from(table.summit).where(sql`
+      ST_DWithin(
+        ST_Transform(
+          (SELECT linestring FROM ${table.activity} WHERE id = ${activityId}),
+          4326
+        ),
+        ${table.summit.location},
+        ${THRESHHOLD_METERS}
+      )
+    `);
+
+	return summits;
+}
+
+export async function summitAttemptsFromActivity(line: string) {
 	const summits = await summitsMatchPolyline(line);
 	return summits;
 }

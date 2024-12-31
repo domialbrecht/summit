@@ -36,7 +36,7 @@
 											<div class="badge badge-primary">NEU</div>
 										</Card.Title>
 										<Card.Content>
-											<p>Datum: {dt(entry.strava_activity.startDate)}</p>
+											<p>Datum: {dt(entry.summit_attempt.date)}</p>
 											<div class="card-actions justify-end">
 												{#if entry.strava_activity.distance}
 													<div class="badge badge-outline">
