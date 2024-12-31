@@ -8,7 +8,7 @@ import logger from '$lib/logger';
 
 export const authorizationEndpoint = 'https://www.strava.com/oauth/authorize';
 export const tokenEndpoint = 'https://www.strava.com/oauth/token';
-export const scopes = ['activity:read,read,profile:read_all'];
+export const scopes = ['activity:read_all,read,profile:read_all'];
 
 export const stravaClient = new OAuth2Client(
 	env.AUTH_STRAVA_CLIENT_ID,

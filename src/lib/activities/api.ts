@@ -107,7 +107,10 @@ export async function updateActivityCache(userId: string) {
 		return 0;
 	}
 
-	logger.info({ message: 'Updating db activities', data: { user: userId } });
+	logger.info({
+		message: 'Updating db activities',
+		data: { user: userId, activities: activities }
+	});
 	await updateActivities(userId, activities);
 	logger.info({ message: 'Finished db activities write', data: { user: userId } });
 
