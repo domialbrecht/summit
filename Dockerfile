@@ -28,6 +28,8 @@ COPY package.json ./
 
 # Copy script folder
 COPY scripts /app/scripts
+# Copy drizzle folder
+COPY drizzle /app/drizzle
 
 # Expose port and set environment
 EXPOSE 3000
