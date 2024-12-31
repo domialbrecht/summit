@@ -13,7 +13,7 @@ export const scopes = ['activity:read,read,profile:read_all'];
 export const stravaClient = new OAuth2Client(
 	env.AUTH_STRAVA_CLIENT_ID,
 	env.AUTH_STRAVA_CLIENT_SECRET,
-	'http://localhost:5173/login/strava/callback'
+	env.AUTH_STRAVA_REDIRECT_URI
 );
 
 export async function getTokensForUser(userId: string) {
