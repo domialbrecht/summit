@@ -19,3 +19,11 @@ export function hr(m: string | null) {
 export function dt(d: Date) {
 	return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
 }
+
+export function d(d: Date) {
+	return `${d.toLocaleDateString()}`;
+}
+
+export function t(d: Date) {
+	return `${d.toLocaleTimeString()}`;
+}

@@ -17,4 +17,5 @@ export interface SummitWin {
 		published: boolean;
 	};
 	username: string | null;
+	profile: string | null;
 }

@@ -19,18 +19,25 @@ export const load: PageServerLoad = async ({ params }) => {
 		const earliestAttempt = db
 			.select({ minDate: min(table.summit_attempt.date) })
 			.from(table.summit_attempt)
-			.where(eq(table.summit_attempt.summitId, parseInt(params.id)))
+			.where(
+				and(
+					eq(table.summit_attempt.summitId, parseInt(params.id)),
+					eq(table.summit_attempt.published, true)
+				)
+			)
 			.limit(1);
 		const win_result = await db
-			.select({
+			.selectDistinctOn([table.user.id], {
 				winAttempt: table.summit_attempt,
-				username: table.user.firstName
+				username: table.user.firstName,
+				profile: table.user.profile
 			})
 			.from(table.summit_attempt)
 			.leftJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
 			.where(
 				and(
 					eq(table.summit_attempt.summitId, parseInt(params.id)),
+					eq(table.summit_attempt.published, true),
 					gte(table.summit_attempt.date, earliestAttempt),
 					lt(table.summit_attempt.date, sql`${earliestAttempt} + interval '1 minute'`)
 				)
