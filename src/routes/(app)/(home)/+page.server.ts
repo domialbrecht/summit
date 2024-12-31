@@ -46,6 +46,7 @@ export const actions = {
 			logger.info({ message: 'Skipping activity fetch, recently fetched' });
 		}
 
+		logger.info({ message: 'Getting unparsed activities', data: { user: user.id } });
 		const unparsed = await getUnparsedActivities(user.id);
 		logger.info({
 			message: 'Unparsed activiies',

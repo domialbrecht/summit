@@ -100,13 +100,16 @@ export async function updateActivityCache(userId: string) {
 	if (activities.length === 0) {
 		return 0;
 	}
+	logger.info({ message: 'Finished fetching for user', data: { user: userId } });
 
 	activities = filterActivities(activities);
 	if (activities.length === 0) {
 		return 0;
 	}
 
+	logger.info({ message: 'Updating db activities', data: { user: userId } });
 	await updateActivities(userId, activities);
+	logger.info({ message: 'Finished db activities write', data: { user: userId } });
 
 	return activities.length;
 }
