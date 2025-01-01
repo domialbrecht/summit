@@ -7,11 +7,11 @@
 	let { wins }: { wins: SummitWin[] } = $props();
 </script>
 
-<Card.Root variant="border">
+<Card.Root variant="border" class="border-2 border-accent">
 	<Card.Body>
 		<Card.Content>
-			<div class="flex items-center justify-between gap-4">
-				<div class="flex gap-4">
+			<div class="flex flex-col items-center justify-between gap-4 lg:flex-row">
+				<div class="order-2 flex flex-col gap-4 lg:order-1 lg:flex-row">
 					{#each wins as win}
 						<div class="flex items-center gap-3">
 							<img src={Trophy} alt="Trophy" class="h-16 w-16" />
@@ -26,7 +26,7 @@
 						</div>
 					{/each}
 				</div>
-				<div class="flex flex-col items-center">
+				<div class="order-1 flex items-center gap-2 lg:order-2 lg:flex-col lg:gap-0">
 					<span class="text-xl font-bold">{d(wins[0].winAttempt.date)}</span>
 					<span class="text-xl font-bold">{t(wins[0].winAttempt.date)}</span>
 				</div>

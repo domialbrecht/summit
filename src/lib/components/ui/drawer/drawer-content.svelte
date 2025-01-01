@@ -6,7 +6,7 @@
 		variants: {
 			variant: {
 				bottom: 'inset-x-0 bottom-0 h-auto flex-col rounded-t-[10px]',
-				left: 'bottom-0 left-0 top-0 flex-row flex-row-reverse lg:rounded-r-[10px]'
+				left: 'bottom-0 left-0 top-0 flex-col lg:flex-row lg:flex-row-reverse lg:rounded-r-[10px]'
 			}
 		},
 		defaultVariants: {
@@ -49,7 +49,7 @@
 	>
 		<div
 			class={clsx({
-				'rounded-full bg-base-200': true,
+				'hidden rounded-full bg-base-200 lg:block': true,
 				'mx-auto mt-4 h-1.5 w-12': contentProps?.variant === 'bottom',
 				'mx-4 my-auto h-12 w-1.5': contentProps?.variant === 'left'
 			})}

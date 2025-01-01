@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { SelectSummit } from '$lib/server/db/schema';
-	import { Map } from 'lucide-svelte';
+	import { Map, X } from 'lucide-svelte';
 
-	let { summit }: { summit: SelectSummit } = $props();
+	let { summit, handleClick }: { summit: SelectSummit; handleClick: () => void } = $props();
 </script>
 
 <div class="flex items-center justify-between gap-6">
@@ -14,7 +14,7 @@
 			<span class="text-2xl font-bold text-slate-300">{summit.alias}</span>
 		{/if}
 	</div>
-	<div>
+	<div class="flex items-center gap-2">
 		<a
 			class="link-accent"
 			href={`https://www.google.com/maps/search/?api=1&query=${summit.lat},${summit.long}`}
@@ -23,5 +23,8 @@
 		>
 			<Map class="h-8 w-8" />
 		</a>
+		<button class="btn btn-link btn-primary" onclick={handleClick}>
+			<X class="h-8 w-8" />
+		</button>
 	</div>
 </div>

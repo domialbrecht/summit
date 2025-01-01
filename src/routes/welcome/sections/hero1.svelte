@@ -31,7 +31,9 @@
 		</p>
 		<div class="h-10"></div>
 		<div>
-			<div class="inline-flex justify-center gap-8 px-4 xl:justify-start xl:px-0">
+			<div
+				class="inline-flex flex-col justify-center gap-8 px-4 lg:flex-row xl:justify-start xl:px-0"
+			>
 				<a
 					data-sveltekit-preload-data=""
 					href="/login"

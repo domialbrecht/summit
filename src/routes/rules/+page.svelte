@@ -52,7 +52,7 @@
 							<span class="text-primary">II</span> Vorgehenswiis
 						</h2>
 					</div>
-					<div class="ps-16">
+					<div class="lg:ps-16">
 						<div class="flex items-center gap-4">
 							<p>
 								<strong>1.</strong> E Pass mues fürd Challenge ou mitmene SolyVC Sticker markiert werde
@@ -67,7 +67,7 @@
 								normal zerst vo dim Grät uf Strava. Derte muese si öffentlech si. Ei Aktivität cha mehreri
 								Päss beinhalte.
 							</p>
-							<Strava class="w-12 fill-orange-600" />
+							<Strava class="h-[30px] w-[30px] shrink-0 fill-orange-600" />
 						</div>
 						<div class="mt-4 flex items-center gap-4">
 							<p>

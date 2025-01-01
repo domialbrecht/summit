@@ -126,6 +126,7 @@ const dateToUnixTimestamp = (date: Date): string => {
 
 export async function updateActivityCache(userId: string) {
 	// Sync last two weeks of activities
+	const EARLIEST = new Date('2025-01-01');
 	const UPDATE_CYCLE_DAYS = 14;
 	const today = new Date();
 	today.setHours(today.getHours() - 1);
@@ -141,6 +142,10 @@ export async function updateActivityCache(userId: string) {
 	if (!lastSynced) {
 		lastSynced = new Date();
 		lastSynced.setDate(today.getDate() - UPDATE_CYCLE_DAYS);
+	}
+
+	if (lastSynced.getTime() < EARLIEST.getTime()) {
+		lastSynced = EARLIEST;
 	}
 
 	const options = {
