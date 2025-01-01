@@ -45,7 +45,7 @@ export async function summitDetailMatch(activityId: string) {
           )
       ) as summitlines
       WHERE ST_Contains(ST_Buffer(summitlines.location,${BUFFER})::geometry, (dp).geom)
-    ) as contained group by contained.id, contained.name limit 0
+    ) as contained group by contained.id, contained.name
   `;
 
 	const results = await db.execute<{ id: number; name: string; matchTime: number }>(query);

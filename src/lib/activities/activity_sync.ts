@@ -60,6 +60,11 @@ export async function setParsedActivities(
 	matches: Array<{
 		id: string;
 		date: Date;
+		detail_summits: {
+			id: number;
+			name: string;
+			matchTime: number;
+		}[];
 		summits: number[];
 	}>
 ) {
@@ -70,7 +75,7 @@ export async function setParsedActivities(
 	const values = matches.map((a) => {
 		return {
 			id: a.id,
-			match: a.summits.length > 0
+			match: a.detail_summits.length > 0
 		};
 	});
 
