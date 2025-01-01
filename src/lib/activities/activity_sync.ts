@@ -63,7 +63,7 @@ export async function setParsedActivities(
 		detail_summits: {
 			id: number;
 			name: string;
-			matchTime: number;
+			matchtime: number;
 		}[];
 		summits: number[];
 	}>

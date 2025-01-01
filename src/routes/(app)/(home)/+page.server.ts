@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import { eq, and, desc } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { StravaApi } from '$lib/activities';
 import type { Actions, PageServerLoad } from './$types';
 import { getUnparsedActivities, setParsedActivities } from '$lib/activities/activity_sync';
@@ -64,7 +64,7 @@ export const actions = {
 			detail_summits: {
 				id: number;
 				name: string;
-				matchTime: number;
+				matchtime: number;
 			}[];
 		}[] = await Promise.all(
 			unparsed.map(async ({ id, date, sum_line }) => {
@@ -97,7 +97,7 @@ export const actions = {
 
 		const attempts = summitMatches.flatMap((a) => {
 			return a.detail_summits.map((s) => {
-				const reachTime = s.matchTime;
+				const reachTime = s.matchtime;
 				const reachDate = new Date(a.date.getTime() + reachTime * 1000);
 				return {
 					id: a.id,
@@ -112,17 +112,21 @@ export const actions = {
 			redirect(303, `/sync?updated=${updated}&unparsed=${unparsed.length}&attempts=${0}`);
 		}
 
-		logger.info({ message: 'Inserting attempts', data: attempts.length });
-		await db.insert(table.summit_attempt).values(
-			attempts.map((a) => {
-				return {
-					activityId: a.id,
-					summitId: a.summit,
-					userId: user.id,
-					date: a.date
-				};
-			})
-		);
+		logger.info({ message: 'Inserting attempts', data: attempts });
+		try {
+			await db.insert(table.summit_attempt).values(
+				attempts.map((a) => {
+					return {
+						activityId: a.id,
+						summitId: a.summit,
+						userId: user.id,
+						date: a.date
+					};
+				})
+			);
+		} catch (e) {
+			throw new Error(`Failed to insert attempts: ${e}`);
+		}
 
 		redirect(
 			303,
