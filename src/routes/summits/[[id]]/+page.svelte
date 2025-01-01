@@ -14,35 +14,6 @@
 	let activeSummit = $derived(data.summit_data ? data.summit_data.id : null);
 	let open = $state(false);
 
-	let wins = [
-		{
-			winAttempt: {
-				id: 1,
-				date: new Date(),
-				userId: '',
-				summitId: 1,
-				activityId: '',
-				published: false
-			},
-			username: 'Dominik',
-			profile:
-				'https://dgalywyr863hv.cloudfront.net/pictures/athletes/104482993/31263014/1/large.jpg'
-		},
-		{
-			winAttempt: {
-				id: 1,
-				date: new Date(),
-				userId: '',
-				summitId: 1,
-				activityId: '',
-				published: false
-			},
-			username: 'Pascal',
-			profile:
-				'https://dgalywyr863hv.cloudfront.net/pictures/athletes/104482993/31263014/1/large.jpg'
-		}
-	];
-
 	$effect(() => {
 		open = activeSummit ? true : false;
 	});
@@ -106,8 +77,8 @@
 									</div>
 								</div>
 								<div id="summit-wins" class="order-1 lg:order-2">
-									{#if wins.length > 0}
-										<Wins {wins} />
+									{#if data.summit_wins.length > 0}
+										<Wins wins={data.summit_wins} />
 									{:else}
 										<Free />
 									{/if}

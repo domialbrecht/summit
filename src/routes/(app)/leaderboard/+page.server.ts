@@ -1,66 +1,52 @@
 import { db } from '$lib/server/db';
-import { eq, and, desc, min, count } from 'drizzle-orm';
+import { eq, and, min, count, lt, gte, sql } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
-import type { LeaderboardData } from '$lib/types';
 
-async function getLeaderboard(): Promise<LeaderboardData[]> {
-	const firstAttempts = db
+async function getLeaderboard() {
+	const earliestAttempts = db
 		.select({
 			summitId: table.summit_attempt.summitId,
-			firstAttempt: min(table.summit_attempt.date).as('first_attempt')
+			minDate: min(table.summit_attempt.date).as('minDate')
 		})
 		.from(table.summit_attempt)
+		.where(eq(table.summit_attempt.published, true))
 		.groupBy(table.summit_attempt.summitId)
-		.as('first_attempts');
+		.as('earliestAttempts');
 
-	const lastWin = db
-		.select({
-			userId: table.summit_attempt.userId,
-			summitName: table.summit.name,
-			summitId: table.summit.id,
-			lastWinDate: table.summit_attempt.date
+	const win_results = await db
+		.selectDistinctOn([table.user.id, table.summit_attempt.summitId], {
+			userName: table.user.firstName,
+			winAttempt: table.summit_attempt,
+			summitName: table.summit.name
 		})
 		.from(table.summit_attempt)
-		.innerJoin(
-			firstAttempts,
+		.leftJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
+		.innerJoin(earliestAttempts, eq(table.summit_attempt.summitId, earliestAttempts.summitId))
+		.leftJoin(table.summit, eq(table.summit.id, table.summit_attempt.summitId))
+		.where(
 			and(
-				eq(table.summit_attempt.summitId, firstAttempts.summitId),
-				eq(table.summit_attempt.date, firstAttempts.firstAttempt)
+				eq(table.summit_attempt.published, true),
+				gte(table.summit_attempt.date, earliestAttempts.minDate),
+				lt(table.summit_attempt.date, sql`${earliestAttempts.minDate} + interval '1 minute'`)
 			)
-		)
-		.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
-		.orderBy(desc(table.summit_attempt.date))
-		.limit(1)
-		.as('last_win');
+		);
 
-	const leaderboard = await db
+	const attempts = await db
 		.select({
 			userId: table.summit_attempt.userId,
 			userName: table.user.firstName,
-			userProfile: table.user.profile,
-			lastSummitWon: lastWin.summitName,
-			lastSummitId: lastWin.summitId,
-			wins: count()
+			profile: table.user.profile,
+			attempts: count(table.summit_attempt.id).as('attempts')
 		})
 		.from(table.summit_attempt)
-		.innerJoin(
-			firstAttempts,
-			and(
-				eq(table.summit_attempt.summitId, firstAttempts.summitId),
-				eq(table.summit_attempt.date, firstAttempts.firstAttempt)
-			)
-		)
-		.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id))
-		.leftJoin(lastWin, eq(table.summit_attempt.userId, lastWin.userId))
-		.groupBy(
-			table.summit_attempt.userId,
-			table.user.firstName,
-			table.user.profile,
-			lastWin.summitName,
-			lastWin.summitId
-		)
-		.orderBy(desc(count()));
-	return leaderboard;
+		.innerJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
+		.where(eq(table.summit_attempt.published, true))
+		.groupBy(table.summit_attempt.userId, table.user.firstName, table.user.profile);
+
+	return {
+		attempts: attempts,
+		wins: win_results
+	};
 }
 
 export async function load() {

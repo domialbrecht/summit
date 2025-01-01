@@ -2,9 +2,9 @@
 	import Trophy from '$site/icons/trophy.png';
 	import * as Card from '$lib/components/ui/card';
 	import { d, t } from '$lib/utils';
-	import type { SummitWin } from '$lib/types';
+	import type { UserSummitWin } from '$lib/types';
 
-	let { wins }: { wins: SummitWin[] } = $props();
+	let { wins }: { wins: UserSummitWin[] } = $props();
 </script>
 
 <Card.Root variant="border" class="border-2 border-accent">

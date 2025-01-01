@@ -4,10 +4,10 @@ import { gte, lt, min, and, sql, eq } from 'drizzle-orm';
 
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import type { SummitWin } from '$lib/types/index.js';
+import type { UserSummitWin } from '$lib/types/index.js';
 
 export const load: PageServerLoad = async ({ params }) => {
-	let summit_wins: SummitWin[] = [];
+	let summit_wins: UserSummitWin[] = [];
 	let summit_data: table.SelectSummit | undefined = undefined;
 	if (params.id) {
 		const summit_result = await db

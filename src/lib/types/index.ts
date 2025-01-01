@@ -1,13 +1,4 @@
-export interface LeaderboardData {
-	userId: string;
-	userName: string | null;
-	userProfile: string | null;
-	lastSummitWon: string | null;
-	lastSummitId: number | null;
-	wins: number;
-}
-
-export interface SummitWin {
+export interface UserSummitWin {
 	winAttempt: {
 		id: number;
 		date: Date;

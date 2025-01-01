@@ -1,7 +1,29 @@
 <script lang="ts">
-	import type { LeaderboardData } from '$lib/types';
+	type LeaderboardTable = {
+		attempts: {
+			userId: string;
+			userName: string | null;
+			profile: string | null;
+			attempts: number;
+		}[];
+		wins: {
+			userName: string | null;
+			winAttempt: {
+				summitId: number;
+				id: number;
+				date: Date;
+				userId: string;
+				activityId: string;
+				published: boolean;
+			};
+			summitName: string | null;
+		}[];
+	};
+	let { leaderboard }: { leaderboard: LeaderboardTable } = $props();
 
-	let { leaderboard }: { leaderboard: LeaderboardData[] } = $props();
+	function winForUser(userId: string) {
+		return leaderboard.wins.filter((win) => win.winAttempt.userId === userId);
+	}
 </script>
 
 <div class="overflow-x-auto">
@@ -11,18 +33,18 @@
 				<th>Rang</th>
 				<th>Name</th>
 				<th>Päss</th>
-				<th>Letzte Pass</th>
+				<th>Trophäe</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each leaderboard as entry, i}
+			{#each leaderboard.attempts as entry, i}
 				<tr>
 					<td>{i + 1}</td>
 					<td>
 						<div class="flex items-center gap-3">
 							<div class="avatar">
 								<div class="mask mask-squircle h-12 w-12">
-									<img src={entry.userProfile} alt={entry.userName} />
+									<img src={entry.profile} alt={entry.userName} />
 								</div>
 							</div>
 							<div>
@@ -31,12 +53,10 @@
 						</div>
 					</td>
 					<th>
-						<span class="badge badge-ghost badge-sm">{entry.wins}</span>
+						<span class="badge badge-ghost badge-sm">{entry.attempts}</span>
 					</th>
 					<th>
-						<a href={`/summits/${entry.lastSummitId}`} class="badge badge-primary badge-sm"
-							>{entry.lastSummitWon}</a
-						>
+						<span class="badge badge-primary badge-sm">{winForUser(entry.userId).length}</span>
 					</th>
 				</tr>
 			{/each}
