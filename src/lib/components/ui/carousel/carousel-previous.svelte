@@ -3,7 +3,7 @@
 	import type { WithoutChildren } from "bits-ui";
 	import { getEmblaContext } from "./context.js";
 	import { cn } from "$lib/utils.js";
-	import { Button, type Props } from "$lib/registry/default/ui/button/index.js";
+	import { Button, type Props } from "$lib/components/ui/button";
 
 	let {
 		ref = $bindable(null),

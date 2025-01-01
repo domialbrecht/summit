@@ -2,8 +2,8 @@ import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq, notExists } from 'drizzle-orm';
 
-import type { StravaActivity } from './api.js';
-import logger from '$lib/logger.js';
+import type { StravaActivity } from './api';
+import logger from '$lib/logger';
 
 export async function updateActivities(userId: string, activities: StravaActivity[]) {
 	//TODO: Use proper validation

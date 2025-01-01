@@ -1,3 +1,3 @@
-import * as StravaApi from './api.js';
+import * as StravaApi from './api';
 
 export { StravaApi };

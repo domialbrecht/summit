@@ -3,8 +3,8 @@ import * as table from '$lib/server/db/schema';
 import { getTokensForUser } from '$lib/server/strava_auth';
 import { error, redirect } from '@sveltejs/kit';
 import { desc, eq, sql } from 'drizzle-orm';
-import { updateActivities } from './activity_sync.js';
-import logger from '$lib/logger.js';
+import { updateActivities } from './activity_sync';
+import logger from '$lib/logger';
 
 type SportType =
 	| 'AlpineSki'

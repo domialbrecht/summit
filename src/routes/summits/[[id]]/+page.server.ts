@@ -1,10 +1,10 @@
-import type { PageServerLoad } from './$types.js';
+import type { PageServerLoad } from './$types';
 import * as table from '$lib/server/db/schema';
 import { gte, lt, min, and, sql, eq } from 'drizzle-orm';
 
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
-import type { UserSummitWin } from '$lib/types/index.js';
+import type { UserSummitWin } from '$lib/types';
 
 export const load: PageServerLoad = async ({ params }) => {
 	let summit_wins: UserSummitWin[] = [];

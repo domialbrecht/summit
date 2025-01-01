@@ -1,6 +1,6 @@
 import { TokenBucket } from '$lib/server/rate-limit';
 import { error, type Handle, type HandleServerError } from '@sveltejs/kit';
-import * as auth from '$lib/server/session.js';
+import * as auth from '$lib/server/session';
 import { sequence } from '@sveltejs/kit/hooks';
 import { dev } from '$app/environment';
 import logger from '$lib/logger';

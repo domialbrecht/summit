@@ -1,4 +1,4 @@
-import type { RequestHandler } from './$types.js';
+import type { RequestHandler } from './$types';
 import * as table from '$lib/server/db/schema';
 
 import { db } from '$lib/server/db';

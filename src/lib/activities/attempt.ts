@@ -27,34 +27,29 @@ async function summitsMatchPolyline(line: string) {
 }
 
 export async function summitDetailMatch(activityId: string) {
-	const summits = await db
-		.select({
-			id: table.summit.id,
-			name: table.summit.name,
-			matchTime: sql<number>`
-      ST_M(
-        ST_LineInterpolatePoint(
-          (SELECT linestring FROM ${table.activity} WHERE id = ${activityId}),
-          ST_LineLocatePoint(
-            (SELECT linestring FROM ${table.activity} WHERE id = ${activityId}),
-            ${table.summit.location}::geometry
+	const BUFFER = 20;
+	const query = sql`
+    SELECT MIN(ST_M(pt)) as matchTime, contained.id, contained.name FROM 
+    (
+      SELECT (dp).geom as pt, summitlines.id, summitlines.name, summitlines.location FROM 
+      (
+        SELECT 
+          ST_DumpPoints((SELECT linestring FROM strava_activity WHERE id = ${activityId})) as dp,
+          summit.location,
+          summit.id,
+          summit.name
+          from summit where ST_DWithin(
+            ST_Transform((SELECT linestring FROM strava_activity WHERE id = ${activityId}),4326),
+            summit.location,
+            ${BUFFER}
           )
-        )
-      )
-			     `
-		})
-		.from(table.summit).where(sql`
-      ST_DWithin(
-        ST_Transform(
-          (SELECT linestring FROM ${table.activity} WHERE id = ${activityId}),
-          4326
-        ),
-        ${table.summit.location},
-        ${THRESHHOLD_METERS}
-      )
-    `);
+      ) as summitlines
+      WHERE ST_Contains(ST_Buffer(summitlines.location,${BUFFER})::geometry, (dp).geom)
+    ) as contained group by contained.id, contained.name limit 0
+  `;
 
-	return summits;
+	const results = await db.execute<{ id: number; name: string; matchTime: number }>(query);
+	return [...results];
 }
 
 export async function summitAttemptsFromActivity(line: string) {

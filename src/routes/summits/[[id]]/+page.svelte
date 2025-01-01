@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SummitMap from '$lib/components/map/summits.svelte';
-	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
 	import Wins from './Wins.svelte';
 	import Free from './Free.svelte';
