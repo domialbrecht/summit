@@ -64,7 +64,9 @@
 						{#if data.last_attempt}
 							<div class="flex items-center gap-4">
 								<img src={Party} class="h-8 w-8" alt="Party" />
-								<p>{data.last_attempt.summit.name}, {dt(data.last_attempt.summit_attempt.date)}</p>
+								<a class="link-primary" href={`/summits/${data.last_attempt.summit.id}`}
+									>{data.last_attempt.summit.name}, {dt(data.last_attempt.summit_attempt.date)}</a
+								>
 							</div>
 						{:else}
 							<div class="flex items-center gap-4">

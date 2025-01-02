@@ -2,6 +2,7 @@
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
+	import Strava from '$lib/components/icons/strava.svelte';
 	import Wins from './Wins.svelte';
 	import Free from './Free.svelte';
 	import Title from './Title.svelte';
@@ -11,7 +12,7 @@
 	const { data }: { data: PageServerData } = $props();
 	const { user } = page.data;
 
-	let activeSummit = $derived(data.summit_data ? data.summit_data.id : null);
+	let activeSummit = $derived(data.summit_data ? data.summit_data.summit.id : null);
 	let open = $state(false);
 
 	$effect(() => {
@@ -33,56 +34,62 @@
 					{#if data.summit_data}
 						<div class="m-4 flex min-h-0 grow flex-col gap-6">
 							<div class="order-first bg-base-100">
-								<Title summit={data.summit_data} handleClick={() => (open = false)} />
+								<Title summit_data={data.summit_data} handleClick={() => (open = false)} />
 							</div>
-							<div class="flex grow flex-col gap-4 overflow-auto">
-								<div id="summit-data" class="order-2 lg:order-1">
-									<div class="prose">
-										{data.summit_data.description}
-										<p>
-											Lorem ipsum odor amet, consectetuer adipiscing elit. At phasellus lobortis
-											bibendum; ante accumsan suspendisse. Condimentum odio nulla venenatis; fames
-											vivamus suspendisse aenean accumsan. Nascetur fames nunc facilisi platea
-											euismod aliquam. Sem in inceptos suscipit lobortis nam magnis mus. Magnis
-											pulvinar felis natoque fusce consectetur facilisi. Porta aenean auctor cubilia
-											pulvinar mattis. Euismod mus fermentum est eget ultricies penatibus. Litora
-											dui nec aenean; sociosqu metus donec erat.
-										</p>
-										<p>
-											Cubilia dapibus in id aliquet aenean. Nullam integer semper platea dolor
-											fringilla aenean tellus natoque. Himenaeos tortor mus magna commodo est class
-											nec urna. Dolor vestibulum semper imperdiet morbi magna nascetur maecenas.
-											Litora ac laoreet efficitur lacus ex orci molestie. Mauris lacus ex sem tempor
-											lectus in nascetur.
-										</p>
+							<div class="flex grow flex-col gap-4">
+								<div id="summit-data" class="order-2 lg:order-1 lg:overflow-auto">
+									<div class="collapse collapse-arrow bg-base-200">
+										<input type="checkbox" name="accordion-1" />
+										<div class="collapse-title text-xl font-medium">Beschribig</div>
+										<div class="collapse-content">
+											<div class="prose lg:max-h-64 lg:!overflow-auto">
+												{data.summit_data.summit.description}
+											</div>
+										</div>
 									</div>
-									<div role="alert" class="alert mt-8">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-											class="h-6 w-6 shrink-0 stroke-info"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-											></path>
-										</svg>
-										<span
-											>D Passinformatione si no in Arbeit. Hie werde no die verschidene Uffahrte
-											choh mit Profil etc.</span
-										>
+									<div class="collapse collapse-arrow mt-2 bg-base-200">
+										<input type="checkbox" name="accordion-1" checked />
+										<div class="collapse-title text-xl font-medium">Route</div>
+										<div class="collapse-content">
+											{#await data.summit_profiles then profiles}
+												<div class="flex flex-col gap-4">
+													{#each profiles as profile}
+														<div class="card bg-secondary">
+															<div class="card-body">
+																<div class="flex justify-between gap-4">
+																	<span>{profile.name}</span>
+																	<a
+																		class="inline-flex gap-2 text-orange-500"
+																		href={profile.segment}
+																		target="_blank"
+																	>
+																		Segment
+																		<Strava class="h-6 w-6 fill-orange-500" />
+																	</a>
+																</div>
+															</div>
+														</div>
+													{/each}
+												</div>
+											{/await}
+										</div>
 									</div>
 								</div>
-								<div id="summit-wins" class="order-1 lg:order-2">
-									{#if data.summit_wins.length > 0}
-										<Wins wins={data.summit_wins} />
-									{:else}
-										<Free />
-									{/if}
-								</div>
+								{#await data.summit_wins then wins}
+									<div id="summit-wins" class="order-1 lg:order-2">
+										<div class="collapse collapse-arrow">
+											<input type="checkbox" name="accordion-2" checked />
+											<div class="collapse-title text-xl font-medium">Trophäe</div>
+											<div class="collapse-content">
+												{#if wins.length > 0}
+													<Wins {wins} />
+												{:else}
+													<Free />
+												{/if}
+											</div>
+										</div>
+									</div>
+								{/await}
 							</div>
 						</div>
 					{/if}

@@ -103,7 +103,7 @@ export const summit = pgTable(
 	'summit',
 	{
 		id: integer().primaryKey().notNull(),
-		slug: text('slug').notNull(),
+		slug: text('slug').notNull().unique(),
 		name: text('name').notNull(),
 		alias: text('alias'),
 		lat: numeric('lat').notNull(),
@@ -155,9 +155,10 @@ export const summit_profile = pgTable(
 	{
 		id: integer().primaryKey().generatedAlwaysAsIdentity(),
 		summitId: integer('summit_id').notNull(),
-		slug: text('slug').notNull(),
+		slug: text('slug').notNull().unique(),
 		name: text('name').notNull(),
-		linestring: geometry('linestring', { type: undefined, srid: 4326 }).notNull(),
+		linestring: geometry('linestringz', { type: undefined, srid: 4326 }).notNull(),
+		data: text('data'),
 		segment: text('segment'),
 		description: text('description')
 	},
@@ -197,4 +198,6 @@ export type User = typeof user.$inferSelect;
 export type Activity = typeof activity.$inferSelect;
 export type ParsedActivity = typeof parseActivityResults.$inferSelect;
 
+export type SelectArea = typeof area.$inferSelect;
 export type SelectSummit = typeof summit.$inferSelect;
+export type SelectSummitProfile = typeof summit_profile.$inferSelect;
