@@ -38,7 +38,21 @@ async function getSummitWins(summitId: string | undefined): Promise<UserSummitWi
 			)
 		);
 
-	return win_result;
+	const get_media_for_win = win_result.map(async (win) => {
+		const result = await db
+			.select({ url: table.activityMedia.url })
+			.from(table.activityMedia)
+			.where(eq(table.activityMedia.activityId, win.winAttempt.activityId))
+			.limit(1);
+		const media = result.at(0);
+		return {
+			...win,
+			media: media ? media.url : null
+		};
+	});
+	const wins_with_picture = await Promise.all(get_media_for_win);
+
+	return wins_with_picture;
 }
 
 async function getSummitProfiles(

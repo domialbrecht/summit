@@ -79,6 +79,17 @@ export type StravaActivity = {
 	};
 };
 
+export type DetailActivity = StravaActivity & {
+	photos: {
+		primary: {
+			id: string | null;
+			urls: {
+				[key: string]: string;
+			};
+		};
+	};
+};
+
 export type Stream<T> = {
 	data: T[];
 };
@@ -173,6 +184,33 @@ export async function updateActivityCache(userId: string) {
 	logger.info({ message: 'Finished db activities write', data: { user: userId } });
 
 	return activities.length;
+}
+
+export async function syncPhotos(userId: string, activityId: string) {
+	const hasPhotos = await db.$count(
+		table.activityMedia,
+		eq(table.activityMedia.activityId, activityId)
+	);
+
+	if (hasPhotos > 0) {
+		return;
+	}
+
+	const detail: DetailActivity = await stravaFetch(
+		`activities/${activityId}?include_all_efforts=false`,
+		userId
+	);
+	const photo = detail.photos.primary.urls['600'];
+	if (!photo) {
+		return;
+	}
+	await db
+		.insert(table.activityMedia)
+		.values({
+			url: photo,
+			activityId: activityId
+		})
+		.onConflictDoNothing();
 }
 
 export async function updateActivityDetail(userId: string, activityId: string) {

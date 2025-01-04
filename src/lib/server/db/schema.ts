@@ -66,6 +66,14 @@ export const activity = pgTable(
 	})
 );
 
+export const activityMedia = pgTable('activity_media', {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	url: text('url').notNull(),
+	activityId: text('activity_id')
+		.notNull()
+		.references(() => activity.id)
+});
+
 export const parseActivityResults = pgTable(
 	'parse_activity_results',
 	{

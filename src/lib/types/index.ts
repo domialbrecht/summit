@@ -9,4 +9,5 @@ export interface UserSummitWin {
 	};
 	username: string | null;
 	profile: string | null;
+	media: string | null;
 }

@@ -32,7 +32,7 @@
 			<Drawer.Root direction={'left'} bind:open>
 				<Drawer.Content contentProps={{ variant: 'left' }} class="lg:w-1/2">
 					{#if data.summit_data}
-						<div class="m-4 flex min-h-0 grow flex-col gap-6">
+						<div class="m-4 flex min-h-0 grow flex-col gap-6 overflow-auto">
 							<div class="order-first bg-base-100">
 								<Title summit_data={data.summit_data} handleClick={() => (open = false)} />
 							</div>
@@ -54,21 +54,21 @@
 										</div>
 									</div>
 								</div>
-								<div id="summit-data" class="lg:overflow-auto">
+								<div id="summit-data">
 									<div class="collapse collapse-arrow bg-base-200">
 										<input type="checkbox" name="accordion-1" />
 										<div class="collapse-title text-xl font-medium">Beschribig</div>
 										<div class="collapse-content">
-											<div class="prose lg:max-h-64 lg:!overflow-auto">
+											<div class="prose lg:max-h-64">
 												{data.summit_data.summit.description}
 											</div>
 										</div>
 									</div>
-									<div class="collapse collapse-arrow mt-2 bg-base-200">
-										<input type="checkbox" name="accordion-1" checked />
-										<div class="collapse-title text-xl font-medium">Astige</div>
-										<div class="collapse-content">
-											{#await data.summit_profiles then profiles}
+									{#await data.summit_profiles then profiles}
+										<div class="collapse collapse-arrow mt-2 bg-base-200">
+											<input type="checkbox" name="accordion-1" checked />
+											<div class="collapse-title text-xl font-medium">Astige</div>
+											<div class="collapse-content">
 												<div class="flex flex-col gap-4">
 													{#each profiles as profile}
 														<div class="card bg-secondary">
@@ -78,9 +78,9 @@
 														</div>
 													{/each}
 												</div>
-											{/await}
+											</div>
 										</div>
-									</div>
+									{/await}
 								</div>
 							</div>
 						</div>

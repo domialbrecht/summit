@@ -38,8 +38,10 @@ export function t(d: Date) {
 
 // Function to assign color based on gradient
 export function getColorFromGradient(gradient: number): string {
+	if (gradient >= 22) return '#1a1a1a';
+	if (gradient >= 18) return '#730920';
 	if (gradient >= 15) return '#e11d48';
-	if (gradient >= 10) return '#fb7185';
+	if (gradient >= 10) return '#ffa724';
 	if (gradient >= 5) return '#fef08a';
 	return '#bbf7d0';
 }

@@ -76,6 +76,9 @@ export const actions = {
 		summitMatches = summitMatches.filter((m) => m.summits.length > 0);
 		for (const activity of summitMatches) {
 			if (!event.cookies.get(FETCHED_DETAIL_COOKIE_NAME)) {
+				logger.info({ message: 'Sync photos', data: { activity: activity.id } });
+				StravaApi.syncPhotos(user.id, activity.id);
+
 				logger.info({ message: 'Getting detail stream', data: { activity: activity.id } });
 				await StravaApi.updateActivityDetail(user.id, activity.id);
 
