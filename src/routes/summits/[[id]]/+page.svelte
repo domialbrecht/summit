@@ -37,7 +37,24 @@
 								<Title summit_data={data.summit_data} handleClick={() => (open = false)} />
 							</div>
 							<div class="flex grow flex-col gap-4">
-								<div id="summit-data" class="order-2 lg:order-1 lg:overflow-auto">
+								<div id="summit-wins">
+									<div class="collapse collapse-arrow">
+										<input type="checkbox" name="accordion-2" checked />
+										<div class="collapse-title text-xl font-medium">Trophäe</div>
+										<div class="collapse-content">
+											{#await data.summit_wins}
+												<div class="skeleton h-40 w-full"></div>
+											{:then wins}
+												{#if wins.length > 0}
+													<Wins {wins} />
+												{:else}
+													<Free />
+												{/if}
+											{/await}
+										</div>
+									</div>
+								</div>
+								<div id="summit-data" class="lg:overflow-auto">
 									<div class="collapse collapse-arrow bg-base-200">
 										<input type="checkbox" name="accordion-1" />
 										<div class="collapse-title text-xl font-medium">Beschribig</div>
@@ -49,7 +66,7 @@
 									</div>
 									<div class="collapse collapse-arrow mt-2 bg-base-200">
 										<input type="checkbox" name="accordion-1" checked />
-										<div class="collapse-title text-xl font-medium">Route</div>
+										<div class="collapse-title text-xl font-medium">Astige</div>
 										<div class="collapse-content">
 											{#await data.summit_profiles then profiles}
 												<div class="flex flex-col gap-4">
@@ -65,21 +82,6 @@
 										</div>
 									</div>
 								</div>
-								{#await data.summit_wins then wins}
-									<div id="summit-wins" class="order-1 lg:order-2">
-										<div class="collapse collapse-arrow">
-											<input type="checkbox" name="accordion-2" checked />
-											<div class="collapse-title text-xl font-medium">Trophäe</div>
-											<div class="collapse-content">
-												{#if wins.length > 0}
-													<Wins {wins} />
-												{:else}
-													<Free />
-												{/if}
-											</div>
-										</div>
-									</div>
-								{/await}
 							</div>
 						</div>
 					{/if}

@@ -38,7 +38,7 @@
 
 <div>
 	<div class="flex justify-between gap-4">
-		<div class="flex items-center justify-between gap-4">
+		<div class="flex flex-col items-center justify-between gap-2 lg:flex-row lg:gap-4">
 			<span>{profile.name}</span>
 			<div class="flex gap-2">
 				{#if distance}
