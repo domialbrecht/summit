@@ -2,7 +2,7 @@
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
-	import Strava from '$lib/components/icons/strava.svelte';
+	import Profile from './Profile.svelte';
 	import Wins from './Wins.svelte';
 	import Free from './Free.svelte';
 	import Title from './Title.svelte';
@@ -56,17 +56,7 @@
 													{#each profiles as profile}
 														<div class="card bg-secondary">
 															<div class="card-body">
-																<div class="flex justify-between gap-4">
-																	<span>{profile.name}</span>
-																	<a
-																		class="inline-flex gap-2 text-orange-500"
-																		href={profile.segment}
-																		target="_blank"
-																	>
-																		Segment
-																		<Strava class="h-6 w-6 fill-orange-500" />
-																	</a>
-																</div>
+																<Profile {profile} />
 															</div>
 														</div>
 													{/each}

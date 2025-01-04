@@ -43,14 +43,15 @@ async function getSummitWins(summitId: string | undefined): Promise<UserSummitWi
 
 async function getSummitProfiles(
 	summitId: string | undefined
-): Promise<Pick<table.SelectSummitProfile, 'name' | 'segment'>[]> {
+): Promise<Pick<table.SelectSummitProfile, 'name' | 'segment' | 'data'>[]> {
 	if (!summitId) {
 		return [];
 	}
 	return await db
 		.select({
 			name: table.summit_profile.name,
-			segment: table.summit_profile.segment
+			segment: table.summit_profile.segment,
+			data: table.summit_profile.data
 		})
 		.from(table.summit_profile)
 		.where(eq(table.summit_profile.summitId, parseInt(summitId)));
