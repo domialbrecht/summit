@@ -27,7 +27,7 @@
 		>
 			<Map class="h-8 w-8" />
 		</a>
-		<button class="btn btn-link btn-primary" onclick={handleClick}>
+		<button class="btn btn-ghost" onclick={handleClick}>
 			<X class="h-8 w-8" />
 		</button>
 	</div>

@@ -3,6 +3,7 @@
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
 	import Profile from './Profile.svelte';
+	import Medals from './Medals.svelte';
 	import Wins from './Wins.svelte';
 	import Free from './Free.svelte';
 	import Title from './Title.svelte';
@@ -49,6 +50,13 @@
 													<Wins {wins} />
 												{:else}
 													<Free />
+												{/if}
+											{/await}
+											{#await data.summit_medals then medals}
+												{#if medals.length > 0}
+													<div class="mt-2">
+														<Medals {medals} />
+													</div>
 												{/if}
 											{/await}
 										</div>

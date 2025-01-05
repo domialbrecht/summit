@@ -1,10 +1,55 @@
 import type { PageServerLoad } from './$types';
 import * as table from '$lib/server/db/schema';
-import { gte, lt, min, and, sql, eq } from 'drizzle-orm';
+import { gte, lt, asc, min, and, sql, eq, count } from 'drizzle-orm';
 
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import type { UserSummitWin } from '$lib/types';
+
+async function getSummitMedals(summitId: string | undefined) {
+	if (!summitId) {
+		return [];
+	}
+
+	const attemptAcounts = db.$with('attemptCounts').as(
+		db
+			.select({
+				user_id: table.summit_attempt.userId,
+				attempt_count: count(table.summit_attempt.id).as('attempt_count')
+			})
+			.from(table.summit_attempt)
+			.where(
+				and(
+					eq(table.summit_attempt.summitId, parseInt(summitId)),
+					eq(table.summit_attempt.published, true)
+				)
+			)
+			.groupBy(table.summit_attempt.userId)
+	);
+
+	const rankedUsers = db.$with('rankedUsers').as(
+		db
+			.select({
+				user_id: attemptAcounts.user_id,
+				attempt_count: attemptAcounts.attempt_count,
+				rank: sql`dense_rank() over (order by ${attemptAcounts.attempt_count} desc)`.as('rank')
+			})
+			.from(attemptAcounts)
+	);
+
+	const result = await db
+		.with(attemptAcounts, rankedUsers)
+		.select({
+			username: table.user.firstName,
+			attempts: rankedUsers.attempt_count,
+			rank: rankedUsers.rank
+		})
+		.from(rankedUsers)
+		.innerJoin(table.user, eq(table.user.id, rankedUsers.user_id))
+		.where(lt(rankedUsers.rank, 4))
+		.orderBy(asc(rankedUsers.rank));
+	return result;
+}
 
 async function getSummitWins(summitId: string | undefined): Promise<UserSummitWin[]> {
 	if (!summitId) {
@@ -99,6 +144,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	}
 
 	return {
+		summit_medals: getSummitMedals(params.id),
 		summit_wins: getSummitWins(params.id),
 		summit_profiles: getSummitProfiles(params.id),
 		summit_data: summit_data

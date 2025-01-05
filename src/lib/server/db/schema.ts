@@ -209,3 +209,4 @@ export type ParsedActivity = typeof parseActivityResults.$inferSelect;
 export type SelectArea = typeof area.$inferSelect;
 export type SelectSummit = typeof summit.$inferSelect;
 export type SelectSummitProfile = typeof summit_profile.$inferSelect;
+export type SelectSummitAttempt = typeof summit_attempt.$inferSelect;

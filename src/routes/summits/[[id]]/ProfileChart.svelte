@@ -64,7 +64,6 @@
 					return Math.floor(value.min - 10);
 				},
 				max: function (value) {
-					console.log(Math.ceil(value.max / 100) * 100);
 					return Math.ceil(value.max + 10);
 				}
 			},
