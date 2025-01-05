@@ -15,10 +15,11 @@
 			registriert wärde. Die Person het ner s ganze Jahr der Badge.<br />
 			E Pass wird zerst direkt ufem Velo zoberst mitmene Sticker markiert. Denn loggisch di ufem App
 			i u <a href="/" class="link link-primary">synchronisiersch</a> dini Date.
+			<span class="">Stickers gits bim Villiger</span>
 		</p>
 		<div class="h-12"></div>
 		<div class="flex w-full justify-center">
-			<span class="btn btn-primary btn-wide">Stickers bim Villiger</span>
+			<a class="btn btn-primary btn-wide" href="/rules">Zude Regle</a>
 		</div>
 	</div>
 </div>

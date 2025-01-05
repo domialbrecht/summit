@@ -60,7 +60,6 @@
 		const option: EChartsOption = {
 			xAxis: {
 				type: 'value',
-				name: 'Distanz (m)',
 				min: function (value) {
 					return Math.floor(value.min - 10);
 				},
@@ -71,7 +70,6 @@
 			},
 			yAxis: {
 				type: 'value',
-				name: 'Höhemeter',
 				splitNumber: 4, // Limit to 4 ticks
 				axisLabel: {
 					formatter: function (value) {
@@ -129,4 +127,6 @@
 	});
 </script>
 
-<div class="h-64 w-full" bind:this={chartContainer}></div>
+<div class="flex">
+	<div class="h-64 w-full" bind:this={chartContainer}></div>
+</div>

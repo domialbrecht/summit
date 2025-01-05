@@ -32,7 +32,7 @@
 			<Drawer.Root direction={'left'} bind:open>
 				<Drawer.Content contentProps={{ variant: 'left' }} class="lg:w-1/2">
 					{#if data.summit_data}
-						<div class="m-4 flex min-h-0 grow flex-col gap-6 overflow-auto">
+						<div class="m-4 flex min-h-0 grow flex-col gap-6 overflow-y-auto">
 							<div class="order-first bg-base-100">
 								<Title summit_data={data.summit_data} handleClick={() => (open = false)} />
 							</div>
@@ -59,7 +59,7 @@
 										<input type="checkbox" name="accordion-1" />
 										<div class="collapse-title text-xl font-medium">Beschribig</div>
 										<div class="collapse-content">
-											<div class="prose lg:max-h-64">
+											<div class="prose">
 												{data.summit_data.summit.description}
 											</div>
 										</div>
@@ -71,10 +71,8 @@
 											<div class="collapse-content">
 												<div class="flex flex-col gap-4">
 													{#each profiles as profile}
-														<div class="card bg-secondary">
-															<div class="card-body">
-																<Profile {profile} />
-															</div>
+														<div class="rounded-lg bg-base-100 p-2">
+															<Profile {profile} />
 														</div>
 													{/each}
 												</div>

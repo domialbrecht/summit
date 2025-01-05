@@ -54,9 +54,9 @@
 				>
 				<a
 					data-sveltekit-preload-data=""
-					href="/rules"
+					href="/summits"
 					class="group btn btn-outline btn-primary rounded-full px-12 md:btn-lg"
-					>Zude Regle<svg
+					>Zude Päss<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
 						viewBox="0 0 24 24"

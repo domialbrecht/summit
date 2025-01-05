@@ -37,30 +37,28 @@
 </script>
 
 <div>
-	<div class="flex justify-between gap-4">
-		<div class="flex flex-col items-center justify-between gap-2 lg:flex-row lg:gap-4">
-			<span>{profile.name}</span>
-			<div class="flex gap-2">
-				{#if distance}
-					<div class="badge badge-primary">{km(distance)}</div>
-				{/if}
-				{#if elevation}
-					<div class="badge badge-primary">{m_sign(elevation)}</div>
-				{/if}
-				{#if gradient}
-					<div
-						class="badge text-black"
-						style:background-color={getColorFromGradient(gradient * 100)}
-					>
-						{percent(gradient)}
-					</div>
-				{/if}
-			</div>
-		</div>
-		<a class="inline-flex gap-2 text-orange-500" href={profile.segment} target="_blank">
+	<div class="flex w-full justify-between gap-2">
+		<span class="shrink">{profile.name}</span>
+		<a class="inline-flex shrink gap-2 text-orange-500" href={profile.segment} target="_blank">
 			Segment
 			<Strava class="h-6 w-6 fill-orange-500" />
 		</a>
+	</div>
+	<div class="mt-2 flex w-full gap-2">
+		{#if distance}
+			<div class="rounded-lg bg-primary p-1 text-sm text-white">{km(distance)}</div>
+		{/if}
+		{#if elevation}
+			<div class="rounded-lg bg-primary p-1 text-sm text-white">{m_sign(elevation)}</div>
+		{/if}
+		{#if gradient}
+			<div
+				class="rounded-lg p-1 text-sm text-black"
+				style:background-color={getColorFromGradient(gradient * 100)}
+			>
+				{percent(gradient)}
+			</div>
+		{/if}
 	</div>
 	{#if chartData}
 		<ProfileChart {chartData} />
