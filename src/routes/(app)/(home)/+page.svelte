@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import Section from '$lib/components/ui/section';
-	import Furka from '$site/furka.jpg?enhanced';
+	import Stelvio from '$site/stelvio.jpg';
 	import Dizzy from '$site/icons/dizzy.png';
 	import Party from '$site/icons/party.png';
 	import { enhance } from '$app/forms';
@@ -41,12 +41,12 @@
 							class="absolute -top-4 -translate-x-1/2 text-[0.6rem] italic rtl:translate-x-1/2"
 							style="inset-inline-start:79%"
 						>
-							65%
+							95%
 						</div>
 						<progress
 							class="progress progress-accent w-full border border-base-200 bg-base-200"
 							max="100"
-							value="79"
+							value="95"
 						></progress>
 						<div class="absolute -bottom-4 text-[0.6rem] italic tracking-wide">
 							Aktuelle Fortschritt zu 1.0
@@ -118,20 +118,26 @@
 		</div>
 		<div class="xl:col-span-10">
 			<Card.Root variant="sideResponsive">
-				<figure>
-					<enhanced:img src={Furka} alt="Stelvio pass" class="" />
-				</figure>
+				<img
+					src={Stelvio}
+					alt="Stelvio pass"
+					class="lg:h-auto lg:w-1/2 lg:rounded-bl-xl lg:rounded-tl-xl"
+				/>
 				<Card.Body>
 					<Card.Title>
-						Furkapass
+						Stelvio
 						<div class="badge badge-accent">Hightlight</div>
 					</Card.Title>
 					<Card.Content>
-						Die bronzezeitlichen Funde im Oberwallis und im Vorderrheintal deuten auf Verbindungen
-						und kulturellen Austausch zwischen dem Goms und Raetien hin. Urkundlich belegt ist
-						sicher ein erster Höhepunkt des Verkehrs über die Furka, als um 1200 J. hunderte von
-						deutschsprachigen Walsern mit ihren Familien sich im Urserental oder noch weiter
-						ostwärts in Raetien niederliessen.
+						„Die Königin der Passstraßen“ und „Höchster Rummelplatz Europas“ sind die beiden
+						meistgebrauchten Beinamen des Stilfser Jochs. In wie weit diese Bezeichnungen
+						tatsächlich zutreffen, möchten wir der Beurteilung eines jeden einzelnen überlassen.
+						Unbestritten ist jedoch, dass es sich mit 2757 m Höhe nicht nur um den höchsten
+						Straßenpass Italiens handelt, sondern nach dem Col de l’Iséran um die zweithöchste
+						Passstraße der Alpen, und dass die klassische 48-Kehren-Auffahrt von Prad wohl zu den
+						bekanntesten und prestigeträchtigsten Anstiegen Europas gehört. Nebenbei bemerkt ist das
+						Stilfser Joch hier auf quaeldich.de der am häufigsten aufgerufene Pass und derjenige mit
+						den meisten Highscore-Einträgen.
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>

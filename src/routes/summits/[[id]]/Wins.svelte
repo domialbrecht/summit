@@ -14,7 +14,7 @@
 				<img src={Trophy} alt="Trophy" />
 			</div>
 		</div>
-		<div>
+		<div class="flex flex-row gap-2 lg:flex-col">
 			<div class="lg:text-md text-sm font-bold">{d(wins[0].winAttempt.date)}</div>
 			<div class="text-sm opacity-50">{t(wins[0].winAttempt.date)}</div>
 		</div>

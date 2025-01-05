@@ -23,7 +23,7 @@
 
 <div class="flex flex-col gap-2">
 	{#each medals as medal}
-		<div class="flex flex-col justify-between gap-2 lg:flex-row lg:items-center">
+		<div class="flex items-center justify-between gap-2">
 			<div class="flex items-center justify-between gap-3">
 				<div class="avatar">
 					<div class="mask mask-squircle h-6 w-6 lg:h-12 lg:w-12">

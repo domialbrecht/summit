@@ -54,7 +54,7 @@
 											{/await}
 											{#await data.summit_medals then medals}
 												{#if medals.length > 0}
-													<div class="mt-2">
+													<div class="mt-2 border-t-2 border-base-200 pt-1">
 														<Medals {medals} />
 													</div>
 												{/if}

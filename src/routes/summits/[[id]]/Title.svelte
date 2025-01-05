@@ -9,8 +9,8 @@
 		$props();
 </script>
 
-<div class="flex items-center justify-between gap-6">
-	<div class="flex items-end gap-4">
+<div class="flex items-start justify-between gap-6 xl:items-center">
+	<div class="flex flex-col flex-wrap gap-2 xl:flex-row xl:gap-4">
 		<h1 class="font-title mb-0 text-[clamp(1.5rem,4vw,3rem)] font-black leading-none text-primary">
 			{summit_data.summit.name}
 		</h1>

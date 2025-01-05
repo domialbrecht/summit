@@ -71,7 +71,9 @@
 <!-- 	</div> -->
 <!-- </Section> -->
 <Section sectionId="table">
-	<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">Aui Teilnehmer</div>
+	<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none text-primary">
+		Leaderboard
+	</div>
 	<div>
 		<Table leaderboard={data.leaderboard} />
 	</div>
