@@ -4,14 +4,27 @@
 	import ProfileChart from './ProfileChart.svelte';
 	import { km, m_sign, percent, getColorFromGradient } from '$lib/utils';
 
+	const PERFORM_SANITY_CHECK = true;
+
 	let { profile }: { profile: Pick<SelectSummitProfile, 'name' | 'segment' | 'data'> } = $props();
 
 	let chartData = $derived.by(() => {
 		if (!profile.data) return null;
-		return profile.data.split(',').map((item) => {
+		const data = [];
+		let lastElevation;
+		for (let item of profile.data.split(',')) {
 			const values = item.trim().split(' ');
-			return [parseFloat(values[0]) * 1000, parseFloat(values[1])];
-		});
+			let next_elevation = parseFloat(values[1]);
+			//sanity check
+			if (PERFORM_SANITY_CHECK) {
+				if (lastElevation !== undefined && next_elevation > lastElevation + 5) {
+					next_elevation = (lastElevation || next_elevation) + 2;
+				}
+			}
+			data.push([parseFloat(values[0]) * 1000, next_elevation]);
+			lastElevation = next_elevation;
+		}
+		return data;
 	});
 
 	let distance = $derived.by(() => {
@@ -39,10 +52,12 @@
 <div>
 	<div class="flex w-full justify-between gap-2">
 		<span class="shrink">{profile.name}</span>
-		<a class="inline-flex shrink gap-2 text-orange-500" href={profile.segment} target="_blank">
-			Segment
-			<Strava class="h-6 w-6 fill-orange-500" />
-		</a>
+		{#if profile.segment}
+			<a class="inline-flex shrink gap-2 text-orange-500" href={profile.segment} target="_blank">
+				Segment
+				<Strava class="h-6 w-6 fill-orange-500" />
+			</a>
+		{/if}
 	</div>
 	<div class="mt-2 flex w-full gap-2">
 		{#if distance}
