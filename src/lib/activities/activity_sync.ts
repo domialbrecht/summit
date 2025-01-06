@@ -88,3 +88,5 @@ export async function setParsedActivities(
 		})
 	);
 }
+
+export async function syncHookCalbck(activityId: number, athleteId, number) {}

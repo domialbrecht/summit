@@ -39,6 +39,18 @@ You can preview the production build with `npm run preview`.
 
 ## Notes
 
+### Strava Webhooks
+
+This is a one-time setup. The server needs to handle the callback. But this can be called locally. Grab the verify token from env
+
+```curl
+curl -X POST https://www.strava.com/api/v3/push_subscriptions \
+      -F client_id=5 \
+      -F client_secret=7b2946535949ae70f015d696d8ac602830ece412 \
+      -F callback_url=http://a-valid.com/url \
+      -F verify_token=STRAVA
+```
+
 Weissenstein Seg: 8421766
 Activity Balm/Weissenstein: 12804517711
 
