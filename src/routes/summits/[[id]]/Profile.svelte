@@ -17,8 +17,13 @@
 			let next_elevation = parseFloat(values[1]);
 			//sanity check
 			if (PERFORM_SANITY_CHECK) {
+				// check for too high jumps for offset points
 				if (lastElevation !== undefined && next_elevation > lastElevation + 5) {
 					next_elevation = (lastElevation || next_elevation) + 2;
+				}
+				// primarily check for null data
+				if (lastElevation !== undefined && next_elevation < lastElevation - 10) {
+					next_elevation = lastElevation || next_elevation;
 				}
 			}
 			data.push([parseFloat(values[0]) * 1000, next_elevation]);

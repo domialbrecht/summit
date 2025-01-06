@@ -40,7 +40,7 @@
 	onMount(() => {
 		var myChart = echarts.init(chartContainer);
 
-		const chunkSize = 10;
+		const chunkSize = 20;
 		const segmentData = chartData.reduce((result: number[][][], item, index) => {
 			const chunkIndex = Math.floor(index / chunkSize);
 			if (!result[chunkIndex]) {
