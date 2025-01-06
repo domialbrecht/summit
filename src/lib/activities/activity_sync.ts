@@ -1,9 +1,11 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { and, eq, notExists } from 'drizzle-orm';
+import { StravaApi } from '$lib/activities';
 
 import type { StravaActivity } from './api';
 import logger from '$lib/logger';
+import { syncWithCount } from './attempt';
 
 export async function updateActivities(userId: string, activities: StravaActivity[]) {
 	//TODO: Use proper validation
@@ -89,4 +91,17 @@ export async function setParsedActivities(
 	);
 }
 
-export async function syncHookCalbck(activityId: number, athleteId, number) {}
+export async function syncHookCallback(activityId: number, athleteId: number): Promise<void> {
+	const userId = athleteId.toString();
+	let activities: StravaActivity[] = [];
+	try {
+		activities = await StravaApi.getActivity(userId, activityId.toString());
+	} catch (e) {
+		logger.error(`Failed to fetch activity from hook: ${e} ${activityId}`);
+	}
+
+	await StravaApi.updateActivityCache(userId, activities);
+	await syncWithCount(userId, false);
+
+	logger.info(`Synced activity ${activityId} for user ${userId} from hook`);
+}

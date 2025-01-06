@@ -135,7 +135,26 @@ const dateToUnixTimestamp = (date: Date): string => {
 	return Math.floor(date.getTime() / 1000).toString();
 };
 
-export async function updateActivityCache(userId: string) {
+export async function getActivity(userId: string, activityId: string) {
+	const results = await db
+		.select({ id: table.activity.id })
+		.from(table.activity)
+		.where(eq(table.activity.id, activityId))
+		.limit(1);
+
+	const hasActivity = results.at(0);
+	if (hasActivity) {
+		return [];
+	}
+
+	const activity: DetailActivity = await stravaFetch(
+		`activities/${activityId}?include_all_efforts=false`,
+		userId
+	);
+	return [activity];
+}
+
+export async function manualFetch(userId: string) {
 	// Sync last two weeks of activities
 	const EARLIEST = new Date('2025-01-01');
 	const UPDATE_CYCLE_DAYS = 14;
@@ -165,12 +184,18 @@ export async function updateActivityCache(userId: string) {
 	};
 
 	logger.info({ message: 'Fetch strava activities', data: { user: userId, options: options } });
-	let activities: StravaActivity[] = await stravaFetch('athlete/activities', userId, options);
+	const activities: StravaActivity[] = await stravaFetch('athlete/activities', userId, options);
 	if (activities.length === 0) {
-		return 0;
+		return [];
 	}
 	logger.info({ message: 'Finished fetching for user', data: { user: userId } });
+	return activities;
+}
 
+export async function updateActivityCache(
+	userId: string,
+	activities: StravaActivity[]
+): Promise<number> {
 	activities = filterActivities(activities);
 	if (activities.length === 0) {
 		return 0;

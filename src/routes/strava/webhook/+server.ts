@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types.js';
+import { syncHookCallback } from '$lib/activities/activity_sync.js';
 
 type StravaWebhookEvent = {
 	object_type: 'activity' | 'athlete';
@@ -22,8 +23,9 @@ export const GET: RequestHandler = ({ url }) => {
 
 export const POST: RequestHandler = async ({ request }) => {
 	console.log('webhook event received', request.url, request.body);
-	const event = request.body as StravaWebhookEvent;
+	const event = request.body as unknown as StravaWebhookEvent;
 	if (event.object_type === 'activity' && event.aspect_type === 'create') {
+		syncHookCallback(event.object_id, event.owner_id);
 	}
 	// Return 200 OK to acknowledge receipt of the event
 	return new Response('OK', { status: 200 });
