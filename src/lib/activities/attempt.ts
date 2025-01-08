@@ -10,7 +10,8 @@ const THRESHHOLD_METERS = 50;
 
 export async function syncWithCount(
 	userId: string,
-	skipDetailFetch = false
+	skipDetailFetch = false,
+	autoPublish = false
 ): Promise<{
 	unparsed: number;
 	attempts: number;
@@ -86,7 +87,8 @@ export async function syncWithCount(
 					activityId: a.id,
 					summitId: a.summit,
 					userId: userId,
-					date: a.date
+					date: a.date,
+					published: autoPublish
 				};
 			})
 		);

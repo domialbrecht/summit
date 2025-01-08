@@ -102,7 +102,7 @@ export async function syncHookCallback(activityId: number, athleteId: number): P
 	}
 
 	await StravaApi.updateActivityCache(userId, activities);
-	await syncWithCount(userId, false);
+	await syncWithCount(userId, false, true);
 
 	logger.info(`Synced activity ${activityId} for user ${userId} from hook`);
 }
