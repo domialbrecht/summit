@@ -16,7 +16,7 @@ export const GET: RequestHandler = ({ url }) => {
 	const mode = url.searchParams.get('hub.mode');
 	const token = url.searchParams.get('hub.verify_token');
 	const challenge = url.searchParams.get('hub.challenge');
-	logger.info('webhook verification', mode, token, challenge);
+	logger.info({ message: 'webhook event received', mode, token, challenge });
 	if (mode === 'subscribe' && token === env.STRAVA_WEBHOOK_SECRET) {
 		json({ 'hub.challenge': challenge });
 	}
@@ -24,7 +24,7 @@ export const GET: RequestHandler = ({ url }) => {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	logger.info('webhook event received', request.url, request.body);
+	logger.info({ message: 'webhook event received', body: request.body });
 	const event = request.body as unknown as StravaWebhookEvent;
 	if (event.object_type === 'activity' && event.aspect_type === 'create') {
 		syncHookCallback(event.object_id, event.owner_id);
