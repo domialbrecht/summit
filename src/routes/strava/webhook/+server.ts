@@ -18,7 +18,8 @@ export const GET: RequestHandler = ({ url }) => {
 	const challenge = url.searchParams.get('hub.challenge');
 	logger.info({ message: 'webhook event received', mode, token, challenge });
 	if (mode === 'subscribe' && token === env.STRAVA_WEBHOOK_SECRET) {
-		json({ 'hub.challenge': challenge });
+		logger.info({ message: 'webhook event confirmed' });
+		return json({ 'hub.challenge': challenge });
 	}
 	return error(403);
 };
