@@ -16,6 +16,7 @@ export const GET: RequestHandler = ({ url }) => {
 	const mode = url.searchParams.get('hub.mode');
 	const token = url.searchParams.get('hub.verify_token');
 	const challenge = url.searchParams.get('hub.challenge');
+	logger.info('webhook verification', mode, token, challenge);
 	if (mode === 'subscribe' && token === env.STRAVA_WEBHOOK_SECRET) {
 		json({ 'hub.challenge': challenge });
 	}
