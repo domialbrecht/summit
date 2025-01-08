@@ -95,6 +95,7 @@ export async function syncHookCallback(activityId: number, athleteId: number): P
 	const userId = athleteId.toString();
 	let activities: StravaActivity[] = [];
 	try {
+		logger.info(`Fetching activity ${activityId} for user ${userId} from hook`);
 		activities = await StravaApi.getActivity(userId, activityId.toString());
 	} catch (e) {
 		logger.error(`Failed to fetch activity from hook: ${e} ${activityId}`);
