@@ -20,7 +20,12 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
               'name', name,
               'elevation', elevation,
               'category', category,
-              'desc', description
+              'desc', description,
+              'attempt', EXISTS (
+                SELECT 1 
+                FROM ${table.summit_attempt} 
+                WHERE ${table.summit_attempt}.summit_id = ${table.summit}.id
+              )
             )
           )
         )

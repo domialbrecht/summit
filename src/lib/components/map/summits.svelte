@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { MapLibre, GeoJSON, SymbolLayer, type LayerClickInfo } from 'svelte-maplibre';
 	import solyvc from '$site/solyvc.png';
+	import trophy from '$site/icons/trophy.png';
 	import type { Feature, Geometry } from 'geojson';
 	import { goto } from '$app/navigation';
 
@@ -24,7 +25,10 @@
 <MapLibre
 	style="/komoot_mapstyle.json"
 	class="h-full w-full"
-	images={[{ id: 'solyvc_logo', url: solyvc }]}
+	images={[
+		{ id: 'solyvc_logo', url: solyvc },
+		{ id: 'attempt_icon', url: trophy }
+	]}
 	center={[7.535409043530986, 47.20735710031535]}
 	zoom={13}
 >
@@ -38,11 +42,21 @@
 				layout={{
 					'text-field': ['to-string', ['get', 'name']],
 					'text-size': 12,
-					'icon-size': 0.06,
+					'icon-size': [
+						'case',
+						['==', ['get', 'attempt'], true], // Check if 'attempt' is true
+						0.1, // Use this icon if true
+						0.06 // Default icon
+					],
 					'text-anchor': 'top',
 					'text-offset': [0, 1.2],
 					'text-font': ['Noto Sans Regular'],
-					'icon-image': 'solyvc_logo'
+					'icon-image': [
+						'case',
+						['==', ['get', 'attempt'], true], // Check if 'attempt' is true
+						'attempt_icon', // Use this icon if true
+						'solyvc_logo' // Default icon
+					]
 				}}
 				paint={{
 					'text-color': [
