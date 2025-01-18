@@ -24,6 +24,12 @@
 	function winForUser(userId: string) {
 		return leaderboard.wins.filter((win) => win.winAttempt.userId === userId);
 	}
+
+	let sortedByWins = $derived.by(() => {
+		return leaderboard.attempts.sort((a, b) => {
+			return winForUser(b.userId).length - winForUser(a.userId).length;
+		});
+	});
 </script>
 
 <div class="overflow-x-auto">
@@ -37,7 +43,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each leaderboard.attempts as entry, i}
+			{#each sortedByWins as entry, i}
 				<tr>
 					<td>{i + 1}</td>
 					<td>
