@@ -121,8 +121,9 @@ async function summitsMatchPolyline(line: string) {
 }
 
 export async function summitDetailMatch(activityId: string) {
-	const BUFFER = 20;
-	const query = sql`
+	try {
+		const BUFFER = 20;
+		const query = sql`
     SELECT MIN(ST_M(pt)) as matchtime, contained.id, contained.name FROM 
     (
       SELECT (dp).geom as pt, summitlines.id, summitlines.name, summitlines.location FROM 
@@ -142,8 +143,19 @@ export async function summitDetailMatch(activityId: string) {
     ) as contained group by contained.id, contained.name
   `;
 
-	const results = await db.execute<{ id: number; name: string; matchtime: number }>(query);
-	return [...results];
+		const results = await db.execute<{ id: number; name: string; matchtime: number }>(query);
+		logger.info({
+			message: 'Matched summit details',
+			data: { activity: activityId, results: results }
+		});
+		return [...results];
+	} catch (e) {
+		logger.error({
+			message: 'Failed to match summit details',
+			data: { activity: activityId, error: e }
+		});
+		return [];
+	}
 }
 
 export async function summitAttemptsFromActivity(line: string) {
