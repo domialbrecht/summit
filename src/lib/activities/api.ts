@@ -124,7 +124,7 @@ async function stravaFetch(
 
 	if (!response.ok) {
 		const api_err = await response.json();
-		console.error(api_err);
+		logger.error({ message: 'Failed to fetch data from Strava with error', data: api_err });
 		error(response.status, { message: `Failed to fetch data from Strava with error` });
 	}
 
@@ -243,6 +243,8 @@ export async function updateActivityDetail(userId: string, activityId: string) {
 		`activities/${activityId}/streams?keys=latlng,time&key_by_type=true`,
 		userId
 	);
+
+	logger.info({ message: 'Got detail stream', data: { stream: stream } });
 	const points = stream.latlng.data.map((coord, index) => {
 		const [lat, lon] = coord;
 		const t = stream.time.data[index];

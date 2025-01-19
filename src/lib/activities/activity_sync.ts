@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { and, eq, notExists } from 'drizzle-orm';
+import { and, eq, isNotNull, notExists, sql } from 'drizzle-orm';
 import { StravaApi } from '$lib/activities';
 
 import type { StravaActivity } from './api';
@@ -8,29 +8,30 @@ import logger from '$lib/logger';
 import { syncWithCount } from './attempt';
 
 export async function updateActivities(userId: string, activities: StravaActivity[]) {
-	//TODO: Use proper validation
+	const insertValues = activities.map((activity) => ({
+		id: activity.id.toString(),
+		userId: userId,
+		uploadId: activity.upload_id.toString(),
+		name: activity.name,
+		distance: activity.distance ? Math.round(activity.distance) : 0,
+		movingTime: activity.moving_time.toString(),
+		elapsedTime: activity.elapsed_time.toString(),
+		totalElevationGain: activity.total_elevation_gain.toString(),
+		type: activity.type,
+		startDate: new Date(activity.start_date),
+		averageSpeed: activity.average_speed ? activity.average_speed.toString() : undefined,
+		maxSpeed: activity.max_speed.toString(),
+		averageWatts: activity.average_watts ? activity.average_watts.toString() : undefined,
+		summaryPolyline: activity.map.summary_polyline
+	}));
 	try {
 		await db
 			.insert(table.activity)
-			.values(
-				activities.map((activity) => ({
-					id: activity.id.toString(),
-					userId: userId,
-					uploadId: activity.upload_id.toString(),
-					name: activity.name,
-					distance: activity.distance ? Math.round(activity.distance) : 0,
-					movingTime: activity.moving_time.toString(),
-					elapsedTime: activity.elapsed_time.toString(),
-					totalElevationGain: activity.total_elevation_gain.toString(),
-					type: activity.type,
-					startDate: new Date(activity.start_date),
-					averageSpeed: activity.average_speed ? activity.average_speed.toString() : undefined,
-					maxSpeed: activity.max_speed.toString(),
-					averageWatts: activity.average_watts ? activity.average_watts.toString() : undefined,
-					summaryPolyline: activity.map.summary_polyline
-				}))
-			)
-			.onConflictDoNothing();
+			.values(insertValues)
+			.onConflictDoUpdate({
+				target: table.activity.id,
+				set: { ...insertValues, userId: sql`${table.activity.userId}` }
+			});
 	} catch (e) {
 		logger.error(`Failed to update activities: ${e}`);
 		throw new Error(`Failed to update activities: ${e}`);
@@ -91,8 +92,23 @@ export async function setParsedActivities(
 	);
 }
 
-export async function syncHookCallback(activityId: number, athleteId: number): Promise<void> {
+export async function syncHookCallback(
+	activityId: number,
+	athleteId: number,
+	isUpdate: boolean
+): Promise<void> {
 	const userId = athleteId.toString();
+
+	let skipDetailFetch = false;
+	if (isUpdate) {
+		const hasDetail = await db.$count(
+			table.activity,
+			and(eq(table.activity.id, activityId.toString()), isNotNull(table.activity.linestring))
+		);
+
+		skipDetailFetch = hasDetail > 0;
+	}
+
 	let activities: StravaActivity[] = [];
 	try {
 		logger.info(`Fetching activity ${activityId} for user ${userId} from hook`);
@@ -103,7 +119,7 @@ export async function syncHookCallback(activityId: number, athleteId: number): P
 	}
 
 	await StravaApi.updateActivityCache(userId, activities);
-	await syncWithCount(userId, false, true);
+	await syncWithCount(userId, skipDetailFetch, true);
 
 	logger.info(`Synced activity ${activityId} for user ${userId} from hook`);
 }

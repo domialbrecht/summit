@@ -28,8 +28,11 @@ export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const event: StravaWebhookEvent = await request.json();
 		logger.info({ message: 'webhook event received', data: event });
-		if (event.object_type === 'activity' && event.aspect_type === 'create') {
-			syncHookCallback(event.object_id, event.owner_id);
+		if (
+			(event.object_type === 'activity' && event.aspect_type === 'create') ||
+			event.aspect_type === 'update'
+		) {
+			syncHookCallback(event.object_id, event.owner_id, event.aspect_type === 'update');
 		}
 	} catch (error) {
 		logger.error({ message: 'webhook event error', data: error });
