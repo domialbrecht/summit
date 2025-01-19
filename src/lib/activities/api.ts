@@ -107,6 +107,10 @@ async function stravaFetch(
 ) {
 	const tokens = await getTokensForUser(userId);
 	if (!tokens) {
+		logger.error({
+			message: 'Failed to fetch data from Strava with error',
+			data: 'No tokens found'
+		});
 		redirect(304, 'logout/direct');
 	}
 
@@ -136,17 +140,6 @@ const dateToUnixTimestamp = (date: Date): string => {
 };
 
 export async function getActivity(userId: string, activityId: string) {
-	const results = await db
-		.select({ id: table.activity.id })
-		.from(table.activity)
-		.where(eq(table.activity.id, activityId))
-		.limit(1);
-
-	const hasActivity = results.at(0);
-	if (hasActivity) {
-		return [];
-	}
-
 	const activity: DetailActivity = await stravaFetch(
 		`activities/${activityId}?include_all_efforts=false`,
 		userId
@@ -244,7 +237,7 @@ export async function updateActivityDetail(userId: string, activityId: string) {
 		userId
 	);
 
-	logger.info({ message: 'Got detail stream', data: { stream: stream } });
+	logger.info({ message: 'Got detail stream' });
 	const points = stream.latlng.data.map((coord, index) => {
 		const [lat, lon] = coord;
 		const t = stream.time.data[index];
