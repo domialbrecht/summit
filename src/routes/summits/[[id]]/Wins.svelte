@@ -27,9 +27,11 @@
 					{#if win.media}
 						<Dialog.Root>
 							<Dialog.Trigger class="btn btn-primary btn-xs">Bild</Dialog.Trigger>
-							<Dialog.Content class="w-full">
+							<Dialog.Content class="flex h-[95vh] w-full flex-col">
 								<Dialog.Header>Passbiud</Dialog.Header>
-								<img class="h-auto w-full min-w-full" src={win.media} alt="Bild" />
+								<div class="flex h-[90%] items-center justify-center">
+									<img class="h-full w-auto" src={win.media} alt="Bild" />
+								</div>
 							</Dialog.Content>
 						</Dialog.Root>
 					{/if}
