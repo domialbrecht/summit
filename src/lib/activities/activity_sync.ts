@@ -31,17 +31,17 @@ export async function updateActivities(userId: string, activities: StravaActivit
 			.onConflictDoUpdate({
 				target: table.activity.id,
 				set: {
-					name: sql.raw(`excluded.${table.activity.name}`),
-					distance: sql.raw(`excluded.${table.activity.distance}`),
-					movingTime: sql.raw(`excluded.${table.activity.movingTime}`),
-					elapsedTime: sql.raw(`excluded.${table.activity.elapsedTime}`),
-					totalElevationGain: sql.raw(`excluded.${table.activity.totalElevationGain}`),
-					type: sql.raw(`excluded.${table.activity.type}`),
-					startDate: sql.raw(`excluded.${table.activity.startDate}`),
-					averageSpeed: sql.raw(`excluded.${table.activity.averageSpeed}`),
-					maxSpeed: sql.raw(`excluded.${table.activity.maxSpeed}`),
-					averageWatts: sql.raw(`excluded.${table.activity.averageWatts}`),
-					summaryPolyline: sql.raw(`excluded.${table.activity.summaryPolyline}`)
+					name: sql.raw(`excluded.${table.activity.name.name}`),
+					distance: sql.raw(`excluded.${table.activity.distance.name}`),
+					movingTime: sql.raw(`excluded.${table.activity.movingTime.name}`),
+					elapsedTime: sql.raw(`excluded.${table.activity.elapsedTime.name}`),
+					totalElevationGain: sql.raw(`excluded.${table.activity.totalElevationGain.name}`),
+					type: sql.raw(`excluded.${table.activity.type.name}`),
+					startDate: sql.raw(`excluded.${table.activity.startDate.name}`),
+					averageSpeed: sql.raw(`excluded.${table.activity.averageSpeed.name}`),
+					maxSpeed: sql.raw(`excluded.${table.activity.maxSpeed.name}`),
+					averageWatts: sql.raw(`excluded.${table.activity.averageWatts.name}`),
+					summaryPolyline: sql.raw(`excluded.${table.activity.summaryPolyline.name}`)
 				}
 			});
 	} catch (e) {

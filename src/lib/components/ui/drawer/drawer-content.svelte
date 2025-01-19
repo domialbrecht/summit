@@ -51,7 +51,7 @@
 			class={clsx({
 				'hidden rounded-full bg-base-200 lg:block': true,
 				'mx-auto mt-4 h-1.5 w-12': contentProps?.variant === 'bottom',
-				'mx-4 my-auto h-12 w-1.5': contentProps?.variant === 'left'
+				'mx-4 my-auto h-12 w-2': contentProps?.variant === 'left'
 			})}
 		></div>
 		{@render children?.()}
