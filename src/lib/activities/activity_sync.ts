@@ -30,7 +30,19 @@ export async function updateActivities(userId: string, activities: StravaActivit
 			.values(insertValues)
 			.onConflictDoUpdate({
 				target: table.activity.id,
-				set: { ...insertValues, userId: sql`${table.activity.userId}` }
+				set: {
+					name: sql.raw(`excluded.${table.activity.name}`),
+					distance: sql.raw(`excluded.${table.activity.distance}`),
+					movingTime: sql.raw(`excluded.${table.activity.movingTime}`),
+					elapsedTime: sql.raw(`excluded.${table.activity.elapsedTime}`),
+					totalElevationGain: sql.raw(`excluded.${table.activity.totalElevationGain}`),
+					type: sql.raw(`excluded.${table.activity.type}`),
+					startDate: sql.raw(`excluded.${table.activity.startDate}`),
+					averageSpeed: sql.raw(`excluded.${table.activity.averageSpeed}`),
+					maxSpeed: sql.raw(`excluded.${table.activity.maxSpeed}`),
+					averageWatts: sql.raw(`excluded.${table.activity.averageWatts}`),
+					summaryPolyline: sql.raw(`excluded.${table.activity.summaryPolyline}`)
+				}
 			});
 	} catch (e) {
 		logger.error(`Failed to update activities: ${e}`);
