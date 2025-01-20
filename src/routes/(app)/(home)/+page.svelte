@@ -57,7 +57,7 @@
 				<!---->
 			</div>
 		</div>
-		<div class="xl:col-span-4">
+		<div class="xl:col-span-5">
 			<Card.Root variant="border" class="min-h-44">
 				<Card.Body>
 					<Card.Title>Di letzt Pass</Card.Title>
@@ -79,6 +79,44 @@
 								</div>
 							{/if}
 						{/await}
+					</Card.Content>
+				</Card.Body>
+			</Card.Root>
+		</div>
+		<div class="xl:col-span-4">
+			<Card.Root variant="border" class="min-h-44">
+				<Card.Body>
+					<Card.Title>Dini Aktivitäte</Card.Title>
+					<Card.Content>
+						<Button href="/activities">Link</Button>
+					</Card.Content>
+				</Card.Body>
+			</Card.Root>
+		</div>
+		<div class="xl:col-span-3">
+			<Card.Root class="min-h-44" variant={syncing ? 'info' : 'primary'}>
+				<Card.Body>
+					<Card.Title>Aktualisier dini Date</Card.Title>
+					<Card.Content>
+						{#if !syncing}
+							<form
+								action="?/sync"
+								method="POST"
+								use:enhance={() => {
+									syncing = true;
+									return async ({ update }) => {
+										await update();
+										syncing = false;
+									};
+								}}
+							>
+								<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
+							</form>
+						{:else}
+							<div class="flex items-center justify-center">
+								<progress class="progress w-full"></progress>
+							</div>
+						{/if}
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>
@@ -115,34 +153,6 @@
 				</Card.Body>
 			</Card.Root>
 		</div>
-		<div class="xl:col-span-3">
-			<Card.Root class="min-h-44" variant={syncing ? 'info' : 'primary'}>
-				<Card.Body>
-					<Card.Title>Aktualisier dini Date</Card.Title>
-					<Card.Content>
-						{#if !syncing}
-							<form
-								action="?/sync"
-								method="POST"
-								use:enhance={() => {
-									syncing = true;
-									return async ({ update }) => {
-										await update();
-										syncing = false;
-									};
-								}}
-							>
-								<button disabled={syncing} class="btn btn-secondary"> Synchronisiere </button>
-							</form>
-						{:else}
-							<div class="flex items-center justify-center">
-								<progress class="progress w-full"></progress>
-							</div>
-						{/if}
-					</Card.Content>
-				</Card.Body>
-			</Card.Root>
-		</div>
 		<div class="xl:col-span-8">
 			<Card.Root variant="sideResponsive">
 				<figure class="grow">
@@ -158,16 +168,6 @@
 						Zweiradfahrer. Sie wurde Anfang des 19. Jahrhunderts erbaut und zwischen 1937 und 1941
 						durch einen Belag mit Hundertausenden von Granitsteinen ersetzt. Sie windet sich mit 24
 						Kehren von Airolo hinauf zum 2106 Meter hohen Gotthardpass.
-					</Card.Content>
-				</Card.Body>
-			</Card.Root>
-		</div>
-		<div class="xl:col-span-4">
-			<Card.Root variant="border" class="min-h-44">
-				<Card.Body>
-					<Card.Title>Dini Aktivitäte</Card.Title>
-					<Card.Content>
-						<Button href="/activities">Link</Button>
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>
