@@ -37,7 +37,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
 	const geojson = result.at(0)?.geojson;
 
 	setHeaders({
-		'cache-control': 'public, max-age=86400, stale-while-revalidate=172800'
+		'cache-control': 'public, max-age=3600, stale-while-revalidate=14400'
 	});
 
 	return json(geojson);
