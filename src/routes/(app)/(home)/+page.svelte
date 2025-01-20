@@ -1,9 +1,10 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import Section from '$lib/components/ui/section';
-	import Stelvio from '$site/stelvio.jpg';
+	import Tremola from '$site/tremola.jpg';
 	import Dizzy from '$site/icons/dizzy.png';
 	import Party from '$site/icons/party.png';
+	import Bicycle from '$site/icons/bicycle.png';
 	import { enhance } from '$app/forms';
 	import type { ActionData, PageData } from './$types';
 	import { dt } from '$lib/utils';
@@ -56,39 +57,65 @@
 				<!---->
 			</div>
 		</div>
-		<div class="xl:col-span-5">
+		<div class="xl:col-span-4">
 			<Card.Root variant="border" class="min-h-44">
 				<Card.Body>
 					<Card.Title>Di letzt Pass</Card.Title>
 					<Card.Content>
-						{#if data.last_attempt}
-							<div class="flex items-center gap-4">
-								<img src={Party} class="h-8 w-8" alt="Party" />
-								<a class="link-primary" href={`/summits/${data.last_attempt.summit.id}`}
-									>{data.last_attempt.summit.name}, {dt(data.last_attempt.summit_attempt.date)}</a
-								>
-							</div>
-						{:else}
-							<div class="flex items-center gap-4">
-								<img src={Dizzy} class="h-8 w-8" alt="Dizzy" />
-								<p>Leider no kene gfunde..</p>
-							</div>
-						{/if}
-					</Card.Content>
-				</Card.Body>
-			</Card.Root>
-		</div>
-		<div class="xl:col-span-3">
-			<Card.Root variant="border" class="min-h-44">
-				<Card.Body>
-					<Card.Title>Dini Aktivitäte</Card.Title>
-					<Card.Content>
-						<Button href="/activities">Link</Button>
+						{#await data.last_attempt}
+							<div class="skeleton h-32 w-full"></div>
+						{:then last_attempt}
+							{#if last_attempt}
+								<div class="flex items-center gap-4">
+									<img src={Party} class="h-8 w-8" alt="Party" />
+									<a class="link-primary" href={`/summits/${last_attempt.summit.id}`}
+										>{last_attempt.summit.name}, {dt(last_attempt.summit_attempt.date)}</a
+									>
+								</div>
+							{:else}
+								<div class="flex items-center gap-4">
+									<img src={Dizzy} class="h-8 w-8" alt="Dizzy" />
+									<p>Leider no kene gfunde..</p>
+								</div>
+							{/if}
+						{/await}
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>
 		</div>
 		<div class="xl:col-span-4">
+			<Card.Root variant="border" class="min-h-44">
+				<Card.Body>
+					<Card.Title>Club Aktivitäte</Card.Title>
+					<Card.Content>
+						{#await data.last_attempts}
+							<div class="skeleton h-32 w-full"></div>
+						{:then last_attempts}
+							{#each last_attempts as attempt}
+								<div class="flex items-center gap-4">
+									<a class="link-primary" href={`/summits/${attempt.id}`}
+										>{attempt.name}, {dt(attempt.date)}</a
+									>
+									<div class="tooltip" data-tip={`${attempt.firstName} ${attempt.lastName}`}>
+										<div class="avatar">
+											<div class="mask mask-circle w-8">
+												<img
+													loading="lazy"
+													class="pointer-events-none transition-all duration-500 ease-in-out"
+													alt={attempt.firstName}
+													src={attempt.profile}
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+							{/each}
+						{/await}
+					</Card.Content>
+				</Card.Body>
+			</Card.Root>
+		</div>
+		<div class="xl:col-span-3">
 			<Card.Root class="min-h-44" variant={syncing ? 'info' : 'primary'}>
 				<Card.Body>
 					<Card.Title>Aktualisier dini Date</Card.Title>
@@ -116,28 +143,31 @@
 				</Card.Body>
 			</Card.Root>
 		</div>
-		<div class="xl:col-span-10">
+		<div class="xl:col-span-8">
 			<Card.Root variant="sideResponsive">
-				<img
-					src={Stelvio}
-					alt="Stelvio pass"
-					class="lg:h-auto lg:w-1/2 lg:rounded-bl-xl lg:rounded-tl-xl"
-				/>
+				<figure class="grow">
+					<img src={Tremola} alt="Tremola" class="h-full" />
+				</figure>
 				<Card.Body>
 					<Card.Title>
-						Stelvio
+						Tremola
 						<div class="badge badge-accent">Hightlight</div>
 					</Card.Title>
 					<Card.Content>
-						„Die Königin der Passstraßen“ und „Höchster Rummelplatz Europas“ sind die beiden
-						meistgebrauchten Beinamen des Stilfser Jochs. In wie weit diese Bezeichnungen
-						tatsächlich zutreffen, möchten wir der Beurteilung eines jeden einzelnen überlassen.
-						Unbestritten ist jedoch, dass es sich mit 2757 m Höhe nicht nur um den höchsten
-						Straßenpass Italiens handelt, sondern nach dem Col de l’Iséran um die zweithöchste
-						Passstraße der Alpen, und dass die klassische 48-Kehren-Auffahrt von Prad wohl zu den
-						bekanntesten und prestigeträchtigsten Anstiegen Europas gehört. Nebenbei bemerkt ist das
-						Stilfser Joch hier auf quaeldich.de der am häufigsten aufgerufene Pass und derjenige mit
-						den meisten Highscore-Einträgen.
+						Die Tremola ist eine der schönsten und abenteuerlichsten Strassen für passionierte
+						Zweiradfahrer. Sie wurde Anfang des 19. Jahrhunderts erbaut und zwischen 1937 und 1941
+						durch einen Belag mit Hundertausenden von Granitsteinen ersetzt. Sie windet sich mit 24
+						Kehren von Airolo hinauf zum 2106 Meter hohen Gotthardpass.
+					</Card.Content>
+				</Card.Body>
+			</Card.Root>
+		</div>
+		<div class="xl:col-span-4">
+			<Card.Root variant="border" class="min-h-44">
+				<Card.Body>
+					<Card.Title>Dini Aktivitäte</Card.Title>
+					<Card.Content>
+						<Button href="/activities">Link</Button>
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>

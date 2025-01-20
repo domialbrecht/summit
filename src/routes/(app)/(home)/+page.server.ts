@@ -9,19 +9,44 @@ import logger from '$lib/logger';
 
 const FETCHED_LIST_COOKIE_NAME = 'strava_list_fetched';
 
-export const load: PageServerLoad = async (event) => {
-	const { user } = await event.parent();
-
+async function user_last_attempt(userId: string) {
 	const results = await db
 		.select()
 		.from(table.summit_attempt)
 		.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
-		.where(and(eq(table.summit_attempt.userId, user.id), eq(table.summit_attempt.published, true)))
+		.where(and(eq(table.summit_attempt.userId, userId), eq(table.summit_attempt.published, true)))
 		.orderBy(desc(table.summit_attempt.date))
 		.limit(1);
 
+	return results.at(0);
+}
+
+async function last_attempts() {
+	const results = await db
+		.select({
+			id: table.summit.id,
+			name: table.summit.name,
+			date: table.summit_attempt.date,
+			firstName: table.user.firstName,
+			lastName: table.user.lastName,
+			profile: table.user.profile
+		})
+		.from(table.summit_attempt)
+		.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
+		.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id))
+		.where(and(eq(table.summit_attempt.published, true)))
+		.orderBy(desc(table.summit_attempt.date))
+		.limit(5);
+
+	return results;
+}
+
+export const load: PageServerLoad = async (event) => {
+	const { user } = await event.parent();
+
 	return {
-		last_attempt: results.at(0)
+		last_attempt: user_last_attempt(user.id),
+		last_attempts: last_attempts()
 	};
 };
 
