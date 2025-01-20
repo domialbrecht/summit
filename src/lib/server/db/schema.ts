@@ -71,7 +71,7 @@ export const activityMedia = pgTable('activity_media', {
 	url: text('url').notNull(),
 	activityId: text('activity_id')
 		.notNull()
-		.references(() => activity.id)
+		.references(() => activity.id, { onDelete: 'cascade' })
 });
 
 export const parseActivityResults = pgTable(
@@ -80,7 +80,7 @@ export const parseActivityResults = pgTable(
 		id: integer().primaryKey().generatedAlwaysAsIdentity(),
 		activityId: text('activity_id')
 			.notNull()
-			.references(() => activity.id),
+			.references(() => activity.id, { onDelete: 'cascade' }),
 		hasMatch: boolean('has_match').notNull()
 	},
 	(t) => {
@@ -188,7 +188,9 @@ export const summit_attempt = pgTable('summit_attempt', {
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),
-	activityId: text('activity_id').notNull(),
+	activityId: text('activity_id')
+		.references(() => activity.id, { onDelete: 'cascade' })
+		.notNull(),
 	date: timestamp('date', { withTimezone: true, mode: 'date' }).notNull(),
 	published: boolean('published').notNull().default(false)
 });

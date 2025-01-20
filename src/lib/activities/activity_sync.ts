@@ -50,6 +50,10 @@ export async function updateActivities(userId: string, activities: StravaActivit
 	}
 }
 
+export async function deleteActivity(activityId: string) {
+	await db.delete(table.activity).where(eq(table.activity.id, activityId));
+}
+
 export async function getUnparsedActivities(userId: string) {
 	return await db
 		.select({

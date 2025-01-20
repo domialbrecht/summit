@@ -1,7 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types.js';
-import { syncHookCallback } from '$lib/activities/activity_sync.js';
+import { deleteActivity, syncHookCallback } from '$lib/activities/activity_sync.js';
 import logger from '$lib/logger.js';
 
 type StravaWebhookEvent = {
@@ -27,12 +27,17 @@ export const GET: RequestHandler = ({ url }) => {
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const event: StravaWebhookEvent = await request.json();
-		logger.info({ message: 'webhook event received', data: event });
 		if (
 			(event.object_type === 'activity' && event.aspect_type === 'create') ||
 			event.aspect_type === 'update'
 		) {
+			logger.info({ message: 'webhook c/u event received', data: event });
 			syncHookCallback(event.object_id, event.owner_id, event.aspect_type === 'update');
+		}
+
+		if (event.object_type === 'activity' && event.aspect_type === 'delete') {
+			logger.info({ message: 'webhook delete event received', data: event });
+			deleteActivity(event.object_id.toString());
 		}
 	} catch (error) {
 		logger.error({ message: 'webhook event error', data: error });

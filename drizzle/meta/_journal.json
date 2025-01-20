@@ -43,6 +43,13 @@
       "when": 1736030728394,
       "tag": "0005_peaceful_spiral",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1737357537820,
+      "tag": "0006_melted_viper",
+      "breakpoints": true
     }
   ]
 }
