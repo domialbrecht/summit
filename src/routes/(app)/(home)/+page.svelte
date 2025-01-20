@@ -130,7 +130,7 @@
 							<div class="skeleton h-32 w-full"></div>
 						{:then last_attempts}
 							{#each last_attempts as attempt}
-								<div class="flex items-center gap-4">
+								<div class="flex items-center justify-between gap-4">
 									<a class="link-primary" href={`/summits/${attempt.id}`}
 										>{attempt.name}, {dt(attempt.date)}</a
 									>
