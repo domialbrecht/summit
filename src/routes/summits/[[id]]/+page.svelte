@@ -73,19 +73,21 @@
 										</div>
 									</div>
 									{#await data.summit_profiles then profiles}
-										<div class="collapse collapse-arrow mt-2 bg-base-200">
-											<input type="checkbox" name="accordion-1" checked />
-											<div class="collapse-title text-xl font-medium">Astige</div>
-											<div class="collapse-content">
-												<div class="flex flex-col gap-4">
-													{#each profiles as profile}
-														<div class="rounded-lg bg-base-100 p-2">
-															<Profile {profile} />
-														</div>
-													{/each}
+										{#if profiles.length > 0}
+											<div class="collapse collapse-arrow mt-2 bg-base-200">
+												<input type="checkbox" name="accordion-1" checked />
+												<div class="collapse-title text-xl font-medium">Astige</div>
+												<div class="collapse-content">
+													<div class="flex flex-col gap-4">
+														{#each profiles as profile}
+															<div class="rounded-lg bg-base-100 p-2">
+																<Profile {profile} />
+															</div>
+														{/each}
+													</div>
 												</div>
 											</div>
-										</div>
+										{/if}
 									{/await}
 								</div>
 							</div>
