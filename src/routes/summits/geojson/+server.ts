@@ -25,6 +25,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
                 SELECT 1 
                 FROM ${table.summit_attempt} 
                 WHERE ${table.summit_attempt}.summit_id = ${table.summit}.id
+                AND ${table.summit_attempt.published} = TRUE
               )
             )
           )
