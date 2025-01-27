@@ -4,7 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"test:dev": "dotenvx run --env TEST_USER=true -- vite dev",
+		"test:dev": "TEST_USER=true vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -48,7 +48,6 @@
 		"vite": "^6.0.5"
 	},
 	"dependencies": {
-		"@dotenvx/dotenvx": "^1.31.3",
 		"@mapbox/polyline": "^1.2.1",
 		"@node-rs/argon2": "^2.0.2",
 		"@oslojs/crypto": "^1.0.1",

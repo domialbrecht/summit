@@ -71,7 +71,10 @@ export const activityMedia = pgTable('activity_media', {
 	url: text('url').notNull(),
 	activityId: text('activity_id')
 		.notNull()
-		.references(() => activity.id, { onDelete: 'cascade' })
+		.references(() => activity.id, { onDelete: 'cascade' }),
+	summitId: text('summit_id')
+		.notNull()
+		.references(() => summit.id, { onDelete: 'cascade' })
 });
 
 export const parseActivityResults = pgTable(

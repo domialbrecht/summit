@@ -1,43 +1,45 @@
-# Base stage - set up pnpm and the environment
-FROM node:22-alpine AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-COPY . /app
-WORKDIR /app
+# use the official Bun image
+# see all versions at https://hub.docker.com/r/oven/bun/tags
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
 
-# Install production dependencies
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+# install dependencies into temp directory
+# this will cache them and speed up future builds
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lock /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-# Build stage - install all dependencies and build the app
-FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build
+# install with --production (exclude devDependencies)
+RUN mkdir -p /temp/prod
+COPY package.json bun.lock /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-# Final stage - minimal production image
-FROM node:22-alpine AS production
-WORKDIR /app
+# copy node_modules from temp directory
+# then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
+COPY . .
 
-# Copy production dependencies and build output from previous stages
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=build /app/build /app/build
-# Copy static assets directly from the base stage (not build stage)
-COPY --from=base /app/static /app/static
-COPY package.json ./
-
+# copy production dependencies and source code into final image
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /app/build /app/build
+COPY --from=prerelease /app/static /app/static
+COPY --from=prerelease package.json ./
 # Copy script folder
 COPY scripts /app/scripts
 # Copy drizzle folder
 COPY drizzle /app/drizzle
 
 # Expose port and set environment
-EXPOSE 3000
+USER bun
+EXPOSE 3000/tcp
 ENV NODE_ENV=production
 
 # Create volume for logs
 VOLUME /app/logs
 
 # Start the app
-CMD [ "node", "build" ]
+CMD [ "bun", "build" ]
 
