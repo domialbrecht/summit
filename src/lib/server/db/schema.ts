@@ -11,6 +11,7 @@ import {
 	index,
 	primaryKey
 } from 'drizzle-orm/pg-core';
+import { createInsertSchema } from 'drizzle-zod';
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -212,3 +213,8 @@ export type SelectArea = typeof area.$inferSelect;
 export type SelectSummit = typeof summit.$inferSelect;
 export type SelectSummitProfile = typeof summit_profile.$inferSelect;
 export type SelectSummitAttempt = typeof summit_attempt.$inferSelect;
+
+const cs = createInsertSchema(summit);
+export const summitInsertSchema = cs.omit({ location: true }).extend({
+	id: cs.shape.id.optional()
+});

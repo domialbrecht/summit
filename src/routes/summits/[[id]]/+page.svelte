@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SummitMap from '$lib/components/map/summits.svelte';
+	import SummitMap from './map.svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
 	import Profile from './Profile.svelte';

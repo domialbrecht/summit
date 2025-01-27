@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SolYVC from '$site/solyvc.svg';
 	import { page } from '$app/stores';
-	import { LogIn } from 'lucide-svelte';
+	import { LogIn, Wrench } from 'lucide-svelte';
 	import type { User } from '$lib/server/db/schema';
 	let { user }: { user: User | undefined } = $props();
 </script>
@@ -24,7 +24,7 @@
 		<a
 			href="/summits"
 			class="tooltip"
-			class:active={$page.url.pathname.includes('/summits')}
+			class:active={$page.url.pathname.startsWith('/summits')}
 			data-tip="Päss"
 			aria-label="Summits"
 		>
@@ -66,6 +66,19 @@
 			></a
 		>
 	</li>
+	{#if user?.isAdmin}
+		<li>
+			<a
+				href="/admin/summits"
+				class:active={$page.url.pathname.startsWith('/admin')}
+				class="tooltip"
+				data-tip="Admin"
+				aria-label="Admin"
+			>
+				<Wrench class="h-5 w-5" />
+			</a>
+		</li>
+	{/if}
 	<li>
 		<a
 			href={user ? '/logout' : '/login'}

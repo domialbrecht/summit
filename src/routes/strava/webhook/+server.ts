@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types.js';
+import type { RequestHandler } from './$types';
 import { deleteActivity, syncHookCallback } from '$lib/activities/activity_sync.js';
 import logger from '$lib/logger.js';
 
