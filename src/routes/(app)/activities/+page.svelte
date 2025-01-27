@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import Section from '$lib/components/ui/section';
 	import type { PageServerData } from './$types';
@@ -13,31 +12,32 @@
 		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
 			<span class="text-primary">Aktivitäte</span> im System
 		</div>
-		<p class="mb-2 mt-2 max-w-xl">
+		<p class="mb-2 mt-2 max-w-2xl">
 			Hie gsehsch aui Aktivitäte womer gsynched hei. Und die wo e Pass isch erkennt worde hei es
 			"Pass erledigt" Zeiche. Falls was dire Meinig nach nid stimmt nim Kontakt uf.
 		</p>
 		<div class="mt-6 grid gap-6 xl:grid-cols-12">
 			{#each data.activities as activity}
 				<div class="xl:col-span-4">
-					<Card.Root variant={activity.match ? 'primary' : 'border'}>
-						<Card.Body>
-							<Card.Title>
-								{activity.name}
-								{#if activity.match}
-									<div class="badge badge-secondary">Pass erledigt</div>
-								{/if}
-							</Card.Title>
-							<Card.Content>
-								<p>Datum: {dt(activity.start)}</p>
-								<div class="card-actions justify-end">
+					<a
+						class={`card card-bordered border-2 shadow-xl transition-transform hover:-translate-y-2 ${activity.match ? 'border-primary' : ''}`}
+						href={`/activities/${activity.id}`}
+					>
+						<div class="card-body">
+							<h3 class="text-2xl font-black">{activity.name}</h3>
+							{#if activity.match}
+								<div class="badge badge-primary">Pass erledigt</div>
+							{/if}
+							<div class="card-content">
+								<div class="card-actions mt-2">
+									<div class="badge badge-outline badge-lg">{dt(activity.start)}</div>
 									{#if activity.distance}
-										<div class="badge badge-outline">{km(activity.distance)}</div>
+										<div class="badge badge-outline badge-lg">{km(activity.distance)}</div>
 									{/if}
 								</div>
-							</Card.Content>
-						</Card.Body>
-					</Card.Root>
+							</div>
+						</div>
+					</a>
 				</div>
 			{/each}
 		</div>

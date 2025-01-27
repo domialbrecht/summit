@@ -8,6 +8,7 @@ export const load: PageServerLoad = async (event) => {
 
 	const result = await db
 		.select({
+			id: table.activity.id,
 			name: table.activity.name,
 			distance: table.activity.distance,
 			start: table.activity.startDate,
