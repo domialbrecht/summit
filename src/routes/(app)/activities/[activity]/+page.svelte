@@ -14,23 +14,20 @@
 		<span class="text-primary">Päss uf</span>
 		"{activityName}"
 	</div>
-	<p class="mb-2 mt-2 max-w-2xl">
-		Hie gsehsch aui Aktivitäte womer gsynched hei. Und die wo e Pass isch erkennt worde hei es
-		"Pass" Zeiche. Falls was dire Meinig nach nid stimmt nim Kontakt uf.
-	</p>
+	<p class="mb-2 mt-2 max-w-2xl">Hie si d Päss vo dere Aktivität. Du chasch Bilder ufelade.</p>
 	<div class=""><Button href="/activities">Zrügg</Button></div>
 	{#if data.summits.length > 0}
 		<div class="mt-6 grid gap-6 xl:grid-cols-12">
 			{#each data.summits as summit}
 				<div class="xl:col-span-4">
-					<a
-						class="card card-bordered shadow-xl hover:bg-primary hover:text-base-100"
-						href={`/summits/${summit.summit.id}`}
-					>
-						<div class="card-body">
-							<h3 class="text-2xl font-black">{summit.summit.name}</h3>
-						</div>
-					</a>
+					<Card.Root variant={'border'}>
+						<Card.Body>
+							<Card.Title>{summit.summit.name}</Card.Title>
+							<Card.Actions>
+								<Button href={`/summits/${summit.summit.id}`}>Zum Pass</Button>
+							</Card.Actions>
+						</Card.Body>
+					</Card.Root>
 				</div>
 			{/each}
 		</div>
