@@ -41,7 +41,7 @@
 				onclick={handleSummitClick}
 				layout={{
 					'text-field': ['to-string', ['get', 'name']],
-					'text-size': 12,
+					'text-size': 14,
 					'icon-size': [
 						'case',
 						['==', ['get', 'attempt'], true], // Check if 'attempt' is true

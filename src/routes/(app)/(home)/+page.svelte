@@ -18,42 +18,17 @@
 
 <Section sectionId="welcome">
 	<div class="mt-6 grid gap-6 xl:grid-cols-12">
-		<div class="xl:col-span-12">
+		<div class="flex items-center gap-4 xl:col-span-12">
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
 				Hey, <span class="text-primary">{data.user?.firstName}</span>
 			</div>
-		</div>
-		<div class="xl:col-span-12">
-			<div class="flex flex-row items-center gap-4 xl:items-center xl:gap-6">
-				<div>
-					<button class="btn btn-sm rounded-full font-mono font-light"
-						><pre><code>Beta Version {version}</code></pre></button
-					>
-				</div>
-				<div class="flex w-full max-w-48 grow gap-2 max-lg:my-4 sm:max-w-sm">
-					<a
-						class="tooltip tooltip-accent relative flex w-full flex-col"
-						href="https://trello.com/invite/b/676877314cec746b00490b2c/ATTIb94d4fda688120db48b9eb3e6882f973C3FC143F/solyvc-summits"
-						target="_blank"
-						rel="nofollow"
-						data-tip="Zum Projektplan"
-						><div
-							class="absolute -top-4 -translate-x-1/2 text-[0.6rem] italic rtl:translate-x-1/2"
-							style="inset-inline-start:79%"
-						>
-							95%
-						</div>
-						<progress
-							class="progress progress-accent w-full border border-base-200 bg-base-200"
-							max="100"
-							value="95"
-						></progress>
-						<div class="absolute -bottom-4 text-[0.6rem] italic tracking-wide">
-							Aktuelle Fortschritt zu 1.0
-						</div></a
-					>
-				</div>
-				<!---->
+			<div class="tooltip tooltip-accent" data-tip="Zum Projektplan">
+				<a
+					class="btn btn-sm rounded-full font-mono font-light"
+					href="https://trello.com/invite/b/676877314cec746b00490b2c/ATTIb94d4fda688120db48b9eb3e6882f973C3FC143F/solyvc-summits"
+					target="_blank"
+					rel="nofollow"><pre><code>Version {version}</code></pre></a
+				>
 			</div>
 		</div>
 		<div class="xl:col-span-5">
