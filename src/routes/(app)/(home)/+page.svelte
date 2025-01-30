@@ -4,7 +4,6 @@
 	import Tremola from '$site/tremola.jpg';
 	import Dizzy from '$site/icons/dizzy.png';
 	import Party from '$site/icons/party.png';
-	import Bicycle from '$site/icons/bicycle.png';
 	import { enhance } from '$app/forms';
 	import type { ActionData, PageData } from './$types';
 	import { dt } from '$lib/utils';
@@ -88,7 +87,7 @@
 				<Card.Body>
 					<Card.Title>Dini Aktivitäte</Card.Title>
 					<Card.Content>
-						<Button href="/activities">Link</Button>
+						<Button href="/activities/me">Link</Button>
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>
@@ -148,6 +147,9 @@
 									</div>
 								</div>
 							{/each}
+							<Card.Actions class="mt-2 justify-center">
+								<Button href="/activities">Aui</Button>
+							</Card.Actions>
 						{/await}
 					</Card.Content>
 				</Card.Body>

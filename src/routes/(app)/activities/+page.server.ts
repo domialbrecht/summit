@@ -1,28 +1,42 @@
 import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	const { user } = await event.parent();
+	const offsetParam = event.url.searchParams.get('offset');
+	let offset = offsetParam ? parseInt(offsetParam) : 0;
+	if (typeof offset !== 'number' || offset < 0) {
+		offset = 0;
+	}
 
-	const result = await db
+	const results = await db
 		.select({
-			id: table.activity.id,
-			name: table.activity.name,
-			distance: table.activity.distance,
-			start: table.activity.startDate,
-			match: table.parseActivityResults.hasMatch
+			id: table.summit.id,
+			name: table.summit.name,
+			date: table.summit_attempt.date,
+			firstName: table.user.firstName,
+			lastName: table.user.lastName,
+			profile: table.user.profile,
+			win: table.winActivitiesView.activityId
 		})
-		.from(table.activity)
+		.from(table.summit_attempt)
+		.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
+		.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id))
 		.leftJoin(
-			table.parseActivityResults,
-			eq(table.parseActivityResults.activityId, table.activity.id)
+			table.winActivitiesView,
+			and(
+				eq(table.summit_attempt.summitId, table.winActivitiesView.summitId),
+				eq(table.summit_attempt.activityId, table.winActivitiesView.activityId)
+			)
 		)
-		.where(eq(table.activity.userId, user.id))
-		.limit(20);
+		.where(and(eq(table.summit_attempt.published, true)))
+		.orderBy(desc(table.summit_attempt.date))
+		.limit(50)
+		.offset(offset);
 
 	return {
-		activities: result
+		activities: results,
+		offset
 	};
 };

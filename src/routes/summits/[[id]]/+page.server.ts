@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import * as table from '$lib/server/db/schema';
-import { gte, lt, asc, min, and, sql, eq, count } from 'drizzle-orm';
+import { lt, asc, and, sql, eq, count } from 'drizzle-orm';
 
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
@@ -56,32 +56,19 @@ async function getSummitWins(summitId: string | undefined): Promise<UserSummitWi
 		return [];
 	}
 
-	const earliestAttempt = db
-		.select({ minDate: min(table.summit_attempt.date) })
-		.from(table.summit_attempt)
-		.where(
-			and(
-				eq(table.summit_attempt.summitId, parseInt(summitId)),
-				eq(table.summit_attempt.published, true)
-			)
-		)
-		.limit(1);
 	const win_result = await db
-		.selectDistinctOn([table.user.id], {
+		.select({
 			winAttempt: table.summit_attempt,
 			username: table.user.firstName,
 			profile: table.user.profile
 		})
-		.from(table.summit_attempt)
-		.leftJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
-		.where(
-			and(
-				eq(table.summit_attempt.summitId, parseInt(summitId)),
-				eq(table.summit_attempt.published, true),
-				gte(table.summit_attempt.date, earliestAttempt),
-				lt(table.summit_attempt.date, sql`${earliestAttempt} + interval '1 minute'`)
-			)
-		);
+		.from(table.winActivitiesView)
+		.innerJoin(
+			table.summit_attempt,
+			eq(table.winActivitiesView.activityId, table.summit_attempt.activityId)
+		)
+		.leftJoin(table.user, eq(table.user.id, table.winActivitiesView.userId))
+		.where(eq(table.winActivitiesView.summitId, parseInt(summitId)));
 
 	const get_media_for_win = win_result.map(async (win) => {
 		const result = await db

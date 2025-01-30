@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import Section from '$lib/components/ui/section';
 	import type { PageServerData } from './$types';
@@ -18,7 +17,7 @@
 		Hie gsehsch aui Aktivitäte womer gsynched hei. Und die wo e Pass isch erkennt worde hei es
 		"Pass" Zeiche. Falls was dire Meinig nach nid stimmt nim Kontakt uf.
 	</p>
-	<div class=""><Button href="/activities">Zrügg</Button></div>
+	<div class=""><Button href="/activities/me">Zrügg</Button></div>
 	{#if data.summits.length > 0}
 		<div class="mt-6 grid gap-6 xl:grid-cols-12">
 			{#each data.summits as summit}
