@@ -43,7 +43,7 @@
 								<a class="link-primary" href={`/summits/${activity.id}`}>{activity.name}</a>
 							</td>
 							<th>
-								<span class="badge badge-ghost badge-sm">{dt(activity.date)}</span>
+								<span class="">{dt(activity.date)}</span>
 							</th>
 							<td>
 								{#if activity.win}

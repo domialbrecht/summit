@@ -65,9 +65,12 @@ async function getSummitWins(summitId: string | undefined): Promise<UserSummitWi
 		.from(table.winActivitiesView)
 		.innerJoin(
 			table.summit_attempt,
-			eq(table.winActivitiesView.activityId, table.summit_attempt.activityId)
+			and(
+				eq(table.winActivitiesView.activityId, table.summit_attempt.activityId),
+				eq(table.winActivitiesView.summitId, table.summit_attempt.summitId)
+			)
 		)
-		.leftJoin(table.user, eq(table.user.id, table.winActivitiesView.userId))
+		.innerJoin(table.user, eq(table.user.id, table.winActivitiesView.userId))
 		.where(eq(table.winActivitiesView.summitId, parseInt(summitId)));
 
 	const get_media_for_win = win_result.map(async (win) => {
