@@ -218,6 +218,9 @@ export async function syncPhotos(userId: string, activityId: string) {
 		`activities/${activityId}?include_all_efforts=false`,
 		userId
 	);
+	if (!detail.photos || !detail.photos.primary || !detail.photos.primary.urls) {
+		return;
+	}
 	const photo = detail.photos.primary.urls['600'];
 	if (!photo) {
 		return;
