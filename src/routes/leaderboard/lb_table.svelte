@@ -9,20 +9,20 @@
 		wins: {
 			userName: string | null;
 			winAttempt: {
-				summitId: number;
-				id: number;
 				date: Date;
+				id: number;
+				summitId: number;
 				userId: string;
 				activityId: string;
 				published: boolean;
-			};
+			} | null;
 			summitName: string | null;
 		}[];
 	};
 	let { leaderboard }: { leaderboard: LeaderboardTable } = $props();
 
 	function winForUser(userId: string) {
-		return leaderboard.wins.filter((win) => win.winAttempt.userId === userId);
+		return leaderboard.wins.filter((win) => win.winAttempt?.userId === userId);
 	}
 
 	let sortedByWins = $derived.by(() => {

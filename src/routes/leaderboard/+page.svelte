@@ -1,16 +1,14 @@
-<script module lang="ts">
-</script>
-
 <script lang="ts">
+	import Navbar from '$lib/components/navbar.svelte';
+	import PoweredBy from '$lib/components/poweredby.svelte';
 	import Table from './lb_table.svelte';
-	import * as Card from '$lib/components/ui/card';
 	import Section from '$lib/components/ui/section';
-	import Gold from '$site/icons/medal1.png';
-	import Silver from '$site/icons/medal2.png';
-	import Bronze from '$site/icons/medal3.png';
+	import { page } from '$app/state';
 	import type { PageServerData } from './$types';
 
 	const { data }: { data: PageServerData } = $props();
+
+	const { user } = page.data;
 
 	// let first = $derived(data.leaderboard.wins.at(0));
 	// let second = $derived(data.leaderboard.wins.at(1));
@@ -70,11 +68,25 @@
 <!-- 		</div> -->
 <!-- 	</div> -->
 <!-- </Section> -->
-<Section sectionId="table">
-	<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none text-primary">
-		Leaderboard
-	</div>
+<div>
 	<div>
-		<Table leaderboard={data.leaderboard} />
+		<Navbar {user} />
 	</div>
-</Section>
+	<div
+		class="md:gap-y-30 mb-20 flex flex-col gap-y-20 overflow-hidden pt-28 sm:mb-32 sm:gap-y-32 md:mb-40 md:pt-32"
+	>
+		<Section sectionId="table">
+			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none text-primary">
+				Leaderboard
+			</div>
+			<div>
+				<Table leaderboard={data.leaderboard} />
+			</div>
+		</Section>
+	</div>
+	<div class="section-normal mx-auto mb-4 w-full max-w-7xl bg-base-100 px-4 sm:px-6 md:px-8">
+		<div class="flex justify-end">
+			<PoweredBy />
+		</div>
+	</div>
+</div>
