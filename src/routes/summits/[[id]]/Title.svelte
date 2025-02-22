@@ -13,8 +13,8 @@
 	} = $props();
 </script>
 
-<div class="flex items-start justify-between gap-6 xl:items-center">
-	<div class="flex flex-col flex-wrap gap-2 xl:flex-row xl:gap-4">
+<div class="flex flex-col items-center justify-between gap-1 xl:flex-row">
+	<div class="flex shrink flex-col flex-wrap gap-2 xl:flex-row xl:gap-4">
 		<h1 class="font-title mb-0 text-[clamp(1.5rem,4vw,3rem)] font-black leading-none text-primary">
 			{summit_data.summit.name}
 		</h1>
@@ -22,14 +22,14 @@
 			<span class="text-2xl font-bold text-slate-300">{summit_data.summit.alias}</span>
 		{/if}
 	</div>
-	<div class="flex items-center gap-2">
+	<div class="flex shrink-0 items-center gap-2">
 		<button
 			class="btn btn-ghost text-accent"
 			onclick={() => handleTarget(summit_data.summit.lat, summit_data.summit.long)}
 			target="_blank"
 			rel="noopener noreferrer"
 		>
-			<Crosshair class="h-8 w-8" />
+			<Crosshair class="h-6 w-6" />
 		</button>
 		<a
 			class="link-accent"
@@ -37,10 +37,10 @@
 			target="_blank"
 			rel="noopener noreferrer"
 		>
-			<Map class="h-8 w-8" />
+			<Map class="h-6 w-6" />
 		</a>
 		<button class="btn btn-ghost" onclick={handleClick}>
-			<X class="h-8 w-8" />
+			<X class="h-6 w-6" />
 		</button>
 	</div>
 </div>
