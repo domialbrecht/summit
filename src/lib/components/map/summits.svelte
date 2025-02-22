@@ -2,6 +2,7 @@
 	import { MapLibre, GeoJSON, SymbolLayer, type LayerClickInfo } from 'svelte-maplibre';
 	import solyvc from '$site/solyvc.png';
 	import trophy from '$site/icons/trophy.png';
+	import trophyF from '$site/icons/trophyF.png';
 	import type { Feature, Geometry } from 'geojson';
 	import { goto } from '$app/navigation';
 
@@ -20,6 +21,8 @@
 	}
 
 	let { handleClick } = $props();
+
+	const femaleAthletes = ['24796572', '39865757'];
 </script>
 
 <MapLibre
@@ -28,7 +31,8 @@
 	class="h-full w-full"
 	images={[
 		{ id: 'solyvc_logo', url: solyvc },
-		{ id: 'attempt_icon', url: trophy }
+		{ id: 'attempt_icon', url: trophy },
+		{ id: 'attempt_icon_female', url: trophyF }
 	]}
 	center={[7.535409043530986, 47.20735710031535]}
 	zoom={13}
@@ -45,7 +49,7 @@
 					'text-size': 14,
 					'icon-size': [
 						'case',
-						['==', ['get', 'attempt'], true], // Check if 'attempt' is true
+						['any', ['has', 'attempts'], ['boolean', ['get', 'attempts'], false]],
 						0.1, // Use this icon if true
 						0.06 // Default icon
 					],
@@ -54,8 +58,14 @@
 					'text-font': ['Noto Sans Regular'],
 					'icon-image': [
 						'case',
-						['==', ['get', 'attempt'], true], // Check if 'attempt' is true
-						'attempt_icon', // Use this icon if true
+						[
+							'all',
+							['any', ['has', 'attempts'], ['boolean', ['get', 'attempts'], false]], // Check if has attempts
+							['in', ['to-string', ['get', 'user_id']], ['literal', femaleAthletes]] // Check if athlete_id is in femaleAthletes array
+						],
+						'attempt_icon_female', // If female and has attempts
+						['any', ['has', 'attempts'], ['boolean', ['get', 'attempts'], false]],
+						'attempt_icon', // If has attempts but is not female
 						'solyvc_logo' // Default icon
 					]
 				}}

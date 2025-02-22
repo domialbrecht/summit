@@ -21,11 +21,12 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
               'elevation', elevation,
               'category', category,
               'desc', description,
-              'attempt', EXISTS (
-                SELECT 1 
-                FROM ${table.summit_attempt} 
-                WHERE ${table.summit_attempt}.summit_id = ${table.summit}.id
-                AND ${table.summit_attempt.published} = TRUE
+              'attempts', (
+                SELECT json_agg(row_to_json(wa))
+                FROM (
+                  SELECT * FROM ${table.winActivitiesView} 
+                  WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
+                ) wa
               )
             )
           )
@@ -40,6 +41,5 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
 	setHeaders({
 		'cache-control': 'public, max-age=3600, stale-while-revalidate=14400'
 	});
-
 	return json(geojson);
 };
