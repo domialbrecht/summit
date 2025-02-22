@@ -57,6 +57,13 @@
       "when": 1738146120745,
       "tag": "0007_magical_big_bertha",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1740240751757,
+      "tag": "0008_abandoned_killraven",
+      "breakpoints": true
     }
   ]
 }

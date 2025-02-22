@@ -1,0 +1,829 @@
+{
+	"id": "fa23a324-9b46-44a9-a53b-a6146546acd4",
+	"prevId": "e2d298db-5980-4e2d-8c9f-bf836093dd68",
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.strava_activity": {
+			"name": "strava_activity",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"upload_id": {
+					"name": "upload_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"distance": {
+					"name": "distance",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"moving_time": {
+					"name": "moving_time",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"elapsed_time": {
+					"name": "elapsed_time",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"total_elevation_gain": {
+					"name": "total_elevation_gain",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"type": {
+					"name": "type",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"start_date": {
+					"name": "start_date",
+					"type": "timestamp with time zone",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"average_speed": {
+					"name": "average_speed",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"max_speed": {
+					"name": "max_speed",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"average_watts": {
+					"name": "average_watts",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"summary_polyline": {
+					"name": "summary_polyline",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"linestring": {
+					"name": "linestring",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {
+				"activity_spatial_index": {
+					"name": "activity_spatial_index",
+					"columns": [
+						{
+							"expression": "linestring",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "gist",
+					"with": {}
+				}
+			},
+			"foreignKeys": {
+				"strava_activity_user_id_user_id_fk": {
+					"name": "strava_activity_user_id_user_id_fk",
+					"tableFrom": "strava_activity",
+					"tableTo": "user",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.activity_media": {
+			"name": "activity_media",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "always",
+						"name": "activity_media_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"url": {
+					"name": "url",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"activity_id": {
+					"name": "activity_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"activity_media_activity_id_strava_activity_id_fk": {
+					"name": "activity_media_activity_id_strava_activity_id_fk",
+					"tableFrom": "activity_media",
+					"tableTo": "strava_activity",
+					"columnsFrom": ["activity_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.area": {
+			"name": "area",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "always",
+						"name": "area_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {
+				"name_idx": {
+					"name": "name_idx",
+					"columns": [
+						{
+							"expression": "name",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"area_name_unique": {
+					"name": "area_name_unique",
+					"nullsNotDistinct": false,
+					"columns": ["name"]
+				}
+			},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.parse_activity_results": {
+			"name": "parse_activity_results",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "always",
+						"name": "parse_activity_results_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"activity_id": {
+					"name": "activity_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"has_match": {
+					"name": "has_match",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {
+				"activity_idx": {
+					"name": "activity_idx",
+					"columns": [
+						{
+							"expression": "activity_id",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {
+				"parse_activity_results_activity_id_strava_activity_id_fk": {
+					"name": "parse_activity_results_activity_id_strava_activity_id_fk",
+					"tableFrom": "parse_activity_results",
+					"tableTo": "strava_activity",
+					"columnsFrom": ["activity_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.session": {
+			"name": "session",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"expires_at": {
+					"name": "expires_at",
+					"type": "timestamp with time zone",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"session_user_id_user_id_fk": {
+					"name": "session_user_id_user_id_fk",
+					"tableFrom": "session",
+					"tableTo": "user",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.summit": {
+			"name": "summit",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"slug": {
+					"name": "slug",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"alias": {
+					"name": "alias",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"lat": {
+					"name": "lat",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"long": {
+					"name": "long",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"location": {
+					"name": "location",
+					"type": "geometry(point)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"elevation": {
+					"name": "elevation",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"category": {
+					"name": "category",
+					"type": "smallint",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {
+				"spatial_index": {
+					"name": "spatial_index",
+					"columns": [
+						{
+							"expression": "location",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "gist",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"summit_slug_unique": {
+					"name": "summit_slug_unique",
+					"nullsNotDistinct": false,
+					"columns": ["slug"]
+				}
+			},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.summit_attempt": {
+			"name": "summit_attempt",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "always",
+						"name": "summit_attempt_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"summit_id": {
+					"name": "summit_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"activity_id": {
+					"name": "activity_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"date": {
+					"name": "date",
+					"type": "timestamp with time zone",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"published": {
+					"name": "published",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"summit_attempt_user_id_user_id_fk": {
+					"name": "summit_attempt_user_id_user_id_fk",
+					"tableFrom": "summit_attempt",
+					"tableTo": "user",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"summit_attempt_activity_id_strava_activity_id_fk": {
+					"name": "summit_attempt_activity_id_strava_activity_id_fk",
+					"tableFrom": "summit_attempt",
+					"tableTo": "strava_activity",
+					"columnsFrom": ["activity_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.summit_profile": {
+			"name": "summit_profile",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"identity": {
+						"type": "always",
+						"name": "summit_profile_id_seq",
+						"schema": "public",
+						"increment": "1",
+						"startWith": "1",
+						"minValue": "1",
+						"maxValue": "2147483647",
+						"cache": "1",
+						"cycle": false
+					}
+				},
+				"summit_id": {
+					"name": "summit_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"slug": {
+					"name": "slug",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"linestringz": {
+					"name": "linestringz",
+					"type": "geography(LINESTRINGZ)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"data": {
+					"name": "data",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"segment": {
+					"name": "segment",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {
+				"spatial_profile_index": {
+					"name": "spatial_profile_index",
+					"columns": [
+						{
+							"expression": "linestringz",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "gist",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"summit_profile_slug_unique": {
+					"name": "summit_profile_slug_unique",
+					"nullsNotDistinct": false,
+					"columns": ["slug"]
+				}
+			},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.summits_to_areas": {
+			"name": "summits_to_areas",
+			"schema": "",
+			"columns": {
+				"summit_id": {
+					"name": "summit_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"area_id": {
+					"name": "area_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"summits_to_areas_summit_id_summit_id_fk": {
+					"name": "summits_to_areas_summit_id_summit_id_fk",
+					"tableFrom": "summits_to_areas",
+					"tableTo": "summit",
+					"columnsFrom": ["summit_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"summits_to_areas_area_id_area_id_fk": {
+					"name": "summits_to_areas_area_id_area_id_fk",
+					"tableFrom": "summits_to_areas",
+					"tableTo": "area",
+					"columnsFrom": ["area_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"summits_to_areas_summit_id_area_id_pk": {
+					"name": "summits_to_areas_summit_id_area_id_pk",
+					"columns": ["summit_id", "area_id"]
+				}
+			},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.strava_tokens": {
+			"name": "strava_tokens",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"access_token": {
+					"name": "access_token",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"refresh_token": {
+					"name": "refresh_token",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"expires_at": {
+					"name": "expires_at",
+					"type": "timestamp with time zone",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"strava_tokens_user_id_user_id_fk": {
+					"name": "strava_tokens_user_id_user_id_fk",
+					"tableFrom": "strava_tokens",
+					"tableTo": "user",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.user": {
+			"name": "user",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"first_name": {
+					"name": "first_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"last_name": {
+					"name": "last_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"strava_id": {
+					"name": "strava_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"profile": {
+					"name": "profile",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"ftp": {
+					"name": "ftp",
+					"type": "numeric",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"is_admin": {
+					"name": "is_admin",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"user_strava_id_unique": {
+					"name": "user_strava_id_unique",
+					"nullsNotDistinct": false,
+					"columns": ["strava_id"]
+				}
+			},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		}
+	},
+	"enums": {},
+	"schemas": {},
+	"sequences": {},
+	"roles": {},
+	"policies": {},
+	"views": {
+		"public.win_activities": {
+			"columns": {
+				"activity_id": {
+					"name": "activity_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"summit_id": {
+					"name": "summit_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"definition": "\nWITH earliestAttempts AS (\n    SELECT \n        \"summit_attempt\".\"summit_id\" AS summit_id,\n        MIN(\"summit_attempt\".\"date\") AS min_date\n    FROM \"summit_attempt\"\n    WHERE \"summit_attempt\".\"published\" = TRUE\n    GROUP BY \"summit_attempt\".\"summit_id\"\n)\nSELECT DISTINCT ON (\"user\".\"id\", \"summit_attempt\".\"summit_id\")\n    \"summit_attempt\".\"activity_id\" AS activity_id,\n    \"summit_attempt\".\"summit_id\" AS summit_id,\n    \"user\".\"id\" AS user_id\nFROM \"summit_attempt\"\nLEFT JOIN \"user\" ON \"user\".\"id\" = \"summit_attempt\".\"user_id\"\nINNER JOIN earliestAttempts ON \"summit_attempt\".\"summit_id\" = earliestAttempts.summit_id\nWHERE \n    \"summit_attempt\".\"published\" = TRUE\n    AND \"summit_attempt\".\"date\" >= (SELECT min_date FROM earliestAttempts WHERE earliestAttempts.summit_id = \"summit_attempt\".\"summit_id\")\n    AND \"summit_attempt\".\"date\" < (SELECT min_date FROM earliestAttempts WHERE earliestAttempts.summit_id = \"summit_attempt\".\"summit_id\") + INTERVAL '10 minute'\n",
+			"name": "win_activities",
+			"schema": "public",
+			"isExisting": false,
+			"materialized": false
+		}
+	},
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	}
+}
+
