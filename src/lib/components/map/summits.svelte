@@ -24,6 +24,7 @@
 
 <MapLibre
 	style="/komoot_mapstyle.json"
+	standardControls
 	class="h-full w-full"
 	images={[
 		{ id: 'solyvc_logo', url: solyvc },
