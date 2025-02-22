@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type maplibregl from 'maplibre-gl';
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
@@ -16,9 +17,17 @@
 	let activeSummit = $derived(data.summit_data ? data.summit_data.summit.id : null);
 	let open = $state(false);
 
+	let mapComp: maplibregl.Map | undefined = $state();
+
 	$effect(() => {
 		open = activeSummit ? true : false;
 	});
+
+	const zoomToSummit = (lat: string, long: string) => {
+		if (!mapComp) return;
+		open = false;
+		mapComp.flyTo({ center: [parseFloat(long), parseFloat(lat)], zoom: 14 });
+	};
 </script>
 
 <div>
@@ -28,14 +37,18 @@
 	<div class="flex flex-col">
 		<div class="flex flex-col">
 			<div class="h-screen w-full">
-				<SummitMap handleClick={() => (open = true)} />
+				<SummitMap bind:map={mapComp} handleClick={() => (open = true)} />
 			</div>
 			<Drawer.Root direction={'left'} bind:open>
 				<Drawer.Content contentProps={{ variant: 'left' }} class="lg:w-1/2">
 					{#if data.summit_data}
 						<div class="m-4 flex min-h-0 grow flex-col gap-6 overflow-y-auto">
 							<div class="order-first bg-base-100">
-								<Title summit_data={data.summit_data} handleClick={() => (open = false)} />
+								<Title
+									summit_data={data.summit_data}
+									handleClick={() => (open = false)}
+									handleTarget={zoomToSummit}
+								/>
 							</div>
 							<div class="flex grow flex-col gap-4">
 								<div id="summit-wins">

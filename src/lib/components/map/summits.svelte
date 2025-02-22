@@ -20,12 +20,13 @@
 		handleClick();
 	}
 
-	let { handleClick } = $props();
+	let { map = $bindable(), handleClick } = $props();
 
 	const femaleAthletes = ['24796572', '39865757'];
 </script>
 
 <MapLibre
+	bind:map
 	style="/komoot_mapstyle.json"
 	standardControls
 	class="h-full w-full"

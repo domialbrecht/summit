@@ -1,12 +1,16 @@
 <script lang="ts">
 	import type { SelectSummit, SelectArea } from '$lib/server/db/schema';
-	import { Map, X } from 'lucide-svelte';
+	import { Map, X, Crosshair } from 'lucide-svelte';
 
 	let {
 		summit_data,
-		handleClick
-	}: { summit_data: { summit: SelectSummit; areas: SelectArea[] }; handleClick: () => void } =
-		$props();
+		handleClick,
+		handleTarget
+	}: {
+		summit_data: { summit: SelectSummit; areas: SelectArea[] };
+		handleClick: () => void;
+		handleTarget: (lat: string, long: string) => void;
+	} = $props();
 </script>
 
 <div class="flex items-start justify-between gap-6 xl:items-center">
@@ -19,6 +23,14 @@
 		{/if}
 	</div>
 	<div class="flex items-center gap-2">
+		<button
+			class="btn btn-ghost text-accent"
+			onclick={() => handleTarget(summit_data.summit.lat, summit_data.summit.long)}
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			<Crosshair class="h-8 w-8" />
+		</button>
 		<a
 			class="link-accent"
 			href={`https://www.google.com/maps/search/?api=1&query=${summit_data.summit.lat},${summit_data.summit.long}`}
