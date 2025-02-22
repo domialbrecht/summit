@@ -22,12 +22,22 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
               'category', category,
               'desc', description,
               'attempts', (
-                SELECT json_agg(row_to_json(wa))
+                SELECT json_agg(wa.user_id)
                 FROM (
-                  SELECT * FROM ${table.winActivitiesView} 
+                  SELECT ${table.winActivitiesView.userId} 
+                  FROM ${table.winActivitiesView} 
                   WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
                 ) wa
+              ),
+              'has_female_attempt', (
+                SELECT EXISTS (
+                  SELECT 1
+                  FROM ${table.winActivitiesView}
+                  WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
+                  AND ${table.winActivitiesView.userId} IN ('24796572', '39865757')
+                )
               )
+
             )
           )
         )
