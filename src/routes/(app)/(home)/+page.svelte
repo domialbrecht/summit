@@ -46,6 +46,9 @@
 										>{last_attempt.summit.name}, {dt(last_attempt.summit_attempt.date)}</a
 									>
 								</div>
+								<Card.Actions class="mt-2 justify-center">
+									<Button href={`/users/${data.user.id}`}>Aui</Button>
+								</Card.Actions>
 							{:else}
 								<div class="flex items-center gap-4">
 									<img src={Dizzy} class="h-8 w-8" alt="Dizzy" />

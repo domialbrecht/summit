@@ -21,8 +21,6 @@
 	}
 
 	let { map = $bindable(), handleClick } = $props();
-
-	const femaleAthletes = ['24796572', '39865757', '104482993'];
 </script>
 
 <MapLibre
@@ -59,14 +57,9 @@
 					'text-font': ['Noto Sans Regular'],
 					'icon-image': [
 						'case',
-						['boolean', ['get', 'has_female_attempt'], false],
-						'attempt_icon_female', // If any attempt is from a female athlete
-						[
-							'case',
-							['any', ['has', 'attempts'], ['boolean', ['get', 'attempts'], false]],
-							'attempt_icon', // Default attempt icon if attempts exist
-							'solyvc_logo' // Default icon if no attempts
-						]
+						['any', ['has', 'attempts'], ['boolean', ['get', 'attempts'], false]],
+						'attempt_icon', // Default attempt icon if attempts exist
+						'solyvc_logo' // Default icon if no attempts
 					]
 				}}
 				paint={{

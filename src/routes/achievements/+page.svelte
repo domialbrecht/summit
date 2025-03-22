@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Navbar from '$lib/components/navbar.svelte';
 	import PoweredBy from '$lib/components/poweredby.svelte';
-	import Table from './lb_table.svelte';
+	import AreaCard from './area.svelte';
 	import Section from '$lib/components/ui/section';
 	import { page } from '$app/state';
 	import type { PageServerData } from './$types';
@@ -20,12 +20,20 @@
 	>
 		<Section sectionId="table">
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none text-primary">
-				Leaderboard
+				Regio Erfolge
 			</div>
-			<div>
-				<Table leaderboard={data.leaderboard} />
-			</div>
-		</Section>
+			<div class="mt-6 grid gap-6 xl:grid-cols-12">
+				{#await data.areas}
+					<div class="skeleton h-44 xl:col-span-4"></div>
+					<div class="skeleton h-44 xl:col-span-4"></div>
+					<div class="skeleton h-44 xl:col-span-4"></div>
+				{:then entries}
+					{#each entries as entry}
+						<AreaCard {...entry} />
+					{/each}
+				{/await}
+			</div></Section
+		>
 	</div>
 	<div class="section-normal mx-auto mb-4 w-full max-w-7xl bg-base-100 px-4 sm:px-6 md:px-8">
 		<div class="flex justify-end">

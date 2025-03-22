@@ -54,7 +54,9 @@
 								</div>
 							</div>
 							<div>
-								<div class="font-bold">{entry.userName}</div>
+								<a class="font-bold text-primary" href={`/users/${entry.userId}`}
+									>{entry.userName}</a
+								>
 							</div>
 						</div>
 					</td>

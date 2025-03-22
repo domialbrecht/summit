@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SolYVC from '$site/solyvc.svg';
 	import { page } from '$app/stores';
-	import { LogIn } from 'lucide-svelte';
+	import { Award, LogIn } from 'lucide-svelte';
 	import type { User } from '$lib/server/db/schema';
 	let { user }: { user: User | undefined } = $props();
 </script>
@@ -65,6 +65,17 @@
 				/><path d="M12 18v-2h-.5" /></svg
 			></a
 		>
+	</li>
+	<li>
+		<a
+			href="/achievements"
+			class="tooltip"
+			class:active={$page.url.pathname === '/achievements'}
+			data-tip="Erfolge"
+			aria-label="Erfolge"
+		>
+			<Award class="h-5 w-5" />
+		</a>
 	</li>
 	<li>
 		<a

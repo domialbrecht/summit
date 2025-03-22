@@ -28,16 +28,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
                   FROM ${table.winActivitiesView} 
                   WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
                 ) wa
-              ),
-              'has_female_attempt', (
-                SELECT EXISTS (
-                  SELECT 1
-                  FROM ${table.winActivitiesView}
-                  WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
-                  AND ${table.winActivitiesView.userId} IN ('24796572', '39865757')
-                )
               )
-
             )
           )
         )
