@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import * as table from '$lib/server/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { count, eq, and } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 
@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		const userId = params.id;
 		user_data = await db
 			.select({
-				winAttempt: table.summit_attempt,
+				winAttempt: count(table.winActivitiesView.summitId).as('winAttempt'),
 				summitName: table.summit.name,
 				summitId: table.summit_attempt.summitId
 			})
@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params }) => {
 					eq(table.summit_attempt.summitId, table.winActivitiesView.summitId)
 				)
 			)
-			.groupBy(table.summit_attempt.summitId, table.summit_attempt.id, table.summit.name)
+			.groupBy(table.summit_attempt.summitId, table.summit.name)
 			.where(eq(table.summit_attempt.userId, userId));
 	}
 
