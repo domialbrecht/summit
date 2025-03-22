@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import Section from '$lib/components/ui/section';
-	import Tremola from '$site/tremola.jpg';
+	import Bernina from '$site/bernina.jpg';
 	import Dizzy from '$site/icons/dizzy.png';
 	import Party from '$site/icons/party.png';
 	import { enhance } from '$app/forms';
@@ -135,19 +135,25 @@
 		</div>
 		<div class="xl:col-span-8">
 			<Card.Root variant="sideResponsive">
-				<figure class="grow">
-					<img src={Tremola} alt="Tremola" class="h-full" />
-				</figure>
 				<Card.Body>
 					<Card.Title>
-						Tremola
+						Berninapass
 						<div class="badge badge-accent">Hightlight</div>
 					</Card.Title>
 					<Card.Content>
-						Die Tremola ist eine der schönsten und abenteuerlichsten Strassen für passionierte
-						Zweiradfahrer. Sie wurde Anfang des 19. Jahrhunderts erbaut und zwischen 1937 und 1941
-						durch einen Belag mit Hundertausenden von Granitsteinen ersetzt. Sie windet sich mit 24
-						Kehren von Airolo hinauf zum 2106 Meter hohen Gotthardpass.
+						<div class="flex flex-wrap gap-4 md:flex-nowrap">
+							<figure class="md:w-1/2 md:shrink-0">
+								<img src={Bernina} alt="Berninapss" class="h-auto w-full" />
+							</figure>
+							<p>
+								Der Berninapass bildet - gestützt auf zahlreiche Funde wie steinzeitliche Menhire
+								mit rätselhaften Ritzzeichnungen etc. - eine jahrtausendalte Verbindung zwischen dem
+								Oberengadin und dem Puschlav bis ins Veltlin. Der Berninapass war, im Gegensatz zu
+								Splügen oder Septimer, nie eine alpenquerende Transitroute, die eine europäische
+								Bedeutung erlangt hätte. Erst die politische Entwicklung zu Beginn der Neuzeit
+								(Anfangs des 16. Jh) förderte die Bedeutung.
+							</p>
+						</div>
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>
