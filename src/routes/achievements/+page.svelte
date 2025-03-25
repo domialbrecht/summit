@@ -22,6 +22,10 @@
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none text-primary">
 				Regio Erfolge
 			</div>
+			<p class="pt-4">
+				Regio Erfolge si persönlechi Ziel e Gruppe a Päss komplett abgschlosse z ha. Derbi muesch
+				mindestens jede einisch erledigt ha. Unabhängig dervo obde z erste bisch oder nid.
+			</p>
 			<div class="mt-6 grid gap-6 xl:grid-cols-12">
 				{#await data.areas}
 					<div class="skeleton h-44 xl:col-span-4"></div>

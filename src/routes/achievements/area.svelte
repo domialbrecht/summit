@@ -17,9 +17,9 @@
 		if (completion === 0) {
 			return 'bg-slate-400';
 		} else if (completion < 25) {
-			return 'bg-orange-300';
-		} else if (completion < 50) {
 			return 'bg-red-400';
+		} else if (completion < 50) {
+			return 'bg-purple-400';
 		} else if (completion < 75) {
 			return 'bg-sky-400';
 		} else {
@@ -36,14 +36,11 @@
 		<div class="card-body items-center justify-center">
 			<Card.Title>{area.name}</Card.Title>
 			<Card.Content>
-				<div
-					class={`${color} radial-progress border-4 text-primary-content`}
-					style={`--value:${completion};`}
-					aria-valuenow={completion}
-					role="progressbar"
-				>
-					{completion}%
+				<div class="flex w-full items-center gap-2">
+					<progress class="progress progress-primary grow" value={completion} max="100"></progress>
+					<div class="badge badge-primary">{completion}%</div>
 				</div>
+				<span class="font-bold">{done}/{total}</span>
 			</Card.Content>
 		</div>
 	</a>
