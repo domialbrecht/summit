@@ -1,29 +1,27 @@
 import { db } from '$lib/server/db';
-import { eq, count, and, desc, isNotNull } from 'drizzle-orm';
+import { eq, gt, countDistinct, and } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
 async function getAreas(userId: string) {
-	//Select all summits grouped by areas. Join winAttempt as hasWin
-	return await db
+	return db
 		.select({
 			area: table.area,
-			total: count(table.summitsToAreas.summitId).as('total'),
-			hasWin: count(table.winActivitiesView.summitId).as('win')
+			done: countDistinct(table.summit_attempt.summitId).as('done'),
+			total: countDistinct(table.summitsToAreas.summitId).as('total')
 		})
 		.from(table.summitsToAreas)
-		.innerJoin(table.area, eq(table.summitsToAreas.areaId, table.area.id))
+		.innerJoin(table.area, eq(table.area.id, table.summitsToAreas.areaId))
 		.leftJoin(
-			table.winActivitiesView,
+			table.summit_attempt,
 			and(
-				eq(table.summitsToAreas.summitId, table.winActivitiesView.summitId),
-				eq(table.winActivitiesView.userId, userId)
+				eq(table.summit_attempt.summitId, table.summitsToAreas.summitId),
+				eq(table.summit_attempt.userId, userId)
 			)
 		)
-		.where(isNotNull(table.summitsToAreas.areaId))
 		.groupBy(table.area.id)
-		.orderBy(desc(count(table.winActivitiesView.summitId)));
+		.having(gt(countDistinct(table.summit_attempt.id), 0));
 }
 
 export const load: PageServerLoad = async (event) => {

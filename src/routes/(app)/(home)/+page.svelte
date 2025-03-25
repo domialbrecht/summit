@@ -22,12 +22,9 @@
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
 				Hey, <span class="text-primary">{data.user?.firstName}</span>
 			</div>
-			<div class="tooltip tooltip-accent" data-tip="Zum Projektplan">
-				<a
-					class="btn btn-sm rounded-full font-mono font-light"
-					href="https://trello.com/invite/b/676877314cec746b00490b2c/ATTIb94d4fda688120db48b9eb3e6882f973C3FC143F/solyvc-summits"
-					target="_blank"
-					rel="nofollow"><pre><code>Version {version}</code></pre></a
+			<div class="">
+				<a class="btn btn-sm rounded-full font-mono font-light" href="/news" rel="nofollow"
+					><pre><code>Neus in Version {version}!</code></pre></a
 				>
 			</div>
 		</div>

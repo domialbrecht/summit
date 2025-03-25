@@ -3,16 +3,16 @@
 	const {
 		area,
 		total,
-		hasWin
+		done
 	}: {
 		area: {
 			id: number;
 			name: string;
 		};
 		total: number;
-		hasWin: number;
+		done: number;
 	} = $props();
-	const completion = $derived(Math.ceil((hasWin / total) * 100));
+	const completion = $derived(Math.ceil((done / total) * 100));
 	const color = $derived.by(() => {
 		if (completion === 0) {
 			return 'bg-slate-400';
