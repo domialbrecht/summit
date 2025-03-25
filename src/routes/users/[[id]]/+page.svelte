@@ -21,7 +21,7 @@
 	>
 		<Section sectionId="table">
 			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none text-primary">
-				{user?.firstName}'s Päss
+				{data.user?.name}'s Päss
 			</div>
 			<div>
 				{#if data.userSummits}

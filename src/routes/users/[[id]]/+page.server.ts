@@ -6,8 +6,14 @@ import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
 	let user_data;
+	let user;
 	if (params.id) {
 		const userId = params.id;
+		user = await db
+			.select({ name: table.user.firstName })
+			.from(table.user)
+			.where(eq(table.user.id, userId));
+
 		user_data = await db
 			.select({
 				winAttempt: count(table.winActivitiesView.summitId).as('winAttempt'),
@@ -27,11 +33,12 @@ export const load: PageServerLoad = async ({ params }) => {
 			.where(eq(table.summit_attempt.userId, userId));
 	}
 
-	if (params.id && !user_data) {
+	if ((params.id && !user_data) || !user) {
 		error(404, { message: 'User not found' });
 	}
 
 	return {
+		user: user.at(0),
 		userSummits: user_data
 	};
 };
