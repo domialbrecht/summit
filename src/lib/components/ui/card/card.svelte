@@ -10,10 +10,10 @@
 				default: 'bg-base-100',
 				primary: 'bg-primary text-base-100',
 				info: 'bg-info',
-				border: 'card-bordered',
+				border: 'card-border',
 				image: 'image-full',
 				side: 'card-side',
-				sideResponsive: 'lg:card-side'
+				sideResponsive: 'card-border lg:card-side'
 			},
 			size: {
 				default: 'w-full',

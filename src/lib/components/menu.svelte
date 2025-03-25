@@ -7,13 +7,14 @@
 </script>
 
 <ul
-	class="menu menu-horizontal items-center justify-center rounded-box bg-slate-50 ring-2 ring-primary"
+	class="menu menu-horizontal rounded-box ring-primary items-center justify-center bg-slate-50 ring-2"
 >
 	<li>
 		<a
 			href="/"
 			class="tooltip"
-			class:active={$page.url.pathname === '/'}
+			class:menu-active={$page.url.pathname === '/'}
+			style="--menu-active-bg: var(--color-base-300);"
 			data-tip="Home"
 			aria-label="Home"
 		>
@@ -24,7 +25,7 @@
 		<a
 			href="/summits"
 			class="tooltip"
-			class:active={$page.url.pathname.includes('/summits')}
+			class:menu-active={$page.url.pathname.includes('/summits')}
 			data-tip="Päss"
 			aria-label="Summits"
 		>
@@ -44,7 +45,7 @@
 		<a
 			href="/leaderboard"
 			class="tooltip"
-			class:active={$page.url.pathname === '/leaderboard'}
+			class:menu-active={$page.url.pathname === '/leaderboard'}
 			data-tip="Rangliste"
 			aria-label="Rangliste"
 			><svg
@@ -70,7 +71,7 @@
 		<a
 			href="/achievements"
 			class="tooltip"
-			class:active={$page.url.pathname === '/achievements'}
+			class:menu-active={$page.url.pathname === '/achievements'}
 			data-tip="Erfolge"
 			aria-label="Erfolge"
 		>

@@ -6,9 +6,9 @@
 
 	import SolYVC from '$site/solyvc.svg';
 	import Start from '$site/icons/finish.png';
+	import Trophy from '$site/icons/trophy.png';
 	import Camera from '$site/icons/camera.png';
 	import Tup from '$site/icons/tup.png';
-	import Trophy from '$site/icons/trophy.png';
 	import WomanBike from '$site/icons/womanbike.png';
 	import Strava from '$lib/components/icons/strava.svelte';
 
@@ -20,10 +20,10 @@
 		<Navbar {user} />
 	</div>
 	<div
-		class="md:gap-y-30 mb-20 flex flex-col gap-y-20 overflow-hidden pt-20 sm:mb-32 sm:gap-y-32 sm:pt-28 md:mb-40 md:pt-32"
+		class="mb-20 flex flex-col gap-y-20 overflow-hidden pt-20 sm:mb-32 sm:gap-y-32 sm:pt-28 md:mb-40 md:gap-y-30 md:pt-32"
 	>
 		<Section size="small" id="rules">
-			<h1 class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+			<h1 class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 				<span class="text-primary">Summit </span> Challenge
 			</h1>
 			<p class="mt-4">
@@ -107,7 +107,7 @@
 							pro Jahr.
 						</li>
 					</ul>
-					<p class="font-bold text-primary">
+					<p class="text-primary font-bold">
 						Du chasch aso <strong>aui</strong> dini Passfahrte ufelade. Ou wenn bimne Pass scho e Pokal
 						weg isch.
 					</p>
@@ -133,7 +133,7 @@
 			</div>
 		</Section>
 	</div>
-	<div class="section-normal mx-auto mb-4 w-full max-w-7xl bg-base-100 px-4 sm:px-6 md:px-8">
+	<div class="section-normal bg-base-100 mx-auto mb-4 w-full max-w-7xl px-4 sm:px-6 md:px-8">
 		<div class="flex justify-end">
 			<PoweredBy />
 		</div>

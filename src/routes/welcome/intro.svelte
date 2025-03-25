@@ -1,12 +1,12 @@
 <div class="w-full px-2 py-40 lg:px-10">
 	<div class="text-center">
 		<h2
-			class="font-title relative z-[2] mx-auto text-[clamp(2rem,6vw,4.5rem)] font-black leading-none max-[1279px]:!tracking-normal"
+			class="font-title relative z-2 mx-auto text-[clamp(2rem,6vw,4.5rem)] font-black leading-none max-[1279px]:tracking-normal!"
 			style="letter-spacing:0.23rem"
 		>
 			D Challenge startet<br />
 			<span
-				class="bg-primary bg-clip-text [-webkit-text-fill-color:transparent] max-[1279px]:!tracking-normal"
+				class="bg-primary bg-clip-text [-webkit-text-fill-color:transparent] max-[1279px]:tracking-normal!"
 				>am 01.01.2025</span
 			>
 		</h2>
