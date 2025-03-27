@@ -18,8 +18,6 @@
 		<button
 			class="btn btn-ghost text-accent"
 			onclick={() => handleTarget(summit_data.summit.lat, summit_data.summit.long)}
-			target="_blank"
-			rel="noopener noreferrer"
 		>
 			<Crosshair class="h-6 w-6" />
 		</button>
@@ -36,7 +34,7 @@
 		</button>
 	</div>
 	<div class="flex shrink flex-col flex-wrap gap-2 xl:flex-row xl:gap-4">
-		<h1 class="font-title mb-0 text-[clamp(1.5rem,4vw,3rem)] font-black leading-none text-primary">
+		<h1 class="font-title text-primary mb-0 text-[clamp(1.5rem,4vw,3rem)] leading-none font-black">
 			{summit_data.summit.name}
 		</h1>
 		{#if summit_data.summit.alias}
@@ -44,7 +42,7 @@
 		{/if}
 	</div>
 </div>
-<div class="mt-4 flex gap-2">
+<div class="mt-4 flex flex-wrap gap-2">
 	{#each summit_data.areas as area}
 		<span class="badge badge-info">{area.name}</span>
 	{/each}

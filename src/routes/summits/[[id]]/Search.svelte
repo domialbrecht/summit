@@ -39,7 +39,7 @@
 </script>
 
 <div
-	class="fixed right-2 bottom-10 left-2 z-10 flex w-auto justify-end px-2 lg:top-2 lg:right-0 lg:left-10"
+	class="fixed right-2 bottom-10 left-2 z-10 flex w-auto justify-end px-2 lg:top-2 lg:right-auto lg:bottom-auto lg:left-10"
 >
 	<Combobox.Root
 		onValueChange={(value) => {
