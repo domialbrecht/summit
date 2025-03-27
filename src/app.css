@@ -1,13 +1,16 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-@plugin "daisyui";
+@plugin "daisyui" {
+	themes: soly --default;
+}
 
 @plugin "daisyui/theme" {
 	name: 'soly';
 	default: true;
+	prefersdark: false;
 	prefersdark: true;
-	color-scheme: 'light';
+	color-scheme: 'dark';
 	--color-base-100: oklch(100% 0 0);
 	--color-base-200: oklch(96% 0.007 247.896);
 	--color-base-300: oklch(92% 0.013 255.508);
