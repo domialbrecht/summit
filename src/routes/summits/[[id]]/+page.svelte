@@ -8,6 +8,7 @@
 	import Wins from './Wins.svelte';
 	import Free from './Free.svelte';
 	import Title from './Title.svelte';
+	import Search from './Search.svelte';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
 
@@ -45,6 +46,11 @@
 	<div class="flex flex-col">
 		<div class="flex flex-col">
 			<div class="h-screen w-full">
+				<Search
+					handleSearch={(lat: string, long: string) => {
+						zoomToSummit(lat, long);
+					}}
+				/>
 				<SummitMap bind:map={mapComp} handleClick={() => (open = true)} />
 			</div>
 			<Drawer.Root direction={'left'} bind:open>

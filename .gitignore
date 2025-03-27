@@ -8,6 +8,8 @@ node_modules
 /.svelte-kit
 /build
 
+/static/summit-index.json
+
 # OS
 .DS_Store
 Thumbs.db
@@ -31,3 +33,4 @@ doc/response_stream.json
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
