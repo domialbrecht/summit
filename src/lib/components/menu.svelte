@@ -71,7 +71,7 @@
 		<a
 			href="/achievements"
 			class="tooltip"
-			class:menu-active={$page.url.pathname === '/achievements'}
+			class:menu-active={$page.url.pathname.includes('/achievements')}
 			data-tip="Erfolge"
 			aria-label="Erfolge"
 		>
