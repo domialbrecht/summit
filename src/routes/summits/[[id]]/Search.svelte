@@ -57,7 +57,7 @@
 			<Combobox.Input
 				bind:ref={searchInput}
 				oninput={(e) => (query = e.currentTarget.value)}
-				class="input w-full lg:w-56"
+				class="input w-full text-lg lg:w-56"
 				placeholder="Sueche"
 				aria-label="Sueche"
 			/>
