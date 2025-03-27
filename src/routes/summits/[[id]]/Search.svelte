@@ -17,7 +17,7 @@
 
 	let fuse: Fuse<Summit> | undefined;
 	onMount(async () => {
-		const res = await fetch('/summit-index.json');
+		const res = await fetch('/summits/index');
 		if (!res.ok) {
 			console.error('Failed to fetch summit index');
 			return;
