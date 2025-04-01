@@ -67,17 +67,19 @@
 			></a
 		>
 	</li>
-	<li>
-		<a
-			href="/achievements"
-			class="tooltip"
-			class:menu-active={$page.url.pathname.includes('/achievements')}
-			data-tip="Erfolge"
-			aria-label="Erfolge"
-		>
-			<Award class="h-5 w-5" />
-		</a>
-	</li>
+	{#if user}
+		<li>
+			<a
+				href="/achievements"
+				class="tooltip"
+				class:menu-active={$page.url.pathname.includes('/achievements')}
+				data-tip="Erfolge"
+				aria-label="Erfolge"
+			>
+				<Award class="h-5 w-5" />
+			</a>
+		</li>
+	{/if}
 	<li>
 		<a
 			href={user ? '/logout' : '/login'}

@@ -4,12 +4,13 @@ import { count, eq, and } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ parent, params }) => {
+	const { user } = await parent();
 	let user_data;
-	let user;
+	let statuser;
 	if (params.id) {
 		const userId = params.id;
-		user = await db
+		statuser = await db
 			.select({ name: table.user.firstName })
 			.from(table.user)
 			.where(eq(table.user.id, userId));
@@ -33,12 +34,13 @@ export const load: PageServerLoad = async ({ params }) => {
 			.where(eq(table.summit_attempt.userId, userId));
 	}
 
-	if ((params.id && !user_data) || !user) {
+	if ((params.id && !user_data) || !statuser) {
 		error(404, { message: 'User not found' });
 	}
 
 	return {
-		user: user.at(0),
+		loggedin: user,
+		user: statuser.at(0),
 		userSummits: user_data
 	};
 };
