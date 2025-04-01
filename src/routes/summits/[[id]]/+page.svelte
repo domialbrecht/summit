@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type maplibregl from 'maplibre-gl';
-	import SolYVC from '$site/solyvc.svg';
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
@@ -41,9 +40,15 @@
 </script>
 
 <svelte:head>
-	<title>{data.summit_data?.summit.name}</title>
-	<meta property="og:title" content={data.summit_data?.summit.name} />
-	<meta property="og:description" content={data.summit_data?.summit.name} />
+	<title>{data.summit_data ? data.summit_data.summit.name : 'SolyVC Summits'}</title>
+	<meta
+		property="og:title"
+		content={data.summit_data ? data.summit_data.summit.name : 'SolyVC Summits'}
+	/>
+	<meta
+		property="og:description"
+		content={data.summit_data ? data.summit_data.summit.name : 'SolyVC Summits'}
+	/>
 	<meta property="og:image" content="https://summit.solyvc.com/android-chrome-512x512.png" />
 	<meta property="og:url" content="https://summit.solyvc.com/android-chrome-512x512.png" />
 	<meta property="og:type" content="website" />
