@@ -231,8 +231,7 @@ LEFT JOIN ${user} ON ${user.id} = ${summit_attempt.userId}
 INNER JOIN earliestAttempts ON ${summit_attempt.summitId} = earliestAttempts.summit_id
 WHERE 
     ${summit_attempt.published} = TRUE
-    AND ${summit_attempt.date} >= (SELECT min_date FROM earliestAttempts WHERE earliestAttempts.summit_id = ${summit_attempt.summitId})
-    AND ${summit_attempt.date} < (SELECT min_date FROM earliestAttempts WHERE earliestAttempts.summit_id = ${summit_attempt.summitId}) + INTERVAL '10 minute'
+    AND DATE(${summit_attempt.date}) = (SELECT DATE(min_date) FROM earliestAttempts WHERE earliestAttempts.summit_id = ${summit_attempt.summitId})
 `);
 
 export type Session = typeof session.$inferSelect;
