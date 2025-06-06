@@ -8,17 +8,15 @@
 </script>
 
 <div class="flex flex-col gap-2 lg:flex-row lg:items-center">
-	<div class="flex items-center justify-between gap-3">
-		<div class="avatar">
-			<div class="mask mask-squircle h-6 w-6 lg:h-12 lg:w-12">
-				<img src={Trophy} alt="Trophy" />
-			</div>
-		</div>
-	</div>
 	<div class="flex grow flex-col gap-3">
 		{#each wins as win}
 			<div class="flex items-center justify-between gap-2">
-				<div>
+				<div class="flex items-center gap-1">
+					<div class="avatar">
+						<div class="mask mask-squircle h-6 w-6 lg:h-10 lg:w-10">
+							<img src={Trophy} alt="Trophy" />
+						</div>
+					</div>
 					<div class="font-bold">{win.username}</div>
 					<div class="flex gap-2">
 						<div class="lg:text-md text-sm font-bold">{d(win.winAttempt.date)}</div>
