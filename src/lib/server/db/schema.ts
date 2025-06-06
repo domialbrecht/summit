@@ -207,6 +207,9 @@ export const winActivitiesView = pgView('win_activities', {
 	activityId: text('activity_id')
 		.notNull()
 		.references(() => activity.id),
+	attemptId: text('attempt_id')
+		.notNull()
+		.references(() => summit_attempt.id),
 	summitId: integer('summit_id')
 		.notNull()
 		.references(() => summit.id),
@@ -224,6 +227,7 @@ WITH earliestAttempts AS (
 )
 SELECT DISTINCT ON (${user.id}, ${summit_attempt.summitId})
     ${summit_attempt.activityId} AS activity_id,
+    ${summit_attempt.id} AS attempt_id,
     ${summit_attempt.summitId} AS summit_id,
     ${user.id} AS user_id
 FROM ${summit_attempt}
@@ -231,7 +235,8 @@ LEFT JOIN ${user} ON ${user.id} = ${summit_attempt.userId}
 INNER JOIN earliestAttempts ON ${summit_attempt.summitId} = earliestAttempts.summit_id
 WHERE 
     ${summit_attempt.published} = TRUE
-    AND DATE(${summit_attempt.date}) = (SELECT DATE(min_date) FROM earliestAttempts WHERE earliestAttempts.summit_id = ${summit_attempt.summitId})
+    AND DATE(${summit_attempt.date}) = DATE(earliestAttempts.min_date)
+ORDER BY user_id, ${summit_attempt.summitId}, ${summit_attempt.date}
 `);
 
 export type Session = typeof session.$inferSelect;

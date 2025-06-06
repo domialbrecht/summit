@@ -63,13 +63,7 @@ async function getSummitWins(summitId: string | undefined): Promise<UserSummitWi
 			profile: table.user.profile
 		})
 		.from(table.winActivitiesView)
-		.innerJoin(
-			table.summit_attempt,
-			and(
-				eq(table.winActivitiesView.activityId, table.summit_attempt.activityId),
-				eq(table.winActivitiesView.summitId, table.summit_attempt.summitId)
-			)
-		)
+		.innerJoin(table.summit_attempt, eq(table.winActivitiesView.attemptId, table.summit_attempt.id))
 		.innerJoin(table.user, eq(table.user.id, table.winActivitiesView.userId))
 		.where(eq(table.winActivitiesView.summitId, parseInt(summitId)));
 
