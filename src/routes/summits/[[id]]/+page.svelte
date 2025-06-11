@@ -24,11 +24,14 @@
 		if (!activeSummit) {
 			return;
 		}
+		const { lat, long } = activeSummit;
 		if (page.url.searchParams.has('reveal')) {
-			const { lat, long } = activeSummit;
 			zoomToSummit(lat, long);
 		} else {
 			open = true;
+			if (mapComp) {
+				mapComp.flyTo({ center: [parseFloat(long), parseFloat(lat)], zoom: 14 });
+			}
 		}
 	});
 
