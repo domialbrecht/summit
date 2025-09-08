@@ -63,7 +63,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	if (existingUser) {
 		// Update profile, src might change
 		const profile = userResult.profile;
-		db.update(table.user).set({ profile }).where(eq(table.user.id, stravaId));
+		await db.update(table.user).set({ profile }).where(eq(table.user.id, stravaId));
 
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, existingUser.id);
