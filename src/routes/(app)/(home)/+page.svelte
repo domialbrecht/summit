@@ -19,7 +19,7 @@
 <Section sectionId="welcome">
 	<div class="mt-6 grid gap-6 xl:grid-cols-12">
 		<div class="flex items-center gap-4 xl:col-span-12">
-			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 				Hey, <span class="text-primary">{data.user?.firstName}</span>
 			</div>
 			<div class="">
@@ -63,6 +63,7 @@
 					<Card.Title>Dini Aktivitäte</Card.Title>
 					<Card.Content>
 						<Button href="/activities/me">Link</Button>
+						<Button variant="secondary" href="/report">Manuell erstelle</Button>
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>
@@ -110,7 +111,7 @@
 									>
 									<div class="tooltip" data-tip={`${attempt.firstName} ${attempt.lastName}`}>
 										<div class="avatar">
-											<div class="mask mask-circle w-8">
+											<div class="mask w-8 mask-circle">
 												<img
 													loading="lazy"
 													class="pointer-events-none transition-all duration-500 ease-in-out"

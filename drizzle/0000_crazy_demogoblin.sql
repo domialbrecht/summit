@@ -1,3 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 CREATE TABLE "strava_activity" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,

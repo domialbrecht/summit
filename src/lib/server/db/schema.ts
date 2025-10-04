@@ -1,4 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
+import { createInsertSchema } from 'drizzle-zod';
 import {
 	pgTable,
 	text,
@@ -249,3 +250,5 @@ export type SelectArea = typeof area.$inferSelect;
 export type SelectSummit = typeof summit.$inferSelect;
 export type SelectSummitProfile = typeof summit_profile.$inferSelect;
 export type SelectSummitAttempt = typeof summit_attempt.$inferSelect;
+
+export const summitAttemptInsertSchema = createInsertSchema(summit_attempt);
