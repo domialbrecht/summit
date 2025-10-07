@@ -42,6 +42,7 @@ export const load: PageServerLoad = async (event) => {
 		.where(and(eq(table.activity.userId, user.id), eq(table.summit_attempt.published, true)))
 		.groupBy(table.activity.id, table.activity.name, table.activity.startDate);
 	return {
-		activities: result
+		activities: result,
+		user: user
 	};
 };

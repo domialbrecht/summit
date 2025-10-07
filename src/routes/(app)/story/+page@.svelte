@@ -5,6 +5,7 @@
 	import { dt } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
 	import { BikeIcon } from 'lucide-svelte';
+	import Navbar from '$lib/components/navbar.svelte';
 
 	const { data }: { data: PageServerData } = $props();
 
@@ -89,14 +90,15 @@
 </script>
 
 <div class="grid h-screen w-full grid-cols-1 md:grid-cols-2">
+	<Navbar user={data.user} />
 	<div class="h-[50vh] md:h-full">
 		<Map bind:map={mapComp} />
 	</div>
 	<div
-		class="-order-1 flex h-[50vh] max-h-[50vh] flex-col overflow-scroll px-12 md:order-2 md:h-full md:max-h-screen"
+		class="flex h-[50vh] max-h-[50vh] flex-col overflow-scroll px-12 md:-order-1 md:h-full md:max-h-screen"
 		bind:this={scroller}
 	>
-		<div class="font-title pt-14 text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
+		<div class="font-title pt-12 text-[clamp(1.5rem,6vw,4rem)] leading-none font-black md:pt-12">
 			<span
 				class="animate-pulse bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text font-extrabold text-transparent"
 				>2025 Wrapped</span
