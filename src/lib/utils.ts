@@ -24,16 +24,41 @@ export function hr(m: string | null) {
 	return (parseInt(m) / 60).toFixed(0) + ' Min';
 }
 
+export function season(d: Date) {
+	const month = d.getMonth() + 1;
+	if (month >= 3 && month <= 5) return 'spring';
+	if (month >= 6 && month <= 8) return 'summer';
+	if (month >= 9 && month <= 11) return 'autumn';
+	return 'winter';
+}
+
+export function seasonEmoji(d: Date) {
+	const s = season(d);
+	if (s === 'spring') return '🌸';
+	if (s === 'summer') return '☀️';
+	if (s === 'autumn') return '🍂';
+	return '❄️';
+}
+
 export function dt(d: Date) {
-	return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+	const day = d.getDate().toString().padStart(2, '0');
+	const month = d.toLocaleString('de-CH', { month: 'short' });
+	const year = d.getFullYear().toString().slice(-2);
+	const time = d.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+	return `${day}. ${month} ${year} ${time}`;
 }
 
 export function d(d: Date) {
-	return `${d.toLocaleDateString()}`;
+	const day = d.getDate().toString().padStart(2, '0');
+	const month = d.toLocaleString('de-CH', { month: 'short' });
+	const year = d.getFullYear().toString().slice(-2);
+
+	return `${day}. ${month} ${year}`;
 }
 
 export function t(d: Date) {
-	return `${d.toLocaleTimeString()}`;
+	return d.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
 // Function to assign color based on gradient

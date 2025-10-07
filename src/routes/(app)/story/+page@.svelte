@@ -2,7 +2,7 @@
 	import Map from './StoryMap.svelte';
 	import type maplibregl from 'maplibre-gl';
 	import type { PageServerData } from './$types';
-	import { dt } from '$lib/utils';
+	import { dt, hr, km, seasonEmoji } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
 	import { BikeIcon } from 'lucide-svelte';
 	import Navbar from '$lib/components/navbar.svelte';
@@ -34,7 +34,16 @@
 		'bg-blue-300',
 		'bg-purple-300',
 		'bg-red-300',
-		'bg-indigo-300'
+		'bg-indigo-300',
+		'bg-teal-300',
+		'bg-amber-300',
+		'bg-lime-300',
+		'bg-cyan-300',
+		'bg-fuchsia-300',
+		'bg-emerald-300',
+		'bg-violet-300',
+		'bg-rose-300',
+		'bg-sky-300'
 	];
 
 	const getColor = (index: number) => {
@@ -108,15 +117,21 @@
 				<div class="group min-h-[30vh] w-full" data-card>
 					<div class="flex flex-col gap-3 rounded-b-2xl shadow-2xl">
 						<div
-							class={`flex justify-between rounded-t-2xl px-4 py-2 text-2xl md:text-3xl ${getColor(index)}`}
+							class={`flex justify-between rounded-t-2xl px-4 py-2 text-xl md:text-2xl ${getColor(index)}`}
 						>
 							<p class="">{activity.activityName}</p>
 							<p class="">{dt(activity.date)}</p>
 						</div>
-						<div class="flex flex-col gap-3 p-4">
+						<div class="flex flex-col gap-3 px-4 py-2">
+							<div class="flex justify-between border-b border-dashed border-b-slate-900 pb-2">
+								<div class="mb-2 flex items-center gap-2 text-2xl text-slate-700">
+									<span>{km(activity.activityDistance!)}, {hr(activity.activityMovingTime!)}</span>
+								</div>
+								<span class="pr-2 text-4xl">{seasonEmoji(activity.date)}</span>
+							</div>
 							{#each activity.attempts as item}
 								<div data-longitude={item.long} data-latitude={item.lat}>
-									<div class="flex justify-between gap-2">
+									<div class="flex justify-between gap-2 text-slate-800">
 										<p class="text-2xl">{item.summitName}</p>
 										<button
 											onclick={() => zoomToSummit(item.lat, item.long)}

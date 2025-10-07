@@ -16,6 +16,8 @@ export const load: PageServerLoad = async (event) => {
 		.select({
 			activityId: table.activity.id,
 			activityName: table.activity.name,
+			activityDistance: table.activity.distance,
+			activityMovingTime: table.activity.movingTime,
 			date: table.activity.startDate,
 			attempts: sql<
 				{
