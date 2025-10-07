@@ -62,6 +62,7 @@
 				}
 			},
 			{
+				root: scroller,
 				rootMargin: '0px 0px -85% 0px',
 				threshold: 0
 			}
