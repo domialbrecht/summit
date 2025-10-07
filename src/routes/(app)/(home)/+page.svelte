@@ -102,9 +102,9 @@
 			<Card.Root class="bg-base-content hover:bg-primary min-h-44">
 				<a
 					href="/story"
-					class="flex h-full w-full grow cursor-pointer items-center justify-center text-white"
+					class="flex h-full w-full grow cursor-pointer items-center justify-center p-6 text-white"
 				>
-					<p class="text-4xl font-extrabold">Dini SolyVC Summit Story</p>
+					<p class="text-2xl font-extrabold md:text-4xl">Dini SolyVC Summit Story</p>
 				</a>
 			</Card.Root>
 		</div>
