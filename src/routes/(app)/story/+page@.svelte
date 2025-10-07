@@ -98,9 +98,9 @@
 			Im 2025 hesch du {getAttemptsCount()} Pässe gmacht! Nice! Lueg dir dis Jahr nomau im Rückblick
 			a..
 		</p>
-		<div class="mt-8 flex grow flex-col gap-8">
+		<div class="mt-8 flex grow flex-col gap-36">
 			{#each data.activities as activity, index}
-				<div class="group h-[50vh] w-full md:h-[80vh]" data-card>
+				<div class="group min-h-[30vh] w-full" data-card>
 					<div class="flex flex-col gap-3 rounded-b-2xl shadow-2xl">
 						<div
 							class={`flex justify-between rounded-t-2xl px-4 py-2 text-2xl md:text-3xl ${getColor(index)}`}
