@@ -74,6 +74,10 @@
 	});
 
 	onDestroy(() => observer?.disconnect());
+
+	const getAttemptsCount = () => {
+		return data.activities.reduce((sum, activity) => sum + activity.attempts.length, 0);
+	};
 </script>
 
 <div class="grid h-screen w-full grid-cols-1 md:grid-cols-2">
@@ -91,7 +95,7 @@
 			>
 		</div>
 		<p class="pt-4 text-xl">
-			Im 2025 hesch du {data.activities.length} Pässe gmacht! Nice! Lueg dir dis Jahr nomau im Rückblick
+			Im 2025 hesch du {getAttemptsCount()} Pässe gmacht! Nice! Lueg dir dis Jahr nomau im Rückblick
 			a..
 		</p>
 		<div class="mt-8 flex grow flex-col gap-8">
