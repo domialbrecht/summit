@@ -23,8 +23,10 @@
 				Hey, <span class="text-primary">{data.user?.firstName}</span>
 			</div>
 			<div class="">
-				<a class="btn btn-sm rounded-full font-mono font-light" href="/news" rel="nofollow"
-					><pre><code>Neus in Version {version}!</code></pre></a
+				<a
+					class="btn btn-sm btn-primary rounded-full font-mono font-light"
+					href="/news"
+					rel="nofollow"><pre><code>Neus in Version {version}!</code></pre></a
 				>
 			</div>
 		</div>
@@ -96,6 +98,16 @@
 				</Card.Body>
 			</Card.Root>
 		</div>
+		<div class="xl:col-span-12">
+			<Card.Root class="bg-base-content hover:bg-primary min-h-44">
+				<a
+					href="/story"
+					class="flex h-full w-full grow cursor-pointer items-center justify-center text-white"
+				>
+					<p class="text-4xl font-extrabold">Dini SolyVC Summit Story</p>
+				</a>
+			</Card.Root>
+		</div>
 		<div class="xl:col-span-4">
 			<Card.Root variant="border" class="min-h-44">
 				<Card.Body>
@@ -111,7 +123,7 @@
 									>
 									<div class="tooltip" data-tip={`${attempt.firstName} ${attempt.lastName}`}>
 										<div class="avatar">
-											<div class="mask w-8 mask-circle">
+											<div class="mask mask-circle w-8">
 												<img
 													loading="lazy"
 													class="pointer-events-none transition-all duration-500 ease-in-out"
