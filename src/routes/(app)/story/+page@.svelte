@@ -66,11 +66,19 @@
 					}
 				}
 			},
-			{ root: scroller, threshold: 0.5 }
+			{
+				rootMargin: '0px 0px -85% 0px',
+				threshold: 0
+			}
 		);
 
 		// observe all cards inside the scroller
 		scroller.querySelectorAll<HTMLElement>('[data-card]').forEach((el) => observer.observe(el));
+
+		if (data.activities.length > 0) {
+			//Scroll to first card
+			zoomToSummit(data.activities[0].attempts[0].lat, data.activities[0].attempts[0].long);
+		}
 	});
 
 	onDestroy(() => observer?.disconnect());
