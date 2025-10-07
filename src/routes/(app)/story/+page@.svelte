@@ -41,8 +41,6 @@
 		return colorList[index % colorList.length];
 	};
 
-	const processed = new WeakSet<HTMLElement>();
-
 	onMount(() => {
 		observer = new IntersectionObserver(
 			(entries) => {
@@ -51,17 +49,13 @@
 					if (entry.isIntersecting) {
 						el.classList.add('active');
 
-						if (!processed.has(el)) {
-							processed.add(el);
-
-							// Read lat and long from the first child with data-latitude and data-longitude attributes
-							const locEl = el.querySelector<HTMLElement>('[data-latitude][data-longitude]');
-							if (locEl) {
-								const lat = locEl.getAttribute('data-latitude');
-								const long = locEl.getAttribute('data-longitude');
-								if (lat && long) {
-									zoomToSummit(lat, long);
-								}
+						// Read lat and long from the first child with data-latitude and data-longitude attributes
+						const locEl = el.querySelector<HTMLElement>('[data-latitude][data-longitude]');
+						if (locEl) {
+							const lat = locEl.getAttribute('data-latitude');
+							const long = locEl.getAttribute('data-longitude');
+							if (lat && long) {
+								zoomToSummit(lat, long);
 							}
 						}
 					}
