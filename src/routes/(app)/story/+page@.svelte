@@ -124,10 +124,10 @@
 						</div>
 						<div class="flex flex-col gap-3 px-4 py-2">
 							<div class="flex justify-between border-b border-dashed border-b-slate-900 pb-2">
-								<div class="mb-2 flex items-center gap-2 text-2xl text-slate-700">
+								<div class="mb-2 flex items-center gap-2 text-lg text-slate-700 md:text-2xl">
 									<span>{km(activity.activityDistance!)}, {hr(activity.activityMovingTime!)}</span>
 								</div>
-								<span class="pr-2 text-4xl">{seasonEmoji(activity.date)}</span>
+								<span class="pr-2 text-2xl md:text-4xl">{seasonEmoji(activity.date)}</span>
 							</div>
 							{#each activity.attempts as item}
 								<div data-longitude={item.long} data-latitude={item.lat}>

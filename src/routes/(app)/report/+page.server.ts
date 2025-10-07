@@ -1,13 +1,12 @@
 import type { Actions, PageServerLoad } from './$types';
 import * as table from '$lib/server/db/schema';
-
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { message, superValidate } from 'sveltekit-superforms';
 import { db } from '$lib/server/db';
 import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
-	const form = await superValidate(zod(table.summitAttemptInsertSchema));
+	const form = await superValidate(zod4(table.summitAttemptInsertSchema));
 	const { user } = await event.parent();
 
 	return { form, user };
@@ -15,7 +14,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions = {
 	default: async ({ request }) => {
-		const form = await superValidate(request, zod(table.summitAttemptInsertSchema));
+		const form = await superValidate(request, zod4(table.summitAttemptInsertSchema));
 		if (!form.valid) {
 			return fail(400, { form });
 		}
