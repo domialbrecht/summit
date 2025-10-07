@@ -2,10 +2,19 @@
 	import Map from './StoryMap.svelte';
 	import type maplibregl from 'maplibre-gl';
 	import type { PageServerData } from './$types';
-	import { dt, km } from '$lib/utils';
+	import { dt } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
+	import { BikeIcon } from 'lucide-svelte';
 
 	const { data }: { data: PageServerData } = $props();
+
+	const milestones = [50, 100, 150, 200];
+	const milestoneTexts: Record<number, string> = {
+		50: 'Super Start ins Abenteuer!',
+		100: 'Witer soooooooo',
+		150: 'Du bisch e wahre Bergziege!',
+		200: 'Unglaublich – du bisch e Legende!'
+	};
 
 	let mapComp: maplibregl.Map | undefined = $state();
 
@@ -17,6 +26,22 @@
 	let observer: IntersectionObserver;
 	let scroller: HTMLDivElement;
 
+	let colorList = [
+		'bg-pink-300',
+		'bg-yellow-300',
+		'bg-green-300',
+		'bg-blue-300',
+		'bg-purple-300',
+		'bg-red-300',
+		'bg-indigo-300'
+	];
+
+	const getColor = (index: number) => {
+		return colorList[index % colorList.length];
+	};
+
+	const processed = new WeakSet<HTMLElement>();
+
 	onMount(() => {
 		observer = new IntersectionObserver(
 			(entries) => {
@@ -24,30 +49,44 @@
 					const el = entry.target as HTMLElement;
 					if (entry.isIntersecting) {
 						el.classList.add('active');
-						const lat = el.dataset.latitude;
-						const long = el.dataset.longitude;
-						if (lat && long) zoomToSummit(lat, long);
+
+						if (!processed.has(el)) {
+							processed.add(el);
+
+							// Read lat and long from the first child with data-latitude and data-longitude attributes
+							const locEl = el.querySelector<HTMLElement>('[data-latitude][data-longitude]');
+							if (locEl) {
+								const lat = locEl.getAttribute('data-latitude');
+								const long = locEl.getAttribute('data-longitude');
+								if (lat && long) {
+									zoomToSummit(lat, long);
+								}
+							}
+						}
 					}
 				}
 			},
-			{ root: scroller, threshold: 0.5 } // 50% visible inside our scroll area
+			{ root: scroller, threshold: 0.5 }
 		);
 
 		// observe all cards inside the scroller
-		scroller.querySelectorAll<HTMLElement>('.card').forEach((el) => observer.observe(el));
+		scroller.querySelectorAll<HTMLElement>('[data-card]').forEach((el) => observer.observe(el));
 	});
 
 	onDestroy(() => observer?.disconnect());
 </script>
 
-<div class="grid h-screen w-full grid-cols-2">
-	<div class="h-full">
+<div class="grid h-screen w-full grid-cols-1 md:grid-cols-2">
+	<div class="h-[50vh] md:h-full">
 		<Map bind:map={mapComp} />
 	</div>
-	<div class="full flex max-h-screen flex-col overflow-scroll px-12" bind:this={scroller}>
-		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
+	<div
+		class="-order-1 flex h-[50vh] max-h-[50vh] flex-col overflow-scroll px-12 md:order-2 md:h-full md:max-h-screen"
+		bind:this={scroller}
+	>
+		<div class="font-title pt-14 text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 			<span
-				class="animate-pulse bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text text-5xl font-extrabold text-transparent"
+				class="animate-pulse bg-linear-to-r from-pink-500 to-violet-500 bg-clip-text font-extrabold text-transparent"
 				>2025 Wrapped</span
 			>
 		</div>
@@ -56,19 +95,44 @@
 			a..
 		</p>
 		<div class="mt-8 flex grow flex-col gap-8">
-			{#each data.activities as item}
-				<div
-					class="card [&.active]:bg-primary h-100 w-full shadow-sm transition-colors lg:h-220 [&.active]:text-white"
-					data-longitude={item.long}
-					data-latitude={item.lat}
-				>
-					<div class="flex h-full items-center justify-center">
-						<p class="text-5xl">{item.summitName}</p>
+			{#each data.activities as activity, index}
+				<div class="group h-[50vh] w-full md:h-[80vh]" data-card>
+					<div class="flex flex-col gap-3 rounded-b-2xl shadow-2xl">
+						<div
+							class={`flex justify-between rounded-t-2xl px-4 py-2 text-2xl md:text-3xl ${getColor(index)}`}
+						>
+							<p class="">{activity.activityName}</p>
+							<p class="">{dt(activity.date)}</p>
+						</div>
+						<div class="flex flex-col gap-3 p-4">
+							{#each activity.attempts as item}
+								<div data-longitude={item.long} data-latitude={item.lat}>
+									<div class="flex justify-between gap-2">
+										<p class="text-2xl">{item.summitName}</p>
+										<button
+											onclick={() => zoomToSummit(item.lat, item.long)}
+											aria-label="Show"
+											class="btn btn-circle"
+										>
+											<BikeIcon class="h-6 w-6" />
+										</button>
+									</div>
+								</div>
+							{/each}
+						</div>
 					</div>
 				</div>
+				{#if milestones.includes(index + 1)}
+					<div class="rounded-2xl border-2 border-dashed p-6 text-center shadow-lg">
+						<p class="text-3xl font-bold text-purple-500">
+							🎉 Meilestei {index + 1} erreicht!
+						</p>
+						<p class="mt-2 text-lg">{milestoneTexts[index + 1]}</p>
+					</div>
+				{/if}
 			{/each}
 		</div>
-		<p class="mt-8 mb-4 pt-4 text-xl">
+		<p class="mt-8 mb-14 pt-4 text-xl">
 			Vile Dank fürs Mitmache und bis bald uf em Berg! Grüessli, SolyVC Team
 		</p>
 	</div>

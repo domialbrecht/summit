@@ -27,8 +27,8 @@
 	zoom={13}
 	pitch={52}
 >
-	{#snippet children({ allImagesLoaded })}
-		<GeoJSON id="summits" data="/summits/geojson">
+	{#snippet children()}
+		<GeoJSON id="summits" data="/summits/geojson/me">
 			<SymbolLayer
 				id="summit_symbols"
 				hoverCursor="pointer"
