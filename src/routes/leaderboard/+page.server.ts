@@ -1,30 +1,19 @@
+import type { PageServerLoad } from './$types';
+import { redirect, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { eq, count } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
-import { db_win_results } from '$lib/server/db/functions';
 
-async function getLeaderboard() {
-	const attempts = await db
-		.select({
-			userId: table.summit_attempt.userId,
-			userName: table.user.firstName,
-			profile: table.user.profile,
-			attempts: count(table.summit_attempt.id).as('attempts')
-		})
-		.from(table.summit_attempt)
-		.innerJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
-		.where(eq(table.summit_attempt.published, true))
-		.groupBy(table.summit_attempt.userId, table.user.firstName, table.user.profile);
+export const load: PageServerLoad = async () => {
+	const [active] = await db
+		.select({ slug: table.season.slug })
+		.from(table.season)
+		.where(eq(table.season.isActive, true))
+		.limit(1);
 
-	const wins = await db_win_results();
+	if (!active) {
+		throw error(500, 'No active season configured');
+	}
 
-	return {
-		attempts: attempts,
-		wins: wins
-	};
-}
-
-export async function load() {
-	const data = await getLeaderboard();
-	return { leaderboard: data };
-}
+	throw redirect(302, `/leaderboard/season/${active.slug}`);
+};

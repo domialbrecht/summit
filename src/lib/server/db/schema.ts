@@ -184,18 +184,34 @@ export const summitProfilesRelations = relations(summit_profile, ({ one }) => ({
 	})
 }));
 
-export const summit_attempt = pgTable('summit_attempt', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	summitId: integer('summit_id').notNull(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id),
-	activityId: text('activity_id')
-		.references(() => activity.id, { onDelete: 'cascade' })
-		.notNull(),
-	date: timestamp('date', { withTimezone: true, mode: 'date' }).notNull(),
-	published: boolean('published').notNull().default(false)
-});
+export const summit_attempt = pgTable(
+	'summit_attempt',
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		summitId: integer('summit_id').notNull(),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id),
+		activityId: text('activity_id')
+			.references(() => activity.id, { onDelete: 'cascade' })
+			.notNull(),
+		date: timestamp('date', { withTimezone: true, mode: 'date' }).notNull(),
+		published: boolean('published').notNull().default(false),
+		seasonId: integer('season_id')
+			.notNull()
+			.references(() => season.id)
+	},
+
+	(t) => ({
+		saPubSeasonSummitDateIdx: index('sa_pub_season_summit_date_idx')
+			.using('btree', t.seasonId, t.summitId, t.date)
+			.where(sql`${t.published} = true`),
+
+		saPubSeasonUserSummitDateIdx: index('sa_pub_season_user_summit_date_idx')
+			.using('btree', t.seasonId, t.userId, t.summitId, t.date)
+			.where(sql`${t.published} = true`)
+	})
+);
 
 export const summitAttemptsRelations = relations(summit_attempt, ({ one }) => ({
 	summit: one(summit, {
@@ -204,11 +220,57 @@ export const summitAttemptsRelations = relations(summit_attempt, ({ one }) => ({
 	})
 }));
 
+export const winActivitiesBySeasonView = pgView('win_activities_by_season', {
+	activityId: text('activity_id')
+		.notNull()
+		.references(() => activity.id),
+	attemptId: integer('attempt_id')
+		.notNull()
+		.references(() => summit_attempt.id),
+	summitId: integer('summit_id')
+		.notNull()
+		.references(() => summit.id),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	seasonId: integer('season_id')
+		.notNull()
+		.references(() => season.id)
+}).as(sql`
+WITH earliestAttempts AS (
+  SELECT
+    ${summit_attempt.summitId} AS summit_id,
+    ${summit_attempt.seasonId} AS season_id,
+    MIN(${summit_attempt.date}) AS min_date
+  FROM ${summit_attempt}
+  WHERE ${summit_attempt.published} = TRUE
+  GROUP BY ${summit_attempt.summitId}, ${summit_attempt.seasonId}
+)
+SELECT DISTINCT ON (${summit_attempt.userId}, ${summit_attempt.summitId}, ${summit_attempt.seasonId})
+  ${summit_attempt.activityId} AS activity_id,
+  ${summit_attempt.id} AS attempt_id,
+  ${summit_attempt.summitId} AS summit_id,
+  ${summit_attempt.userId} AS user_id,
+  ${summit_attempt.seasonId} AS season_id
+FROM ${summit_attempt}
+JOIN earliestAttempts ea
+  ON ${summit_attempt.summitId} = ea.summit_id
+ AND ${summit_attempt.seasonId} = ea.season_id
+WHERE
+  ${summit_attempt.published} = TRUE
+  AND DATE(${summit_attempt.date}) = DATE(ea.min_date)
+ORDER BY
+  ${summit_attempt.userId},
+  ${summit_attempt.summitId},
+  ${summit_attempt.seasonId},
+  ${summit_attempt.date}
+`);
+
 export const winActivitiesView = pgView('win_activities', {
 	activityId: text('activity_id')
 		.notNull()
 		.references(() => activity.id),
-	attemptId: text('attempt_id')
+	attemptId: integer('attempt_id')
 		.notNull()
 		.references(() => summit_attempt.id),
 	summitId: integer('summit_id')
@@ -218,27 +280,31 @@ export const winActivitiesView = pgView('win_activities', {
 		.notNull()
 		.references(() => user.id)
 }).as(sql`
-WITH earliestAttempts AS (
-    SELECT 
-        ${summit_attempt.summitId} AS summit_id,
-        MIN(${summit_attempt.date}) AS min_date
-    FROM ${summit_attempt}
-    WHERE ${summit_attempt.published} = TRUE
-    GROUP BY ${summit_attempt.summitId}
-)
-SELECT DISTINCT ON (${user.id}, ${summit_attempt.summitId})
-    ${summit_attempt.activityId} AS activity_id,
-    ${summit_attempt.id} AS attempt_id,
-    ${summit_attempt.summitId} AS summit_id,
-    ${user.id} AS user_id
-FROM ${summit_attempt}
-LEFT JOIN ${user} ON ${user.id} = ${summit_attempt.userId}
-INNER JOIN earliestAttempts ON ${summit_attempt.summitId} = earliestAttempts.summit_id
-WHERE 
-    ${summit_attempt.published} = TRUE
-    AND DATE(${summit_attempt.date}) = DATE(earliestAttempts.min_date)
-ORDER BY user_id, ${summit_attempt.summitId}, ${summit_attempt.date}
+SELECT
+  was.activity_id,
+  was.attempt_id,
+  was.summit_id,
+  was.user_id
+FROM win_activities_by_season was
+JOIN season s ON s.id = was.season_id
+WHERE s.is_active = TRUE
 `);
+
+export const season = pgTable(
+	'season',
+	{
+		id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+		slug: text('slug').notNull().unique(),
+		name: text('name').notNull(),
+		startsAt: timestamp('starts_at', { withTimezone: true, mode: 'date' }).notNull(),
+		endsAt: timestamp('ends_at', { withTimezone: true, mode: 'date' }).notNull(),
+		isActive: boolean('is_active').notNull().default(false)
+	},
+	(t) => ({
+		activeIdx: index('season_active_idx').using('btree', t.isActive),
+		rangeIdx: index('season_range_idx').using('btree', t.startsAt, t.endsAt)
+	})
+);
 
 export type Session = typeof session.$inferSelect;
 export type Tokens = typeof tokens.$inferSelect;

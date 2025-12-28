@@ -6,7 +6,7 @@ import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import type { UserSummitWin } from '$lib/types';
 
-async function getSummitMedals(summitId: string | undefined) {
+async function getSummitMedals(summitId: string | undefined, seasonId: number) {
 	if (!summitId) {
 		return [];
 	}
@@ -21,7 +21,8 @@ async function getSummitMedals(summitId: string | undefined) {
 			.where(
 				and(
 					eq(table.summit_attempt.summitId, parseInt(summitId)),
-					eq(table.summit_attempt.published, true)
+					eq(table.summit_attempt.published, true),
+					eq(table.summit_attempt.seasonId, seasonId)
 				)
 			)
 			.groupBy(table.summit_attempt.userId)
@@ -51,7 +52,10 @@ async function getSummitMedals(summitId: string | undefined) {
 	return result;
 }
 
-async function getSummitWins(summitId: string | undefined): Promise<UserSummitWin[]> {
+async function getSummitWins(
+	summitId: string | undefined,
+	seasonId: number
+): Promise<UserSummitWin[]> {
 	if (!summitId) {
 		return [];
 	}
@@ -62,10 +66,18 @@ async function getSummitWins(summitId: string | undefined): Promise<UserSummitWi
 			username: table.user.firstName,
 			profile: table.user.profile
 		})
-		.from(table.winActivitiesView)
-		.innerJoin(table.summit_attempt, eq(table.winActivitiesView.attemptId, table.summit_attempt.id))
-		.innerJoin(table.user, eq(table.user.id, table.winActivitiesView.userId))
-		.where(eq(table.winActivitiesView.summitId, parseInt(summitId)));
+		.from(table.winActivitiesBySeasonView)
+		.innerJoin(
+			table.summit_attempt,
+			eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id)
+		)
+		.innerJoin(table.user, eq(table.user.id, table.winActivitiesBySeasonView.userId))
+		.where(
+			and(
+				eq(table.winActivitiesBySeasonView.summitId, parseInt(summitId)),
+				eq(table.winActivitiesBySeasonView.seasonId, seasonId)
+			)
+		);
 
 	const get_media_for_win = win_result.map(async (win) => {
 		const result = await db
@@ -107,19 +119,21 @@ export const load: PageServerLoad = async ({ params }) => {
 				areas: table.SelectArea[];
 		  }
 		| undefined = undefined;
+
 	if (params.id) {
 		const result = await db
 			.select({
 				summit: table.summit,
-				areas: sql<
-					table.SelectArea[]
-				>`json_agg(json_build_object('id', area.id, 'name', area.name))`.as('areas')
+				areas: sql<table.SelectArea[]>`
+					json_agg(json_build_object('id', area.id, 'name', area.name))
+				`.as('areas')
 			})
 			.from(table.summit)
 			.leftJoin(table.summitsToAreas, eq(table.summitsToAreas.summitId, table.summit.id))
 			.leftJoin(table.area, eq(table.summitsToAreas.areaId, table.area.id))
 			.where(eq(table.summit.id, parseInt(params.id)))
 			.groupBy(table.summit.id);
+
 		summit_data = result.at(0);
 	}
 
@@ -127,10 +141,24 @@ export const load: PageServerLoad = async ({ params }) => {
 		error(404, { message: 'Summit not found' });
 	}
 
+	const seasons = await db
+		.select({
+			id: table.season.id,
+			slug: table.season.slug,
+			isActive: table.season.isActive,
+			startsAt: table.season.startsAt
+		})
+		.from(table.season)
+		.orderBy(sql`${table.season.isActive} desc, ${table.season.startsAt} desc`);
+
 	return {
-		summit_medals: getSummitMedals(params.id),
-		summit_wins: getSummitWins(params.id),
+		summit_data,
 		summit_profiles: getSummitProfiles(params.id),
-		summit_data: summit_data
+		seasons: seasons.map((s) => ({
+			season: s.slug,
+			isActive: s.isActive,
+			summit_medals: getSummitMedals(params.id, s.id),
+			summit_wins: getSummitWins(params.id, s.id)
+		}))
 	};
 };

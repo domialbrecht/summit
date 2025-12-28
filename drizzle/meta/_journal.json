@@ -1,76 +1,84 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1735661968012,
-      "tag": "0000_crazy_demogoblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1735815893753,
-      "tag": "0001_narrow_shiva",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1735816403887,
-      "tag": "0002_yellow_thunderbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1735817055290,
-      "tag": "0003_cold_major_mapleleaf",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1735818214008,
-      "tag": "0004_violet_shriek",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1736030728394,
-      "tag": "0005_peaceful_spiral",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1737357537820,
-      "tag": "0006_melted_viper",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1738146120745,
-      "tag": "0007_magical_big_bertha",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1740240751757,
-      "tag": "0008_abandoned_killraven",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1749210697056,
-      "tag": "0009_even_captain_marvel",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1735661968012,
+			"tag": "0000_crazy_demogoblin",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1735815893753,
+			"tag": "0001_narrow_shiva",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1735816403887,
+			"tag": "0002_yellow_thunderbird",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1735817055290,
+			"tag": "0003_cold_major_mapleleaf",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1735818214008,
+			"tag": "0004_violet_shriek",
+			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "7",
+			"when": 1736030728394,
+			"tag": "0005_peaceful_spiral",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "7",
+			"when": 1737357537820,
+			"tag": "0006_melted_viper",
+			"breakpoints": true
+		},
+		{
+			"idx": 7,
+			"version": "7",
+			"when": 1738146120745,
+			"tag": "0007_magical_big_bertha",
+			"breakpoints": true
+		},
+		{
+			"idx": 8,
+			"version": "7",
+			"when": 1740240751757,
+			"tag": "0008_abandoned_killraven",
+			"breakpoints": true
+		},
+		{
+			"idx": 9,
+			"version": "7",
+			"when": 1749210697056,
+			"tag": "0009_even_captain_marvel",
+			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "7",
+			"when": 1766916816630,
+			"tag": "0010_thankful_masque",
+			"breakpoints": true
+		}
+	]
 }
+
