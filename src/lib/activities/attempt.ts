@@ -2,7 +2,7 @@ import logger from '$lib/logger';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import polyline from '@mapbox/polyline';
-import { sql } from 'drizzle-orm';
+import { sql, eq } from 'drizzle-orm';
 import { getUnparsedActivities, setParsedActivities } from './activity_sync';
 import { StravaApi } from '.';
 
@@ -80,6 +80,17 @@ export async function syncWithCount(
 	}
 
 	logger.info({ message: 'Inserting attempts', data: attempts });
+
+	const [activeSeason] = await db
+		.select({ id: table.season.id })
+		.from(table.season)
+		.where(eq(table.season.isActive, true))
+		.limit(1);
+
+	if (!activeSeason) {
+		throw new Error('No active season configured');
+	}
+
 	try {
 		await db.insert(table.summit_attempt).values(
 			attempts.map((a) => {
@@ -88,7 +99,8 @@ export async function syncWithCount(
 					summitId: a.summit,
 					userId: userId,
 					date: a.date,
-					published: autoPublish
+					published: autoPublish,
+					seasonId: activeSeason.id
 				};
 			})
 		);

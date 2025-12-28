@@ -45,7 +45,7 @@
 		<a
 			href="/leaderboard"
 			class="tooltip"
-			class:menu-active={$page.url.pathname === '/leaderboard'}
+			class:menu-active={$page.url.pathname.includes('/leaderboard')}
 			data-tip="Rangliste"
 			aria-label="Rangliste"
 			><svg

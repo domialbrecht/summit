@@ -126,7 +126,7 @@
 												<div class="collapse-title text-xl font-medium">Astige</div>
 												<div class="collapse-content">
 													<div class="flex flex-col gap-4">
-														{#each profiles as profile}
+														{#each profiles as profile (profile.segment)}
 															<div class="bg-base-100 rounded-lg p-2">
 																<Profile {profile} />
 															</div>

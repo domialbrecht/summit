@@ -24,7 +24,7 @@
 			</h1>
 			<div class="mt-8">
 				<ul class="flex flex-wrap gap-4">
-					{#each data.seasons as s}
+					{#each data.seasons as s (s.slug)}
 						<li>
 							<a
 								class="badge hover:badge-primary [&.active]:badge-primary mr-2 mb-2 cursor-pointer px-4 py-3 text-lg font-semibold"
