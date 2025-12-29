@@ -1,9 +1,9 @@
 <div
-	class="flex min-h-[calc(100vh-4rem)] items-center justify-center px-2 py-10 text-center xl:justify-start xl:pe-0 xl:ps-10 xl:text-start"
+	class="flex min-h-[calc(100vh-4rem)] items-center justify-center px-2 py-10 text-center xl:justify-start xl:ps-10 xl:pe-0 xl:text-start"
 >
 	<div class="relative z-50">
 		<h1
-			class="font-title [:root[dir=rtl]_&amp;]:leading-[1.35] text-center text-[clamp(3.5rem,6vw,4.2rem)] font-black leading-[1.1] [word-break:auto-phrase] xl:w-[115%] xl:text-start"
+			class="font-title [:root[dir=rtl]_&amp;]:leading-[1.35] text-center text-[clamp(3.5rem,6vw,4.2rem)] leading-[1.1] font-black [word-break:auto-phrase] xl:w-[115%] xl:text-start"
 		>
 			<span
 				class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 brightness-150 contrast-150"
@@ -11,23 +11,23 @@
 			> <br />
 			<span class="inline-grid"
 				><span
-					class="pointer-events-none col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.primary)_42%,theme(colors.primary)_47%,theme(colors.primary)_100%)] bg-clip-text blur-xl [-webkit-text-fill-color:transparent] [transform:translate3d(0,0,0)] before:content-[attr(data-text)] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--er)),oklch(var(--er)))_67%,oklch(var(--er))_100.2%)]"
+					class="bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.primary)_42%,theme(colors.primary)_47%,theme(colors.primary)_100%)] pointer-events-none col-start-1 row-start-1 [transform:translate3d(0,0,0)] bg-clip-text blur-xl [-webkit-text-fill-color:transparent] before:content-[attr(data-text)] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--er)),oklch(var(--er)))_67%,oklch(var(--er))_100.2%)]"
 					aria-hidden="true"
 					data-text="SUMMITS Challenge"
 				></span>
 				<span
-					class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 relative col-start-1 row-start-1 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.primary)_42%,theme(colors.primary)_47%,theme(colors.primary)_100%)] bg-clip-text [-webkit-text-fill-color:transparent] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_67%,oklch(var(--p))_100.2%)]"
+					class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 bg-[linear-gradient(90deg,theme(colors.primary)_0%,theme(colors.primary)_9%,theme(colors.primary)_42%,theme(colors.primary)_47%,theme(colors.primary)_100%)] relative col-start-1 row-start-1 bg-clip-text [-webkit-text-fill-color:transparent] [@supports(color:oklch(0%_0_0))]:bg-[linear-gradient(90deg,oklch(var(--p))_4%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_22%,oklch(var(--p))_45%,color-mix(in_oklch,oklch(var(--p)),oklch(var(--p)))_67%,oklch(var(--p))_100.2%)]"
 					>SUMMITS Challenge</span
 				></span
 			> <br />
 			<span
 				class="[&amp;::selection]:text-base-content [&amp;::selection]:bg-blue-700/20 brightness-150 contrast-150"
-				>2025 Edition</span
+				>2026 Edition</span
 			>
 		</h1>
 		<div class="h-4"></div>
-		<p class="font-title py-4 text-2xl font-light text-base-content/70 md:text-2xl">
-			Mir sammle so viu Päss wies geit! ⛰️
+		<p class="font-title text-base-content/70 py-4 text-2xl font-light md:text-2xl">
+			Ir 2te Saison geits witer! ⛰️
 		</p>
 		<div class="h-10"></div>
 		<div>
@@ -37,7 +37,7 @@
 				<a
 					data-sveltekit-preload-data=""
 					href="/login"
-					class="group btn btn-primary min-w-64 rounded-full px-12 md:btn-lg"
+					class="group btn btn-primary md:btn-lg min-w-64 rounded-full px-12"
 					>Lezgoo<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -55,7 +55,7 @@
 				<a
 					data-sveltekit-preload-data=""
 					href="/summits"
-					class="group btn btn-outline btn-primary rounded-full px-12 md:btn-lg"
+					class="group btn btn-outline btn-primary md:btn-lg rounded-full px-12"
 					>Zude Päss<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"

@@ -149,7 +149,7 @@ export async function getActivity(userId: string, activityId: string) {
 
 export async function manualFetch(userId: string) {
 	// Sync last two weeks of activities
-	const EARLIEST = new Date('2025-01-01');
+	const EARLIEST = new Date('2026-01-01');
 	const UPDATE_CYCLE_DAYS = 14;
 	const today = new Date();
 	today.setHours(today.getHours() - 1);

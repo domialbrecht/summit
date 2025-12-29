@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card';
 	import Section from '$lib/components/ui/section';
-	import Bernina from '$site/bernina.jpg';
+	import Huez from '$site/huez.jpg';
 	import Dizzy from '$site/icons/dizzy.png';
 	import Party from '$site/icons/party.png';
 	import { enhance } from '$app/forms';
@@ -99,13 +99,13 @@
 			</Card.Root>
 		</div>
 		<div class="xl:col-span-12">
-			<Card.Root class="bg-base-content hover:bg-primary min-h-44">
-				<a
-					href="/story"
-					class="flex h-full w-full grow cursor-pointer items-center justify-center p-6 text-white"
+			<Card.Root class="border-primary min-h-44 border-2">
+				<div
+					class="flex h-full w-full grow cursor-pointer flex-col items-center justify-center gap-2 p-6"
 				>
-					<p class="text-2xl font-extrabold md:text-4xl">Dini SolyVC Summit Story</p>
-				</a>
+					<p class="text-2xl font-extrabold md:text-3xl">Zu dire SolyVC Summit Story 2025</p>
+					<a href="/story" class="btn btn-primary"> Link </a>
+				</div>
 			</Card.Root>
 		</div>
 		<div class="xl:col-span-4">
@@ -123,7 +123,7 @@
 									>
 									<div class="tooltip" data-tip={`${attempt.firstName} ${attempt.lastName}`}>
 										<div class="avatar">
-											<div class="mask mask-circle w-8">
+											<div class="mask w-8 mask-circle">
 												<img
 													loading="lazy"
 													class="pointer-events-none transition-all duration-500 ease-in-out"
@@ -147,22 +147,30 @@
 			<Card.Root variant="sideResponsive">
 				<Card.Body>
 					<Card.Title>
-						Berninapass
+						Alpe d’huez
 						<div class="badge badge-accent">Hightlight</div>
 					</Card.Title>
 					<Card.Content>
 						<div class="flex flex-wrap gap-4 md:flex-nowrap">
 							<figure class="md:w-1/2 md:shrink-0">
-								<img src={Bernina} alt="Berninapss" class="h-auto w-full" />
+								<img src={Huez} alt="Berninapss" class="h-auto w-full" />
 							</figure>
-							<p>
-								Der Berninapass bildet - gestützt auf zahlreiche Funde wie steinzeitliche Menhire
-								mit rätselhaften Ritzzeichnungen etc. - eine jahrtausendalte Verbindung zwischen dem
-								Oberengadin und dem Puschlav bis ins Veltlin. Der Berninapass war, im Gegensatz zu
-								Splügen oder Septimer, nie eine alpenquerende Transitroute, die eine europäische
-								Bedeutung erlangt hätte. Erst die politische Entwicklung zu Beginn der Neuzeit
-								(Anfangs des 16. Jh) förderte die Bedeutung.
-							</p>
+							<div>
+								<p>
+									Dises Jahr geiz ar L'Etappe ab ufd Alp. Mit Start in Le Bourg d'Oisans uf 713m
+									radle mer los u näh als ersts der sehr bekannt Col de la Croix de Fer i Agriff.
+									Herti 24km mit durschnitt 5% Stigig!
+								</p>
+								<p>
+									Denne geits wider ufe nid weniger legendär Col du Télégraphe, ab hie geits so
+									richtig ufwerts. Drüber u gad wider ufe Col du Galibier, wo mit 2642m ü.M. der
+									höchste Punkt vo de Tour isch. De fahre mer endlech Richitig Alpe d’Huez. Die 21
+									Kehre no easy peasy u de simer nach <strong>170km, 5400hm</strong> am Ziel.
+								</p>
+								<a href="https://www.letapedutourdefrance.com/en/the-race/route"
+									>https://www.letapedutourdefrance.com/en/the-race/route</a
+								>
+							</div>
 						</div>
 					</Card.Content>
 				</Card.Body>
