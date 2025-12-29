@@ -4,7 +4,7 @@
 	import Nufenen from '$site/nufenen.jpg?enhanced';
 	import Jura from '$site/jura.png?enhanced';
 	import Huez from '$site/huez.jpg?enhanced';
-	import Spain from '$site/Spain.jpg?enhanced';
+	import Spain from '$site/spain.jpg?enhanced';
 
 	let scrollY = $state(0);
 	let innerHeight = $state(0);
