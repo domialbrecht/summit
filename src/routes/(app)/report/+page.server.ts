@@ -3,6 +3,7 @@ import * as table from '$lib/server/db/schema';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { message, superValidate } from 'sveltekit-superforms';
 import { db } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
 import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
@@ -19,13 +20,24 @@ export const actions = {
 			return fail(400, { form });
 		}
 
+		const [activeSeason] = await db
+			.select({ id: table.season.id })
+			.from(table.season)
+			.where(eq(table.season.isActive, true))
+			.limit(1);
+
+		if (!activeSeason) {
+			throw fail(500, 'No active season configured');
+		}
+
 		try {
 			await db.insert(table.summit_attempt).values({
 				activityId: form.data.activityId,
 				summitId: form.data.summitId,
 				userId: form.data.userId,
 				date: form.data.date,
-				published: true
+				published: true,
+				seasonId: activeSeason.id
 			});
 		} catch (e) {
 			console.error(e);

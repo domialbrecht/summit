@@ -71,7 +71,7 @@
 				/>
 				<SummitMap bind:map={mapComp} handleClick={() => (open = true)} />
 			</div>
-			<Drawer.Root direction={'left'} bind:open>
+			<Drawer.Root direction="left" bind:open>
 				<Drawer.Content contentProps={{ variant: 'left' }} class="lg:w-1/2">
 					{#if data.summit_data}
 						<div class="m-4 flex min-h-0 grow flex-col gap-6 overflow-y-auto">
@@ -84,28 +84,30 @@
 							</div>
 							<div class="flex grow flex-col gap-4">
 								<div id="summit-wins">
-									<div class="collapse-arrow collapse">
-										<input type="checkbox" name="accordion-2" checked />
-										<div class="collapse-title text-xl font-medium">Trophäe</div>
-										<div class="collapse-content">
-											{#await data.summit_wins}
-												<div class="skeleton h-40 w-full"></div>
-											{:then wins}
-												{#if wins.length > 0}
-													<Wins {wins} />
-												{:else}
-													<Free />
-												{/if}
-											{/await}
-											{#await data.summit_medals then medals}
-												{#if medals.length > 0}
-													<div class="border-base-200 mt-2 border-t-2 pt-1">
-														<Medals {medals} />
-													</div>
-												{/if}
-											{/await}
+									{#each data.seasons as s (s.season)}
+										<div class="collapse-arrow collapse">
+											<input type="checkbox" name="accordion-2" checked={s.isActive} />
+											<div class="collapse-title text-xl font-medium">Trophäe {s.season}</div>
+											<div class="collapse-content">
+												{#await s.summit_wins}
+													<div class="skeleton h-40 w-full"></div>
+												{:then wins}
+													{#if wins.length > 0}
+														<Wins {wins} />
+													{:else}
+														<Free />
+													{/if}
+												{/await}
+												{#await s.summit_medals then medals}
+													{#if medals.length > 0}
+														<div class="border-base-200 mt-2 border-t-2 pt-1">
+															<Medals {medals} />
+														</div>
+													{/if}
+												{/await}
+											</div>
 										</div>
-									</div>
+									{/each}
 								</div>
 								<div id="summit-data">
 									<div class="collapse-arrow bg-base-200 collapse">
@@ -124,7 +126,7 @@
 												<div class="collapse-title text-xl font-medium">Astige</div>
 												<div class="collapse-content">
 													<div class="flex flex-col gap-4">
-														{#each profiles as profile}
+														{#each profiles as profile (profile.segment)}
 															<div class="bg-base-100 rounded-lg p-2">
 																<Profile {profile} />
 															</div>
