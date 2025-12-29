@@ -157,9 +157,9 @@
 							</figure>
 							<div>
 								<p>
-									Dises Jahr geiz ar L'Etappe ab ufd Alp. Mit Start in Le Bourg d'Oisans uf 713m
-									radle mer los u näh als ersts der sehr bekannt Col de la Croix de Fer i Agriff.
-									Herti 24km mit durschnitt 5% Stigig!
+									Das Jahr geiz ar L'Etappe ab ufd Alp. Mit Start in Le Bourg d'Oisans uf 713m radle
+									mer los u näh als ersts der sehr bekannt Col de la Croix de Fer i Agriff. Herti
+									24km mit durschnitt 5% Stigig!
 								</p>
 								<p>
 									Denne geits wider ufe nid weniger legendär Col du Télégraphe, ab hie geits so
