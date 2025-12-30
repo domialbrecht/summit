@@ -20,7 +20,7 @@
 		handleClick();
 	}
 
-	let { map = $bindable(), handleClick } = $props();
+	let { map = $bindable(), handleClick, mapUrl } = $props();
 </script>
 
 <MapLibre
@@ -37,7 +37,7 @@
 	zoom={13}
 >
 	{#snippet children({ allImagesLoaded })}
-		<GeoJSON id="summits" data="/summits/geojson">
+		<GeoJSON id="summits" data={mapUrl}>
 			<SymbolLayer
 				id="summit_symbols"
 				hoverCursor="pointer"

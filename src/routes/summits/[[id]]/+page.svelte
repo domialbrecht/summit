@@ -9,6 +9,7 @@
 	import Free from './Free.svelte';
 	import Title from './Title.svelte';
 	import Search from './Search.svelte';
+	import SeasonToggle from './SeasonToggle.svelte';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
 
@@ -17,6 +18,9 @@
 
 	let activeSummit = $derived(data.summit_data ? data.summit_data.summit : null);
 	let open = $state(false);
+
+	let showSeasonOnly = $state(true);
+	let mapUrl = $derived(showSeasonOnly ? '/summits/geojson?season=active' : '/summits/geojson');
 
 	let mapComp: maplibregl.Map | undefined = $state();
 
@@ -64,12 +68,19 @@
 	<div class="flex flex-col">
 		<div class="flex flex-col">
 			<div class="h-screen w-full">
-				<Search
-					handleSearch={(lat: string, long: string) => {
-						zoomToSummit(lat, long);
-					}}
-				/>
-				<SummitMap bind:map={mapComp} handleClick={() => (open = true)} />
+				<div
+					class="fixed right-2 bottom-10 left-2 z-10 flex w-auto justify-end px-2 lg:top-2 lg:right-auto lg:bottom-auto lg:left-10"
+				>
+					<div class="flex items-center gap-4">
+						<Search
+							handleSearch={(lat: string, long: string) => {
+								zoomToSummit(lat, long);
+							}}
+						/>
+						<SeasonToggle bind:showSeason={showSeasonOnly} />
+					</div>
+				</div>
+				<SummitMap bind:map={mapComp} handleClick={() => (open = true)} {mapUrl} />
 			</div>
 			<Drawer.Root direction="left" bind:open>
 				<Drawer.Content contentProps={{ variant: 'left' }} class="lg:w-1/2">
