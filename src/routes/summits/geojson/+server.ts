@@ -2,20 +2,36 @@ import type { RequestHandler } from './$types';
 import * as table from '$lib/server/db/schema';
 
 import { db } from '$lib/server/db';
-import { json } from '@sveltejs/kit';
-import { sql } from 'drizzle-orm';
+import { sql, desc } from 'drizzle-orm';
+import { checkEtagCache, jsonWithCache, PUBLIC_GEOJSON_CACHE } from '$lib/server/cache';
 
-export const GET: RequestHandler = async ({ setHeaders, url }) => {
+export const GET: RequestHandler = async ({ setHeaders, url, request }) => {
 	const season = url.searchParams.get('season') ? true : false;
 
-	const result = season ? await getSeasonData() : await getAllData();
+	const latestAttempt = await db
+		.select({ id: table.summit_attempt.id, date: table.summit_attempt.date })
+		.from(table.summit_attempt)
+		.where(sql`${table.summit_attempt.published} = true`)
+		.orderBy(desc(table.summit_attempt.id))
+		.limit(1);
 
+	const etag = latestAttempt[0]
+		? `"${latestAttempt[0].id}-${season ? 'season' : 'all'}"`
+		: '"no-attempts"';
+
+	const cachedResponse = checkEtagCache(
+		request.headers.get('if-none-match'),
+		etag,
+		PUBLIC_GEOJSON_CACHE
+	);
+	if (cachedResponse) {
+		return cachedResponse;
+	}
+
+	const result = season ? await getSeasonData() : await getAllData();
 	const geojson = result.at(0)?.geojson;
 
-	setHeaders({
-		'cache-control': 'public, max-age=3600, stale-while-revalidate=14400'
-	});
-	return json(geojson);
+	return jsonWithCache(geojson, setHeaders, { etag, cacheControl: PUBLIC_GEOJSON_CACHE });
 };
 
 function getSeasonData() {
