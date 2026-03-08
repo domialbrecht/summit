@@ -5,6 +5,8 @@
 	import { dt, hr, km, seasonEmoji } from '$lib/utils';
 	import { onDestroy, onMount } from 'svelte';
 	import { BikeIcon } from 'lucide-svelte';
+	import RefreshCw from 'lucide-svelte/icons/refresh-cw';
+	import Loader2 from 'lucide-svelte/icons/loader-2';
 	import Navbar from '$lib/components/navbar.svelte';
 
 	const { data }: { data: PageServerData } = $props();
@@ -17,7 +19,19 @@
 		200: 'Unglaublich – du bisch e Legende!'
 	};
 
+	let refreshTimestamp = $state(Date.now());
+	let isRefreshing = $state(false);
+	let mapUrl = $derived(`/summits/geojson/me?t=${refreshTimestamp}`);
+
 	let mapComp: maplibregl.Map | undefined = $state();
+
+	async function handleRefresh() {
+		isRefreshing = true;
+		refreshTimestamp = Date.now();
+		setTimeout(() => {
+			isRefreshing = false;
+		}, 1000);
+	}
 
 	const zoomToSummit = (lat: string, long: string) => {
 		if (!mapComp) return;
@@ -96,7 +110,19 @@
 <div class="grid h-screen w-full grid-cols-1 md:grid-cols-2">
 	<Navbar user={data.user} />
 	<div class="h-[50vh] md:h-full">
-		<Map bind:map={mapComp} />
+		<button
+			onclick={handleRefresh}
+			disabled={isRefreshing}
+			class="btn btn-circle btn-sm fixed top-20 right-4 z-10 bg-white text-gray-700 shadow-lg hover:bg-gray-100"
+			aria-label="Refresh map data"
+		>
+			{#if isRefreshing}
+				<Loader2 class="animate-spin" size={20} />
+			{:else}
+				<RefreshCw size={20} />
+			{/if}
+		</button>
+		<Map bind:map={mapComp} {mapUrl} />
 	</div>
 	<div
 		class="flex h-[50vh] max-h-[50vh] flex-col overflow-scroll px-12 md:-order-1 md:h-full md:max-h-screen"

@@ -10,7 +10,7 @@
 	import trophy from '$site/icons/trophy.png';
 	import trophyF from '$site/icons/trophyF.png';
 
-	let { map = $bindable() } = $props();
+	let { map = $bindable(), mapUrl } = $props();
 </script>
 
 <MapLibre
@@ -28,7 +28,7 @@
 	pitch={52}
 >
 	{#snippet children()}
-		<GeoJSON id="summits" data="/summits/geojson/me">
+		<GeoJSON id="summits" data={mapUrl}>
 			<SymbolLayer
 				id="summit_symbols"
 				hoverCursor="pointer"

@@ -10,6 +10,8 @@
 	import Title from './Title.svelte';
 	import Search from './Search.svelte';
 	import SeasonToggle from './SeasonToggle.svelte';
+	import RefreshCw from 'lucide-svelte/icons/refresh-cw';
+	import Loader2 from 'lucide-svelte/icons/loader-2';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
 
@@ -20,9 +22,21 @@
 	let open = $state(false);
 
 	let showSeasonOnly = $state(true);
-	let mapUrl = $derived(showSeasonOnly ? '/summits/geojson?season=active' : '/summits/geojson');
+	let refreshTimestamp = $state(Date.now());
+	let isRefreshing = $state(false);
+	let mapUrl = $derived(
+		`${showSeasonOnly ? '/summits/geojson?season=active' : '/summits/geojson'}&t=${refreshTimestamp}`
+	);
 
 	let mapComp: maplibregl.Map | undefined = $state();
+
+	async function handleRefresh() {
+		isRefreshing = true;
+		refreshTimestamp = Date.now();
+		setTimeout(() => {
+			isRefreshing = false;
+		}, 1000);
+	}
 
 	$effect(() => {
 		if (!activeSummit) {
@@ -78,6 +92,18 @@
 							}}
 						/>
 						<SeasonToggle bind:showSeason={showSeasonOnly} />
+						<button
+							onclick={handleRefresh}
+							disabled={isRefreshing}
+							class="btn btn-circle btn-sm bg-white text-gray-700 shadow-lg hover:bg-gray-100"
+							aria-label="Refresh map data"
+						>
+							{#if isRefreshing}
+								<Loader2 class="animate-spin" size={20} />
+							{:else}
+								<RefreshCw size={20} />
+							{/if}
+						</button>
 					</div>
 				</div>
 				<SummitMap bind:map={mapComp} handleClick={() => (open = true)} {mapUrl} />
