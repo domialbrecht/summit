@@ -12,7 +12,8 @@ const createChallengeSchema = z.object({
 	name: z.string().min(1).max(100),
 	description: z.string().max(500).optional(),
 	pointsJson: z.string().min(2),
-	ordered: z.string().optional()
+	ordered: z.string().optional(),
+	type: z.enum(['one_time', 'seasonal']).optional()
 });
 
 export const load: PageServerLoad = async (event) => {
@@ -63,7 +64,8 @@ export const actions = {
 		}
 
 		const slug = await uniqueSlug(form.data.name);
-		const isOrdered = form.data.ordered === 'true';
+		const challengeType = form.data.type ?? 'one_time';
+		const isOrdered = challengeType === 'seasonal' ? false : form.data.ordered === 'true';
 
 		const [newChallenge] = await db
 			.insert(table.challenge)
@@ -71,6 +73,7 @@ export const actions = {
 				slug,
 				name: form.data.name,
 				description: form.data.description ?? null,
+				type: challengeType,
 				ordered: isOrdered,
 				createdBy: user.id,
 				createdAt: new Date()

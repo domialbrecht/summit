@@ -92,6 +92,13 @@
 			"when": 1744099200000,
 			"tag": "0012_challenge_extensions",
 			"breakpoints": true
+		},
+		{
+			"idx": 13,
+			"version": "7",
+			"when": 1775638500000,
+			"tag": "0013_seasonal_challenges",
+			"breakpoints": true
 		}
 	]
 }

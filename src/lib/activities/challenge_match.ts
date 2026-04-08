@@ -78,6 +78,7 @@ export async function submitActivityToChallenge(
 	completed: boolean;
 	matchedPoints: { id: number; name: string | null }[];
 	totalPoints: number;
+	seasonProgress?: { matchedPointIds: number[]; totalPoints: number; completed: boolean };
 }> {
 	const [activityRow] = await db
 		.select({ summaryPolyline: table.activity.summaryPolyline })
@@ -91,7 +92,7 @@ export async function submitActivityToChallenge(
 
 	// Load challenge metadata
 	const [challengeRow] = await db
-		.select({ ordered: table.challenge.ordered })
+		.select({ ordered: table.challenge.ordered, type: table.challenge.type })
 		.from(table.challenge)
 		.where(eq(table.challenge.id, challengeId))
 		.limit(1);
@@ -156,6 +157,19 @@ export async function submitActivityToChallenge(
 	const completed = matchedPointIds.length === allPoints.length;
 	const matchedPoints = allPoints.filter((p) => matchedPointIds.includes(p.id));
 
+	// For seasonal challenges, fetch the active season
+	let seasonId: number | null = null;
+	if (challengeRow.type === 'seasonal') {
+		const [activeSeason] = await db
+			.select({ id: table.season.id })
+			.from(table.season)
+			.where(eq(table.season.isActive, true))
+			.limit(1);
+		if (activeSeason) {
+			seasonId = activeSeason.id;
+		}
+	}
+
 	// Delete existing attempt for this user+activity+challenge (overwrite)
 	const existing = await db
 		.select({ id: table.challengeAttempt.id })
@@ -179,6 +193,7 @@ export async function submitActivityToChallenge(
 			challengeId,
 			userId,
 			activityId,
+			seasonId,
 			completed,
 			submittedAt: new Date()
 		})
@@ -207,6 +222,46 @@ export async function submitActivityToChallenge(
 		message: 'Challenge attempt recorded',
 		data: { userId, activityId, challengeId, completed, matched: matchedPointIds.length }
 	});
+
+	// For seasonal challenges, compute cumulative progress across all attempts in this season
+	if (challengeRow.type === 'seasonal' && seasonId !== null) {
+		const seasonMatches = await db
+			.selectDistinct({ pointId: table.challengePointMatch.challengePointId })
+			.from(table.challengePointMatch)
+			.innerJoin(
+				table.challengeAttempt,
+				eq(table.challengePointMatch.challengeAttemptId, table.challengeAttempt.id)
+			)
+			.where(
+				and(
+					eq(table.challengeAttempt.challengeId, challengeId),
+					eq(table.challengeAttempt.userId, userId),
+					eq(table.challengeAttempt.seasonId, seasonId)
+				)
+			);
+
+		const seasonMatchedIds = seasonMatches.map((m) => m.pointId);
+		const seasonCompleted = seasonMatchedIds.length >= allPoints.length;
+
+		// If newly completed via cumulative progress, mark the current attempt as completed
+		if (seasonCompleted && !completed) {
+			await db
+				.update(table.challengeAttempt)
+				.set({ completed: true })
+				.where(eq(table.challengeAttempt.id, newAttempt.id));
+		}
+
+		return {
+			completed,
+			matchedPoints,
+			totalPoints: allPoints.length,
+			seasonProgress: {
+				matchedPointIds: seasonMatchedIds,
+				totalPoints: allPoints.length,
+				completed: seasonCompleted
+			}
+		};
+	}
 
 	return { completed, matchedPoints, totalPoints: allPoints.length };
 }

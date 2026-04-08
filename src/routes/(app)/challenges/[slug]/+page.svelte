@@ -5,12 +5,19 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card';
 	import { MapLibre, GeoJSON, SymbolLayer, CircleLayer, LineLayer } from 'svelte-maplibre';
-	import { Download, MountainSnow } from 'lucide-svelte';
+	import { Download, MountainSnow, Zap, CalendarDays, Check } from 'lucide-svelte';
 	import type { PageServerData } from './$types';
 
 	const { data }: { data: PageServerData } = $props();
 
 	const { enhance, message } = superForm(data.joinForm, { invalidateAll: true });
+
+	// For seasonal challenges, the current user's matched point IDs
+	const myMatchedPointIds = $derived(
+		data.challenge.type === 'seasonal' && data.seasonProgress
+			? new Set(data.seasonProgress[data.userId] ?? [])
+			: new Set<number>()
+	);
 
 	const pointsGeoJSON = $derived({
 		type: 'FeatureCollection' as const,
@@ -61,10 +68,29 @@
 				<p class="text-base-content/80 mt-2 max-w-2xl">{data.challenge.description}</p>
 			{/if}
 			<div class="mt-2 flex gap-2">
+				{#if data.challenge.type === 'seasonal'}
+					<Badge variant="secondary" class="gap-1">
+						<CalendarDays size={12} /> Saisonal
+					</Badge>
+				{:else}
+					<Badge variant="outline" class="gap-1">
+						<Zap size={12} /> Einmalig
+					</Badge>
+				{/if}
 				{#if data.challenge.ordered}
 					<Badge variant="outline">Festi Reihefolg</Badge>
 				{/if}
 			</div>
+			{#if data.challenge.type === 'seasonal' && data.activeSeason}
+				<p class="text-base-content/60 mt-1 text-sm">
+					Saison: {data.activeSeason.name}
+					{#if data.isParticipant}
+						— <span class="text-primary font-semibold"
+							>{myMatchedPointIds.size}/{data.points.length} Punkte</span
+						>
+					{/if}
+				</p>
+			{/if}
 		</div>
 		<div class="flex gap-2">
 			<a href="/challenges/{data.challenge.slug}/gpx" class="btn btn-secondary btn-sm" download>
@@ -167,6 +193,13 @@
 									{#if data.challenge.ordered}
 										<span class="badge badge-sm badge-neutral font-mono">{i + 1}</span>
 									{/if}
+									{#if data.challenge.type === 'seasonal' && data.isParticipant}
+										{#if myMatchedPointIds.has(point.id)}
+											<Check size={14} class="text-success shrink-0" />
+										{:else}
+											<span class="inline-block h-3.5 w-3.5 shrink-0"></span>
+										{/if}
+									{/if}
 									{#if point.summitId}
 										<MountainSnow size={14} class="text-primary shrink-0" />
 									{/if}
@@ -197,7 +230,15 @@
 					{:else}
 						<ul class="mt-2 flex flex-col gap-1">
 							{#each data.participants as p (p.userId)}
-								<li class="text-sm">{p.firstName} {p.lastName}</li>
+								<li class="flex items-center justify-between text-sm">
+									<span>{p.firstName} {p.lastName}</span>
+									{#if data.challenge.type === 'seasonal' && data.seasonProgress}
+										{@const userPoints = data.seasonProgress[p.userId]?.length ?? 0}
+										<span class="text-base-content/50 text-xs"
+											>{userPoints}/{data.points.length}</span
+										>
+									{/if}
+								</li>
 							{/each}
 						</ul>
 					{/if}

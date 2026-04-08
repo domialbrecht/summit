@@ -15,7 +15,9 @@
 		MountainSnow,
 		ChevronUp,
 		ChevronDown,
-		Search
+		Search,
+		Zap,
+		CalendarDays
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import Fuse from 'fuse.js';
@@ -75,6 +77,15 @@
 	let ordered = $state(false);
 	$effect(() => {
 		$form.ordered = ordered ? 'true' : '';
+	});
+
+	// Challenge type
+	let challengeType = $state<'one_time' | 'seasonal'>('one_time');
+	$effect(() => {
+		$form.type = challengeType;
+		if (challengeType === 'seasonal') {
+			ordered = false;
+		}
 	});
 
 	// Bidirectional selection
@@ -172,7 +183,7 @@
 
 <Section sectionId="newChallenge">
 	<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
-		<span class="text-primary">Nöji</span> Challange
+		<span class="text-primary">Nöii</span> Challange
 	</div>
 
 	{#if $message}
@@ -198,7 +209,7 @@
 				<legend class="fieldset-legend">Beschriebig (optional)</legend>
 				<Textarea
 					name="description"
-					placeholder="Kurze Beschriebig vo der Challange..."
+					placeholder="Kurzi Beschriebig vo der Challange..."
 					rows={3}
 					bind:value={$form.description}
 				/>
@@ -207,14 +218,52 @@
 
 			<input type="hidden" name="pointsJson" bind:value={$form.pointsJson} />
 			<input type="hidden" name="ordered" bind:value={$form.ordered} />
+			<input type="hidden" name="type" bind:value={$form.type} />
 			{#if $errors.pointsJson}
 				<span class="label text-error">{$errors.pointsJson}</span>
 			{/if}
 
+			<!-- Type selector -->
+			<fieldset class="fieldset">
+				<legend class="fieldset-legend">Typ</legend>
+				<div class="flex gap-2">
+					<button
+						type="button"
+						class="btn btn-sm gap-1"
+						class:btn-primary={challengeType === 'one_time'}
+						class:btn-outline={challengeType !== 'one_time'}
+						onclick={() => (challengeType = 'one_time')}
+					>
+						<Zap size={14} /> Einmalig
+					</button>
+					<button
+						type="button"
+						class="btn btn-sm gap-1"
+						class:btn-primary={challengeType === 'seasonal'}
+						class:btn-outline={challengeType !== 'seasonal'}
+						onclick={() => (challengeType = 'seasonal')}
+					>
+						<CalendarDays size={14} /> Saisonal
+					</button>
+				</div>
+				<p class="text-base-content/50 mt-1 text-xs">
+					{#if challengeType === 'one_time'}
+						Aui Punkte müese i eire Aktivität erreicht werde.
+					{:else}
+						Punkte chöi über mehreri Aktivitäte i dere Saison gsammlet werde.
+					{/if}
+				</p>
+			</fieldset>
+
 			<!-- Options row -->
-			<label class="label cursor-pointer gap-2">
-				<span class="label-text">Festi Reihefolg</span>
-				<input type="checkbox" class="toggle toggle-primary" bind:checked={ordered} />
+			<label class="label cursor-pointer gap-2" class:opacity-40={challengeType === 'seasonal'}>
+				<span class="label-text">Feschti Reihefolg</span>
+				<input
+					type="checkbox"
+					class="toggle toggle-primary"
+					bind:checked={ordered}
+					disabled={challengeType === 'seasonal'}
+				/>
 			</label>
 
 			<!-- Mode toggle + undo/redo toolbar -->
@@ -392,7 +441,7 @@
 					{/each}
 				</div>
 			{:else}
-				<p class="text-base-content/60 text-sm">Klick uf der Map um Punkte hinzüfüege.</p>
+				<p class="text-base-content/60 text-sm">Klick uf der Map um Punkte z erfasse.</p>
 			{/if}
 
 			<Button type="submit" disabled={$delayed || points.length === 0}>

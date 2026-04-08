@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
+	import { Zap, CalendarDays } from 'lucide-svelte';
 	import type { PageServerData } from './$types';
 
 	const { data }: { data: PageServerData } = $props();
@@ -35,6 +36,15 @@
 								<p class="text-base-content/70 line-clamp-2 text-sm">{challenge.description}</p>
 							{/if}
 							<div class="mt-3 flex flex-wrap gap-2">
+								{#if challenge.type === 'seasonal'}
+									<Badge variant="secondary" class="gap-1">
+										<CalendarDays size={12} /> Saisonal
+									</Badge>
+								{:else}
+									<Badge variant="outline" class="gap-1">
+										<Zap size={12} /> Einmalig
+									</Badge>
+								{/if}
 								<Badge variant="outline"
 									>{challenge.pointCount} Punkt{challenge.pointCount !== 1 ? 'e' : ''}</Badge
 								>

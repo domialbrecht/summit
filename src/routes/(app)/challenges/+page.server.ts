@@ -10,6 +10,7 @@ export const load: PageServerLoad = async () => {
 			slug: table.challenge.slug,
 			name: table.challenge.name,
 			description: table.challenge.description,
+			type: table.challenge.type,
 			createdAt: table.challenge.createdAt,
 			creatorFirstName: table.user.firstName,
 			creatorLastName: table.user.lastName,
@@ -20,7 +21,13 @@ export const load: PageServerLoad = async () => {
 				SELECT COUNT(*) FROM challenge_point cpt WHERE cpt.challenge_id = ${table.challenge.id}
 			)`,
 			completionCount: sql<number>`(
-				SELECT COUNT(*) FROM challenge_attempt ca WHERE ca.challenge_id = ${table.challenge.id} AND ca.completed = true
+				CASE WHEN ${table.challenge.type} = 'seasonal' THEN (
+					SELECT COUNT(*) FROM challenge_attempt ca
+					INNER JOIN season s ON s.id = ca.season_id
+					WHERE ca.challenge_id = ${table.challenge.id} AND ca.completed = true AND s.is_active = true
+				) ELSE (
+					SELECT COUNT(*) FROM challenge_attempt ca WHERE ca.challenge_id = ${table.challenge.id} AND ca.completed = true
+				) END
 			)`
 		})
 		.from(table.challenge)

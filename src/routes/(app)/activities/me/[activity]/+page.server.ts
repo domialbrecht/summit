@@ -78,6 +78,23 @@ export const actions = {
 		try {
 			const result = await submitActivityToChallenge(user.id, activityId, form.data.challengeId);
 
+			// Seasonal challenge: show cumulative season progress
+			if (result.seasonProgress) {
+				const sp = result.seasonProgress;
+				if (sp.completed) {
+					return message(
+						form,
+						`✓ Challange abgschlosse! Alli ${sp.totalPoints} Punkte i dere Saison gfunde.`
+					);
+				} else {
+					const missing = sp.totalPoints - sp.matchedPointIds.length;
+					return message(
+						form,
+						`${sp.matchedPointIds.length}/${sp.totalPoints} Punkte i dere Saison gfunde. No ${missing} fehlt${missing !== 1 ? 'e' : ''}.`
+					);
+				}
+			}
+
 			const matchedNames = result.matchedPoints.map((p) => p.name ?? `Punkt ${p.id}`).join(', ');
 
 			if (result.completed) {

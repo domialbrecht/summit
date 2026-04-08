@@ -311,6 +311,7 @@ export const challenge = pgTable('challenge', {
 	slug: text('slug').notNull().unique(),
 	name: text('name').notNull(),
 	description: text('description'),
+	type: text('type').notNull().default('one_time'),
 	ordered: boolean('ordered').notNull().default(false),
 	createdBy: text('created_by')
 		.notNull()
@@ -388,6 +389,7 @@ export const challengeAttempt = pgTable(
 		activityId: text('activity_id')
 			.notNull()
 			.references(() => activity.id, { onDelete: 'cascade' }),
+		seasonId: integer('season_id').references(() => season.id, { onDelete: 'set null' }),
 		submittedAt: timestamp('submitted_at', { withTimezone: true, mode: 'date' })
 			.notNull()
 			.defaultNow(),
