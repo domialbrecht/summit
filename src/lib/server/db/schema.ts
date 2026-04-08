@@ -306,6 +306,129 @@ export const season = pgTable(
 	})
 );
 
+export const challenge = pgTable('challenge', {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	slug: text('slug').notNull().unique(),
+	name: text('name').notNull(),
+	description: text('description'),
+	ordered: boolean('ordered').notNull().default(false),
+	createdBy: text('created_by')
+		.notNull()
+		.references(() => user.id),
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull().defaultNow()
+});
+
+export const challengeRelations = relations(challenge, ({ one, many }) => ({
+	creator: one(user, { fields: [challenge.createdBy], references: [user.id] }),
+	points: many(challengePoint),
+	participants: many(challengeParticipant),
+	attempts: many(challengeAttempt)
+}));
+
+export const challengePoint = pgTable(
+	'challenge_point',
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		challengeId: integer('challenge_id')
+			.notNull()
+			.references(() => challenge.id, { onDelete: 'cascade' }),
+		summitId: integer('summit_id').references(() => summit.id, { onDelete: 'set null' }),
+		sortOrder: integer('sort_order').notNull().default(0),
+		name: text('name'),
+		description: text('description'),
+		lat: numeric('lat').notNull(),
+		long: numeric('long').notNull(),
+		location: geometry('location', { type: 'point', mode: 'xy', srid: 4326 }).notNull()
+	},
+	(t) => ({
+		challengePointSpatialIndex: index('challenge_point_spatial_index').using('gist', t.location),
+		challengePointChallengeIdx: index('challenge_point_challenge_idx').using('btree', t.challengeId)
+	})
+);
+
+export const challengePointRelations = relations(challengePoint, ({ one }) => ({
+	challenge: one(challenge, { fields: [challengePoint.challengeId], references: [challenge.id] }),
+	summit: one(summit, { fields: [challengePoint.summitId], references: [summit.id] })
+}));
+
+export const challengeParticipant = pgTable(
+	'challenge_participant',
+	{
+		challengeId: integer('challenge_id')
+			.notNull()
+			.references(() => challenge.id, { onDelete: 'cascade' }),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		joinedAt: timestamp('joined_at', { withTimezone: true, mode: 'date' }).notNull().defaultNow()
+	},
+	(t) => ({
+		pk: primaryKey({ columns: [t.challengeId, t.userId] })
+	})
+);
+
+export const challengeParticipantRelations = relations(challengeParticipant, ({ one }) => ({
+	challenge: one(challenge, {
+		fields: [challengeParticipant.challengeId],
+		references: [challenge.id]
+	}),
+	user: one(user, { fields: [challengeParticipant.userId], references: [user.id] })
+}));
+
+export const challengeAttempt = pgTable(
+	'challenge_attempt',
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		challengeId: integer('challenge_id')
+			.notNull()
+			.references(() => challenge.id, { onDelete: 'cascade' }),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		activityId: text('activity_id')
+			.notNull()
+			.references(() => activity.id, { onDelete: 'cascade' }),
+		submittedAt: timestamp('submitted_at', { withTimezone: true, mode: 'date' })
+			.notNull()
+			.defaultNow(),
+		completed: boolean('completed').notNull().default(false)
+	},
+	(t) => ({
+		challengeAttemptUserChallengeActivityIdx: index(
+			'challenge_attempt_user_challenge_activity_idx'
+		).using('btree', t.userId, t.challengeId, t.activityId)
+	})
+);
+
+export const challengeAttemptRelations = relations(challengeAttempt, ({ one, many }) => ({
+	challenge: one(challenge, { fields: [challengeAttempt.challengeId], references: [challenge.id] }),
+	user: one(user, { fields: [challengeAttempt.userId], references: [user.id] }),
+	activity: one(activity, { fields: [challengeAttempt.activityId], references: [activity.id] }),
+	pointMatches: many(challengePointMatch)
+}));
+
+export const challengePointMatch = pgTable('challenge_point_match', {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	challengeAttemptId: integer('challenge_attempt_id')
+		.notNull()
+		.references(() => challengeAttempt.id, { onDelete: 'cascade' }),
+	challengePointId: integer('challenge_point_id')
+		.notNull()
+		.references(() => challengePoint.id, { onDelete: 'cascade' }),
+	matchedAt: numeric('matched_at')
+});
+
+export const challengePointMatchRelations = relations(challengePointMatch, ({ one }) => ({
+	attempt: one(challengeAttempt, {
+		fields: [challengePointMatch.challengeAttemptId],
+		references: [challengeAttempt.id]
+	}),
+	point: one(challengePoint, {
+		fields: [challengePointMatch.challengePointId],
+		references: [challengePoint.id]
+	})
+}));
+
 export type Session = typeof session.$inferSelect;
 export type Tokens = typeof tokens.$inferSelect;
 export type User = typeof user.$inferSelect;
@@ -316,5 +439,16 @@ export type SelectArea = typeof area.$inferSelect;
 export type SelectSummit = typeof summit.$inferSelect;
 export type SelectSummitProfile = typeof summit_profile.$inferSelect;
 export type SelectSummitAttempt = typeof summit_attempt.$inferSelect;
+export type SelectChallenge = typeof challenge.$inferSelect;
+export type SelectChallengePoint = typeof challengePoint.$inferSelect;
 
 export const summitAttemptInsertSchema = createInsertSchema(summit_attempt);
+export const insertChallengeSchema = createInsertSchema(challenge, {
+	name: (s) => s.min(1).max(100),
+	description: (s) => s.max(500).optional(),
+	slug: (s) => s.optional()
+});
+export const insertChallengePointSchema = createInsertSchema(challengePoint, {
+	name: (s) => s.max(100).optional(),
+	description: (s) => s.max(300).optional()
+});

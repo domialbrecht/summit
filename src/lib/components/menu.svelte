@@ -70,6 +70,29 @@
 	{#if user}
 		<li>
 			<a
+				href="/challenges"
+				class="tooltip"
+				class:menu-active={$page.url.pathname.includes('/challenges')}
+				data-tip="Challanges"
+				aria-label="Challanges"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="h-5 w-5"
+					><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path
+						d="M2 12l10 5 10-5"
+					/></svg
+				>
+			</a>
+		</li>
+		<li>
+			<a
 				href="/achievements"
 				class="tooltip"
 				class:menu-active={$page.url.pathname.includes('/achievements')}

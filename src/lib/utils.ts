@@ -49,6 +49,16 @@ export function dt(d: Date) {
 	return `${day}. ${month} ${year} ${time}`;
 }
 
+export function slugify(text: string): string {
+	return text
+		.toLowerCase()
+		.trim()
+		.replace(/[\s_]+/g, '-')
+		.replace(/[^\w-]/g, '')
+		.replace(/--+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
+
 export function d(d: Date) {
 	const day = d.getDate().toString().padStart(2, '0');
 	const month = d.toLocaleString('de-CH', { month: 'short' });
