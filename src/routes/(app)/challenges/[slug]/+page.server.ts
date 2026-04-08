@@ -5,6 +5,7 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { error, fail } from '@sveltejs/kit';
 import { eq, and, sql } from 'drizzle-orm';
 import { z } from 'zod/v4';
+import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 const joinSchema = z.object({ action: z.enum(['join', 'leave']) });
@@ -135,5 +136,24 @@ export const actions = {
 			);
 
 		return message(form, 'Challange verlah');
+	},
+
+	delete: async ({ locals, params }: { locals: App.Locals; params: { slug: string } }) => {
+		const user = locals.user;
+		if (!user) return fail(401, {});
+		const slug = params.slug;
+
+		const [challengeRow] = await db
+			.select({ id: table.challenge.id, createdBy: table.challenge.createdBy })
+			.from(table.challenge)
+			.where(eq(table.challenge.slug, slug))
+			.limit(1);
+
+		if (!challengeRow) return fail(404, {});
+		if (challengeRow.createdBy !== user.id) return fail(403, {});
+
+		await db.delete(table.challenge).where(eq(table.challenge.id, challengeRow.id));
+
+		redirect(303, '/challenges');
 	}
 } satisfies Actions;

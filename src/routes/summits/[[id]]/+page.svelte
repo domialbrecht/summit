@@ -170,7 +170,7 @@ ${wpts}
 						<button
 							onclick={toggleSelectionMode}
 							class="btn btn-circle btn-sm shadow-lg {selectionMode
-							? 'btn-primary'
+								? 'btn-primary'
 								: 'bg-white text-gray-700 hover:bg-gray-100'}"
 							aria-label="Toggle selection mode"
 							title="Summits uswähle für GPX Export"
@@ -193,7 +193,7 @@ ${wpts}
 				</div>
 				{#if selectionMode}
 					<div
-						class="fixed bottom-24 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg lg:top-2 lg:bottom-auto lg:left-auto lg:right-2 lg:translate-x-0"
+						class="fixed bottom-24 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg lg:top-2 lg:right-2 lg:bottom-auto lg:left-auto lg:translate-x-0"
 					>
 						<span class="text-sm font-medium">{selectedSummits.length} usgwählt</span>
 						<button

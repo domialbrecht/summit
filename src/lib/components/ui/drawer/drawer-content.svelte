@@ -49,7 +49,7 @@
 	>
 		<div
 			class={clsx({
-				'hidden rounded-full bg-base-200 lg:block': true,
+				'bg-base-200 hidden rounded-full lg:block': true,
 				'mx-auto mt-4 h-1.5 w-12': contentProps?.variant === 'bottom',
 				'mx-4 my-auto h-12 w-2': contentProps?.variant === 'left'
 			})}

@@ -79,6 +79,18 @@
 					<Button type="submit" variant="outline">Verlah</Button>
 				</form>
 			{/if}
+			{#if data.isCreator}
+				<form
+					method="POST"
+					action="?/delete"
+					use:enhance
+					onsubmit={(e) => {
+						if (!confirm('Challange würkli lösche? Aui Daten werded glöscht.')) e.preventDefault();
+					}}
+				>
+					<Button type="submit" variant="error">Lösche</Button>
+				</form>
+			{/if}
 		</div>
 	</div>
 

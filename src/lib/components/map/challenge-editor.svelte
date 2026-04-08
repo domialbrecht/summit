@@ -99,85 +99,85 @@
 </script>
 
 <div class="h-full w-full" class:cursor-crosshair={mode === 'place'}>
-<MapLibre
-	bind:map
-	style="/komoot_mapstyle.json"
-	standardControls
-	class="h-full w-full"
-	images={[{ id: 'solyvc_logo', url: solyvc }]}
-	center={[7.535409043530986, 47.20735710031535]}
-	zoom={12}
-	onclick={handleMapClick}
->
-	{#snippet children()}
-		<GeoJSON id="summits" data="/summits/geojson">
-			<SymbolLayer
-				id="summit_symbols"
-				interactive={mode === 'select'}
-				hoverCursor={summitCursor}
-				onclick={handleSummitClick}
-				layout={{
-					'text-field': ['to-string', ['get', 'name']],
-					'text-size': 12,
-					'icon-size': 0.06,
-					'text-anchor': 'top',
-					'text-offset': [0, 1.2],
-					'text-font': ['Noto Sans Regular'],
-					'icon-image': 'solyvc_logo'
-				}}
-				paint={{
-					'text-color': [
-						'match',
-						['get', 'category'],
-						[1],
-						'#86efac',
-						[2],
-						'#00d7c0',
-						[3],
-						'#00b6ff',
-						[4],
-						'#ffbe00',
-						[5],
-						'#ff5861',
-						'#aaaaaa'
-					],
-					'text-halo-color': 'hsl(0, 0%, 30%)',
-					'text-halo-width': 1,
-					'text-opacity': mode === 'select' ? 1 : 0.5,
-					'icon-opacity': mode === 'select' ? 1 : 0.4
-				}}
-			/>
-		</GeoJSON>
+	<MapLibre
+		bind:map
+		style="/komoot_mapstyle.json"
+		standardControls
+		class="h-full w-full"
+		images={[{ id: 'solyvc_logo', url: solyvc }]}
+		center={[7.535409043530986, 47.20735710031535]}
+		zoom={12}
+		onclick={handleMapClick}
+	>
+		{#snippet children()}
+			<GeoJSON id="summits" data="/summits/geojson">
+				<SymbolLayer
+					id="summit_symbols"
+					interactive={mode === 'select'}
+					hoverCursor={summitCursor}
+					onclick={handleSummitClick}
+					layout={{
+						'text-field': ['to-string', ['get', 'name']],
+						'text-size': 12,
+						'icon-size': 0.06,
+						'text-anchor': 'top',
+						'text-offset': [0, 1.2],
+						'text-font': ['Noto Sans Regular'],
+						'icon-image': 'solyvc_logo'
+					}}
+					paint={{
+						'text-color': [
+							'match',
+							['get', 'category'],
+							[1],
+							'#86efac',
+							[2],
+							'#00d7c0',
+							[3],
+							'#00b6ff',
+							[4],
+							'#ffbe00',
+							[5],
+							'#ff5861',
+							'#aaaaaa'
+						],
+						'text-halo-color': 'hsl(0, 0%, 30%)',
+						'text-halo-width': 1,
+						'text-opacity': mode === 'select' ? 1 : 0.5,
+						'icon-opacity': mode === 'select' ? 1 : 0.4
+					}}
+				/>
+			</GeoJSON>
 
-		<GeoJSON id="editor-points" data={pointsGeoJSON}>
-			<CircleLayer
-				id="editor-circles"
-				interactive
-				hoverCursor="pointer"
-				onclick={handleCircleClick}
-				paint={{
-					'circle-radius': ['case', ['==', ['get', 'idx'], selectedIdx], 11, 9],
-					'circle-color': ['get', 'color'],
-					'circle-stroke-width': ['case', ['==', ['get', 'idx'], selectedIdx], 3, 2],
-					'circle-stroke-color': 'white'
-				}}
-			/>
-			<SymbolLayer
-				id="editor-labels"
-				layout={{
-					'text-field': ['get', 'label'],
-					'text-size': 11,
-					'text-anchor': 'bottom',
-					'text-offset': [0, -1.5],
-					'text-font': ['Noto Sans Regular']
-				}}
-				paint={{
-					'text-color': 'white',
-					'text-halo-color': 'rgba(0,0,0,0.8)',
-					'text-halo-width': 1
-				}}
-			/>
-		</GeoJSON>
-	{/snippet}
-</MapLibre>
+			<GeoJSON id="editor-points" data={pointsGeoJSON}>
+				<CircleLayer
+					id="editor-circles"
+					interactive
+					hoverCursor="pointer"
+					onclick={handleCircleClick}
+					paint={{
+						'circle-radius': ['case', ['==', ['get', 'idx'], selectedIdx], 11, 9],
+						'circle-color': ['get', 'color'],
+						'circle-stroke-width': ['case', ['==', ['get', 'idx'], selectedIdx], 3, 2],
+						'circle-stroke-color': 'white'
+					}}
+				/>
+				<SymbolLayer
+					id="editor-labels"
+					layout={{
+						'text-field': ['get', 'label'],
+						'text-size': 11,
+						'text-anchor': 'bottom',
+						'text-offset': [0, -1.5],
+						'text-font': ['Noto Sans Regular']
+					}}
+					paint={{
+						'text-color': 'white',
+						'text-halo-color': 'rgba(0,0,0,0.8)',
+						'text-halo-width': 1
+					}}
+				/>
+			</GeoJSON>
+		{/snippet}
+	</MapLibre>
 </div>

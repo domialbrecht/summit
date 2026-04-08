@@ -66,10 +66,10 @@
 	</div>
 	<div class="mt-2 flex w-full gap-2">
 		{#if distance}
-			<div class="rounded-lg bg-primary p-1 text-sm text-white">{km(distance)}</div>
+			<div class="bg-primary rounded-lg p-1 text-sm text-white">{km(distance)}</div>
 		{/if}
 		{#if elevation}
-			<div class="rounded-lg bg-primary p-1 text-sm text-white">{m_sign(elevation)}</div>
+			<div class="bg-primary rounded-lg p-1 text-sm text-white">{m_sign(elevation)}</div>
 		{/if}
 		{#if gradient}
 			<div

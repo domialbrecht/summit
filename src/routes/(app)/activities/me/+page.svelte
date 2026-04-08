@@ -9,10 +9,10 @@
 
 <Section sectionId="postsync">
 	{#if data.activities.length > 0}
-		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 			<span class="text-primary">Aktivitäte</span> im System
 		</div>
-		<p class="mb-2 mt-2 max-w-2xl">
+		<p class="mt-2 mb-2 max-w-2xl">
 			Hie gsehsch aui Aktivitäte womer gsynched hei. Und die wo e Pass isch erkennt worde hei es
 			"Pass erledigt" Zeiche. Falls was dire Meinig nach nid stimmt nim Kontakt uf.
 		</p>
@@ -42,10 +42,10 @@
 			{/each}
 		</div>
 	{:else}
-		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 			<span class="text-primary">Nix gfunde,</span> versuech mau e sync
 		</div>
-		<p class="mb-8 mt-12">Falls was dire Mieinig nach nid stimmt, bitte nimm Kontakt mit nis uf.</p>
+		<p class="mt-12 mb-8">Falls was dire Mieinig nach nid stimmt, bitte nimm Kontakt mit nis uf.</p>
 		<div class=""><Button href="/">Zrügg zur Homesite</Button></div>
 	{/if}
 </Section>

@@ -51,11 +51,11 @@
 		</div>
 		<div class="h-12"></div>
 		<h2
-			class="font-title relative z-2 mx-auto text-[clamp(2rem,6vw,4.5rem)] font-black leading-none"
+			class="font-title relative z-2 mx-auto text-[clamp(2rem,6vw,4.5rem)] leading-none font-black"
 		>
 			SolyVC Rennvelo Event<br />
 			{#await users then db_users}
-				<span class="font-light text-primary">{db_users.length} aktivi Mitglider</span>
+				<span class="text-primary font-light">{db_users.length} aktivi Mitglider</span>
 			{/await}
 		</h2>
 		<div class="h-6"></div>

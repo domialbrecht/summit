@@ -11,7 +11,7 @@
 
 <Section sectionId="postsync">
 	{#if data.activities.length > 0}
-		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 			<span class="text-primary">Aktivitäte</span> vom SolyVC
 		</div>
 		<div class="overflow-x-auto">
@@ -69,7 +69,7 @@
 		</div>
 	{:else}
 		{#if data.offset > 0}
-			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 				<span class="text-primary">Keni Date</span> meh ab hie
 			</div>
 		{/if}

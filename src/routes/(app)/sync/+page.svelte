@@ -19,7 +19,7 @@
 
 <Section sectionId="postsync">
 	{#if data.attempts.length > 0}
-		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 			<span class="text-primary">Nice!</span> Neui Päss ready
 		</div>
 		<form method="POST" action="/sync">
@@ -55,16 +55,16 @@
 					</div>
 				{/each}
 			</div>
-			<p class="mb-6 mt-8">
+			<p class="mt-8 mb-6">
 				Gseht aues guet us? Falls ja spichere dini neue Date. Falls nid nim Kontakt mit nis uf.
 			</p>
 			<Button type="submit">Spichere</Button>
 		</form>
 	{:else}
-		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] font-black leading-none">
+		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
 			<span class="text-primary">Sorry,</span> kei neui Päss
 		</div>
-		<p class="mb-8 mt-12">Falls was dire Mieinig nach nid stimmt, bitte nimm Kontakt mit nis uf.</p>
+		<p class="mt-12 mb-8">Falls was dire Mieinig nach nid stimmt, bitte nimm Kontakt mit nis uf.</p>
 		<div class=""><Button href="/">Zrügg zur Homesite</Button></div>
 	{/if}
 	{#if lastParse.updated || lastParse.unparsed}
@@ -73,7 +73,7 @@
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
 				viewBox="0 0 24 24"
-				class="h-6 w-6 shrink-0 stroke-info"
+				class="stroke-info h-6 w-6 shrink-0"
 			>
 				<path
 					stroke-linecap="round"

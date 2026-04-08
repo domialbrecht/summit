@@ -13,7 +13,7 @@
 	<Hero />
 	<Intro />
 	<Community users={data.users} />
-	<div class="section-normal mx-auto mb-4 w-full max-w-7xl bg-base-100 px-4 sm:px-6 md:px-8">
+	<div class="section-normal bg-base-100 mx-auto mb-4 w-full max-w-7xl px-4 sm:px-6 md:px-8">
 		<div class="flex justify-end">
 			<PoweredBy />
 		</div>
