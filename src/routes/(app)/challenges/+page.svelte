@@ -11,13 +11,19 @@
 <Section sectionId="challenges">
 	<div class="flex items-start justify-between">
 		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
-			<span class="text-primary">Custom</span> Challenges
+			<span class="text-primary">SolyVC</span> Challenges
 		</div>
 		<Button href="/challenges/new">Challange erstelle</Button>
 	</div>
+	<p class="pt-4 text-xl">
+		Challenges si vo Mitglider erstellti Events wo du chasch mitmache um e bsunderi Herusforderig
+		oder Tour z mache. Sigs aui Montis vo Locarno, die 4 höchste Päss ir Schwiz oder 5 Dead Ends. Es
+		git Challenges wo du d Checkpoints i eire Route erledige muesch, oder serigi wos drum geit die
+		ire Saison abzschliesse.
+	</p>
 
 	{#if data.challenges.length === 0}
-		<p class="text-base-content/60 mt-12">No no kei Challanges. Erstell doch die erschti!</p>
+		<p class="text-base-content/60 mt-12">No no kei Challanges. Ersteu du die ersti!</p>
 	{:else}
 		<div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
 			{#each data.challenges as challenge (challenge.id)}
