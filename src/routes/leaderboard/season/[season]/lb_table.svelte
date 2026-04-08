@@ -37,7 +37,7 @@
 </script>
 
 <ul class="list bg-base-100 rounded-box mt-12 shadow-md">
-	{#each sortedByWins as entry, i}
+	{#each sortedByWins as entry, i (entry.userId)}
 		<li class="list-row">
 			<div class="text-4xl font-thin tabular-nums opacity-30">
 				{(i + 1).toString().padStart(2, '0')}

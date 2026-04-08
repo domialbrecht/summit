@@ -139,7 +139,7 @@
 			a..
 		</p>
 		<div class="mt-8 flex grow flex-col gap-36">
-			{#each data.activities as activity, index}
+			{#each data.activities as activity, index (activity.activityId)}
 				<div class="group min-h-[30vh] w-full" data-card>
 					<div class="flex flex-col gap-3 rounded-b-2xl shadow-2xl">
 						<div
@@ -155,7 +155,7 @@
 								</div>
 								<span class="pr-2 text-2xl md:text-4xl">{seasonEmoji(activity.date)}</span>
 							</div>
-							{#each activity.attempts as item}
+							{#each activity.attempts as item (item.summitName)}
 								<div data-longitude={item.long} data-latitude={item.lat}>
 									<div class="flex justify-between gap-2 text-slate-800">
 										<p class="text-2xl">{item.summitName}</p>

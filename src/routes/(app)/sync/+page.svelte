@@ -28,7 +28,7 @@
 					<div class="col-span-12">
 						<p class="text-xl font-bold">{attempts[activityId][0].strava_activity.name}</p>
 						<div class="grid gap-4 xl:grid-cols-4">
-							{#each entries as entry}
+							{#each entries as entry (entry.summit.id)}
 								<Card.Root>
 									<Card.Body>
 										<Card.Title>

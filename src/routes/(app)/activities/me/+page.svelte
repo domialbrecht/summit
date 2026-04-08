@@ -17,7 +17,7 @@
 			"Pass erledigt" Zeiche. Falls was dire Meinig nach nid stimmt nim Kontakt uf.
 		</p>
 		<div class="mt-6 grid gap-6 xl:grid-cols-12">
-			{#each data.activities as activity}
+			{#each data.activities as activity (activity.id)}
 				<div class="xl:col-span-4">
 					<a
 						class={`card card-bordered border-2 shadow-xl transition-transform hover:-translate-y-2 ${activity.match ? 'border-primary' : ''}`}

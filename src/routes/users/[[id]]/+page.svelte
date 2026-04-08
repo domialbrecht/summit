@@ -31,7 +31,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each data.userSummits as entry}
+								{#each data.userSummits as entry (entry.summitId)}
 									<tr>
 										<th>
 											<a href={`/summits/${entry.summitId}`} class="badge badge-ghost badge-sm"

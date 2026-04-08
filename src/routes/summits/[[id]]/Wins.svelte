@@ -9,7 +9,7 @@
 
 <div class="flex flex-col gap-2 lg:flex-row lg:items-center">
 	<div class="flex grow flex-col gap-3">
-		{#each wins as win}
+		{#each wins as win (win.winAttempt.id)}
 			<div class="flex items-center justify-between gap-2">
 				<div class="flex items-center gap-1">
 					<div class="avatar">

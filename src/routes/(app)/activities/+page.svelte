@@ -25,7 +25,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each data.activities as activity}
+					{#each data.activities as activity (activity.id)}
 						<tr>
 							<td>
 								<div class="flex items-center gap-3">

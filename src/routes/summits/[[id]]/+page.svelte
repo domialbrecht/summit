@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type maplibregl from 'maplibre-gl';
+	import type { Feature, Geometry } from 'geojson';
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
@@ -12,8 +13,19 @@
 	import SeasonToggle from './SeasonToggle.svelte';
 	import RefreshCw from 'lucide-svelte/icons/refresh-cw';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
+	import Crosshair from 'lucide-svelte/icons/crosshair';
+	import Download from 'lucide-svelte/icons/download';
+	import X from 'lucide-svelte/icons/x';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
+
+	type SelectedSummit = {
+		id: number;
+		name: string;
+		elevation: number;
+		lat: number;
+		lng: number;
+	};
 
 	const { data }: { data: PageServerData } = $props();
 	const { user } = page.data;
@@ -29,6 +41,69 @@
 	);
 
 	let mapComp: maplibregl.Map | undefined = $state();
+
+	// Selection mode state
+	let selectionMode = $state(false);
+	let selectedSummits: SelectedSummit[] = $state([]);
+	let selectedIds = $derived(selectedSummits.map((s) => s.id));
+
+	function toggleSelectionMode() {
+		selectionMode = !selectionMode;
+		if (!selectionMode) {
+			selectedSummits = [];
+		}
+	}
+
+	function handleSummitToggle(feature: Feature<Geometry, any>) {
+		const props = feature.properties;
+		const id = props.id;
+		const idx = selectedSummits.findIndex((s) => s.id === id);
+		if (idx >= 0) {
+			selectedSummits = selectedSummits.filter((s) => s.id !== id);
+		} else {
+			const geom = feature.geometry as { type: string; coordinates: [number, number] };
+			selectedSummits = [
+				...selectedSummits,
+				{
+					id,
+					name: props.name,
+					elevation: props.elevation,
+					lat: geom.coordinates[1],
+					lng: geom.coordinates[0]
+				}
+			];
+		}
+	}
+
+	function exportGpx() {
+		if (selectedSummits.length === 0) return;
+		const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		const wpts = selectedSummits
+			.map(
+				(s) => `  <wpt lat="${s.lat}" lon="${s.lng}">
+    <name>${esc(s.name)}</name>
+    <ele>${s.elevation}</ele>
+  </wpt>`
+			)
+			.join('\n');
+		const gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Summit"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>Summit Selection</name>
+  </metadata>
+${wpts}
+</gpx>`;
+		const blob = new Blob([gpx], { type: 'application/gpx+xml' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'summits.gpx';
+		a.click();
+		URL.revokeObjectURL(url);
+	}
 
 	async function handleRefresh() {
 		isRefreshing = true;
@@ -93,6 +168,16 @@
 						/>
 						<SeasonToggle bind:showSeason={showSeasonOnly} />
 						<button
+							onclick={toggleSelectionMode}
+							class="btn btn-circle btn-sm shadow-lg {selectionMode
+							? 'btn-primary'
+								: 'bg-white text-gray-700 hover:bg-gray-100'}"
+							aria-label="Toggle selection mode"
+							title="Summits uswähle für GPX Export"
+						>
+							<Crosshair size={20} />
+						</button>
+						<button
 							onclick={handleRefresh}
 							disabled={isRefreshing}
 							class="btn btn-circle btn-sm bg-white text-gray-700 shadow-lg hover:bg-gray-100"
@@ -106,7 +191,32 @@
 						</button>
 					</div>
 				</div>
-				<SummitMap bind:map={mapComp} handleClick={() => (open = true)} {mapUrl} />
+				{#if selectionMode}
+					<div
+						class="fixed bottom-24 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg lg:top-2 lg:bottom-auto lg:left-auto lg:right-2 lg:translate-x-0"
+					>
+						<span class="text-sm font-medium">{selectedSummits.length} usgwählt</span>
+						<button
+							onclick={exportGpx}
+							disabled={selectedSummits.length === 0}
+							class="btn btn-sm btn-primary gap-1"
+						>
+							<Download size={16} />
+							GPX
+						</button>
+						<button onclick={toggleSelectionMode} class="btn btn-sm btn-ghost gap-1">
+							<X size={16} />
+						</button>
+					</div>
+				{/if}
+				<SummitMap
+					bind:map={mapComp}
+					handleClick={() => (open = true)}
+					{mapUrl}
+					{selectionMode}
+					{selectedIds}
+					onSummitToggle={handleSummitToggle}
+				/>
 			</div>
 			<Drawer.Root direction="left" bind:open>
 				<Drawer.Content contentProps={{ variant: 'left' }} class="lg:w-1/2">

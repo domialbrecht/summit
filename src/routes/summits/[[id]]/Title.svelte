@@ -43,7 +43,7 @@
 	</div>
 </div>
 <div class="mt-4 flex flex-wrap gap-2">
-	{#each summit_data.areas as area}
+	{#each summit_data.areas as area (area.name)}
 		<span class="badge badge-info">{area.name}</span>
 	{/each}
 </div>

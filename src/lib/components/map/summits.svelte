@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { MapLibre, GeoJSON, SymbolLayer, type LayerClickInfo } from 'svelte-maplibre';
+	import {
+		MapLibre,
+		GeoJSON,
+		SymbolLayer,
+		CircleLayer,
+		type LayerClickInfo
+	} from 'svelte-maplibre';
+	import type { ExpressionSpecification } from 'maplibre-gl';
 	import solyvc from '$site/solyvc.png';
 	import trophy from '$site/icons/trophy.png';
 	import trophyF from '$site/icons/trophyF.png';
@@ -15,19 +22,46 @@
 	};
 
 	function handleSummitClick(e: LayerClickInfo<Feature<Geometry, SummitProperty>>) {
-		const id = e.features[0].properties.id;
+		const feature = e.features[0];
+		const id = feature.properties.id;
+
+		if (selectionMode) {
+			onSummitToggle?.(feature);
+			return;
+		}
+
 		goto(`/summits/${id}`);
 		handleClick();
 	}
 
-	let { map = $bindable(), handleClick, mapUrl } = $props();
+	let {
+		map = $bindable(),
+		handleClick,
+		mapUrl,
+		selectionMode = false,
+		selectedIds = [],
+		onSummitToggle
+	}: {
+		map?: maplibregl.Map;
+		handleClick: () => void;
+		mapUrl: string;
+		selectionMode?: boolean;
+		selectedIds?: number[];
+		onSummitToggle?: (feature: Feature<Geometry, SummitProperty>) => void;
+	} = $props();
+
+	let selectedFilter: ExpressionSpecification = $derived(
+		selectedIds.length > 0
+			? (['in', ['get', 'id'], ['literal', selectedIds]] as ExpressionSpecification)
+			: (['==', ['get', 'id'], -1] as ExpressionSpecification)
+	);
 </script>
 
 <MapLibre
 	bind:map
 	style="/komoot_mapstyle.json"
 	standardControls
-	class="h-full w-full"
+	class="h-full w-full {selectionMode ? 'cursor-crosshair' : ''}"
 	images={[
 		{ id: 'solyvc_logo', url: solyvc },
 		{ id: 'attempt_icon', url: trophy },
@@ -83,5 +117,20 @@
 				}}
 			/>
 		</GeoJSON>
+		{#if selectionMode}
+			<GeoJSON id="summits-selection" data={mapUrl}>
+				<CircleLayer
+					id="summit_selection_highlight"
+					filter={selectedFilter}
+					paint={{
+						'circle-radius': 20,
+						'circle-color': '#e63946',
+						'circle-opacity': 0.3,
+						'circle-stroke-width': 3,
+						'circle-stroke-color': '#e63946'
+					}}
+				/>
+			</GeoJSON>
+		{/if}
 	{/snippet}
 </MapLibre>

@@ -116,7 +116,7 @@
 						{#await data.last_attempts}
 							<div class="skeleton h-32 w-full"></div>
 						{:then last_attempts}
-							{#each last_attempts as attempt}
+							{#each last_attempts as attempt (attempt.id)}
 								<div class="flex items-center justify-between gap-4">
 									<a class="link-primary" href={`/summits/${attempt.id}`}
 										>{attempt.name}, {dt(attempt.date)}</a

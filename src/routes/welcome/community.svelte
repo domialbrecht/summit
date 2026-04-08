@@ -62,7 +62,7 @@
 		<div class="flex w-full justify-center">
 			<div class="flex w-full max-w-5xl flex-wrap justify-center gap-3 p-10">
 				{#await users then db_users}
-					{#each db_users as user}
+					{#each db_users as user (user.id)}
 						<!-- content here -->
 						<div class="tooltip" data-tip={`${user.firstName} ${user.lastName}`}>
 							<div class="avatar">
