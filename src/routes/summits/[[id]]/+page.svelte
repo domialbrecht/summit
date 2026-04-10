@@ -16,6 +16,8 @@
 	import Crosshair from 'lucide-svelte/icons/crosshair';
 	import Download from 'lucide-svelte/icons/download';
 	import X from 'lucide-svelte/icons/x';
+	import GripVertical from 'lucide-svelte/icons/grip-vertical';
+	import Trash2 from 'lucide-svelte/icons/trash-2';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
 
@@ -46,6 +48,31 @@
 	let selectionMode = $state(false);
 	let selectedSummits: SelectedSummit[] = $state([]);
 	let selectedIds = $derived(selectedSummits.map((s) => s.id));
+
+	// Drag-to-reorder state
+	let dragIndex: number | null = $state(null);
+
+	function handleDragStart(idx: number) {
+		dragIndex = idx;
+	}
+
+	function handleDragOver(e: DragEvent, idx: number) {
+		e.preventDefault();
+		if (dragIndex === null || dragIndex === idx) return;
+		const items = [...selectedSummits];
+		const [moved] = items.splice(dragIndex, 1);
+		items.splice(idx, 0, moved);
+		selectedSummits = items;
+		dragIndex = idx;
+	}
+
+	function handleDragEnd() {
+		dragIndex = null;
+	}
+
+	function removeSummit(id: number) {
+		selectedSummits = selectedSummits.filter((s) => s.id !== id);
+	}
 
 	function toggleSelectionMode() {
 		selectionMode = !selectionMode;
@@ -193,20 +220,56 @@ ${wpts}
 				</div>
 				{#if selectionMode}
 					<div
-						class="fixed bottom-24 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-lg lg:top-2 lg:right-2 lg:bottom-auto lg:left-auto lg:translate-x-0"
+						class="fixed right-2 bottom-24 left-2 z-10 flex flex-col rounded-lg bg-white shadow-lg lg:top-28 lg:right-4 lg:bottom-auto lg:left-auto lg:w-80"
 					>
-						<span class="text-sm font-medium">{selectedSummits.length} usgwählt</span>
-						<button
-							onclick={exportGpx}
-							disabled={selectedSummits.length === 0}
-							class="btn btn-sm btn-primary gap-1"
-						>
-							<Download size={16} />
-							GPX
-						</button>
-						<button onclick={toggleSelectionMode} class="btn btn-sm btn-ghost gap-1">
-							<X size={16} />
-						</button>
+						<div class="flex items-center justify-between gap-2 border-b px-3 py-2">
+							<span class="text-sm font-medium">{selectedSummits.length} usgwählt</span>
+							<div class="flex gap-1">
+								<button
+									onclick={exportGpx}
+									disabled={selectedSummits.length === 0}
+									class="btn btn-sm btn-primary gap-1"
+								>
+									<Download size={16} />
+									GPX
+								</button>
+								<button onclick={toggleSelectionMode} class="btn btn-sm btn-ghost">
+									<X size={16} />
+								</button>
+							</div>
+						</div>
+						<div class="max-h-60 overflow-y-auto">
+							{#if selectedSummits.length === 0}
+								<p class="px-3 py-4 text-center text-sm text-gray-400">
+									Klick uf d Karte zum Summits uswähle
+								</p>
+							{:else}
+								{#each selectedSummits as summit, idx (summit.id)}
+									<div
+										role="listitem"
+										draggable="true"
+										ondragstart={() => handleDragStart(idx)}
+										ondragover={(e) => handleDragOver(e, idx)}
+										ondragend={handleDragEnd}
+										class="flex items-center gap-2 border-b border-gray-100 px-2 py-1.5 last:border-b-0
+											{dragIndex === idx ? 'bg-primary/10' : 'hover:bg-gray-50'}"
+									>
+										<span class="cursor-grab text-gray-300 active:cursor-grabbing">
+											<GripVertical size={16} />
+										</span>
+										<span class="text-xs text-gray-400">{idx + 1}.</span>
+										<span class="min-w-0 flex-1 truncate text-sm">{summit.name}</span>
+										<span class="badge badge-sm badge-ghost">{summit.elevation}m</span>
+										<button
+											onclick={() => removeSummit(summit.id)}
+											class="btn btn-ghost btn-xs hover:text-error text-gray-400"
+										>
+											<Trash2 size={14} />
+										</button>
+									</div>
+								{/each}
+							{/if}
+						</div>
 					</div>
 				{/if}
 				<SummitMap
