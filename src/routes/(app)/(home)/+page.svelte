@@ -8,12 +8,19 @@
 	import type { ActionData, PageData } from './$types';
 	import { dt } from '$lib/utils';
 	import { Button } from '$lib/components/ui/button';
+	import { goto } from '$app/navigation';
+	import StatsChart from './StatsChart.svelte';
 
 	const { data }: { data: PageData; form: ActionData } = $props();
 
 	const version = import.meta.env.VITE_APP_VERSION;
 
 	let syncing = $state(false);
+
+	function onSeasonChange(e: Event) {
+		const slug = (e.target as HTMLSelectElement).value;
+		goto(`?season=${slug}`, { invalidateAll: true });
+	}
 </script>
 
 <Section sectionId="welcome">
@@ -98,14 +105,35 @@
 				</Card.Body>
 			</Card.Root>
 		</div>
-		<div class="xl:col-span-12">
-			<Card.Root class="border-primary min-h-44 border-2">
-				<div
-					class="flex h-full w-full grow cursor-pointer flex-col items-center justify-center gap-2 p-6"
-				>
-					<p class="text-2xl font-extrabold md:text-3xl">Zu dire SolyVC Summit Story 2025</p>
-					<a href="/story" class="btn btn-primary"> Link </a>
-				</div>
+		<div class="xl:col-span-8">
+			<Card.Root variant="border" class="min-h-44">
+				<Card.Body>
+					<div class="flex items-center justify-between">
+						<Card.Title>Di Fortschritt</Card.Title>
+						<select
+							class="select select-sm select-bordered"
+							onchange={onSeasonChange}
+							value={data.selectedSeasonSlug}
+						>
+							{#each data.seasons as s (s.slug)}
+								<option value={s.slug}>{s.name}</option>
+							{/each}
+						</select>
+					</div>
+					<Card.Content>
+						{#await data.leaderboardStats}
+							<div class="skeleton h-72 w-full"></div>
+						{:then stats}
+							{#if stats.length > 0}
+								<StatsChart chartData={stats} />
+							{:else}
+								<div class="flex h-72 items-center justify-center text-gray-400">
+									<p>No keni Date für die Saison</p>
+								</div>
+							{/if}
+						{/await}
+					</Card.Content>
+				</Card.Body>
 			</Card.Root>
 		</div>
 		<div class="xl:col-span-4">
@@ -172,6 +200,16 @@
 								>
 							</div>
 						</div>
+					</Card.Content>
+				</Card.Body>
+			</Card.Root>
+		</div>
+		<div class="xl:col-span-4">
+			<Card.Root variant="border" class="min-h-44">
+				<Card.Body>
+					<Card.Title>SolyVC 2025 Story</Card.Title>
+					<Card.Content>
+						<a href="/story" class="btn btn-primary"> Link </a>
 					</Card.Content>
 				</Card.Body>
 			</Card.Root>

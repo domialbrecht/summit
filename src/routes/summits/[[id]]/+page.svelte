@@ -127,7 +127,8 @@ ${wpts}
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'summits.gpx';
+		const today = new Date().toISOString().slice(0, 10);
+		a.download = `summits-${selectedSummits.length}-${today}.gpx`;
 		a.click();
 		URL.revokeObjectURL(url);
 	}

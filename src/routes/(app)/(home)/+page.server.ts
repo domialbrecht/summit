@@ -5,6 +5,12 @@ import { redirect } from '@sveltejs/kit';
 import { StravaApi } from '$lib/activities';
 import type { Actions, PageServerLoad } from './$types';
 import { syncWithCount } from '$lib/activities/attempt';
+import {
+	getActiveSeason,
+	getSeasonBySlug,
+	getSeasons,
+	getUserSeasonStats
+} from '$lib/server/db/functions';
 import logger from '$lib/logger';
 
 const FETCHED_LIST_COOKIE_NAME = 'strava_list_fetched';
@@ -44,9 +50,20 @@ async function last_attempts() {
 export const load: PageServerLoad = async (event) => {
 	const { user } = await event.parent();
 
+	const seasonSlug = event.url.searchParams.get('season');
+	const [seasons, selectedSeason] = await Promise.all([
+		getSeasons(),
+		seasonSlug ? getSeasonBySlug(seasonSlug) : getActiveSeason()
+	]);
+
 	return {
 		last_attempt: user_last_attempt(user.id),
-		last_attempts: last_attempts()
+		last_attempts: last_attempts(),
+		seasons,
+		selectedSeasonSlug: selectedSeason?.slug ?? seasons[0]?.slug ?? null,
+		leaderboardStats: selectedSeason
+			? getUserSeasonStats(user.id, selectedSeason.id)
+			: Promise.resolve([])
 	};
 };
 
