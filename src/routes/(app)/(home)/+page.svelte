@@ -110,6 +110,8 @@
 				<Card.Body>
 					<div class="flex items-center justify-between">
 						<Card.Title>Di Fortschritt</Card.Title>
+					</div>
+					<Card.Content>
 						<select
 							class="select select-sm select-bordered"
 							onchange={onSeasonChange}
@@ -119,8 +121,6 @@
 								<option value={s.slug}>{s.name}</option>
 							{/each}
 						</select>
-					</div>
-					<Card.Content>
 						{#await data.leaderboardStats}
 							<div class="skeleton h-72 w-full"></div>
 						{:then stats}
