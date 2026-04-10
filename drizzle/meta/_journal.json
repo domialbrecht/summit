@@ -75,7 +75,7 @@
 		{
 			"idx": 10,
 			"version": "7",
-			"when": 1766916816630,
+			"when": 1741900000000,
 			"tag": "0010_thankful_masque",
 			"breakpoints": true
 		},
@@ -96,7 +96,7 @@
 		{
 			"idx": 13,
 			"version": "7",
-			"when": 1775638500000,
+			"when": 1744200000000,
 			"tag": "0013_seasonal_challenges",
 			"breakpoints": true
 		}
