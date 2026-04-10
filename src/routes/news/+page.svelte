@@ -3,7 +3,7 @@
 	import Navbar from '$lib/components/navbar.svelte';
 	import PoweredBy from '$lib/components/poweredby.svelte';
 	import Section from '$lib/components/ui/section';
-	import { LocateFixed } from 'lucide-svelte';
+	import { Crosshair } from 'lucide-svelte';
 
 	const { user } = page.data;
 </script>
@@ -23,26 +23,21 @@
 				<div>
 					<div class="mb-4 flex items-center gap-4">
 						<h2 class="font-title mb-0 text-3xl font-bold">
-							<span class="text-primary">I</span> Story
+							<span class="text-primary">I</span> Route Export Modus
 						</h2>
 					</div>
 					<p>
-						Uf der Site <a class="link-primary font-bold" href="/story">Story</a> heimer e cooli Zemefassig
-						vo dine Aktivität und Päss.
+						Du chasch neu uf der Charte mit em <Crosshair class="inline h-5 w-5" /> Knopf Summits uswähle.
+						E Export chasch ner zb. in Komoot importiere. D Summits si als Punkte definiert.
 					</p>
 				</div>
 				<div>
 					<div class="mb-4 flex items-center gap-4">
 						<h2 class="font-title mb-0 text-3xl font-bold">
-							<span class="text-primary">II</span> Manuell erfasse
+							<span class="text-primary">II</span> Challenges
 						</h2>
 					</div>
-					<p>
-						Du chasch neu i dim Profil selber fehlendi Päss are Aktivität zuewise. Bispiu <a
-							class="link-primary font-bold"
-							href="/report">hie.</a
-						>
-					</p>
+					<p>Neus Feature Challenges aktuell ir Beta.</p>
 				</div>
 			</div></Section
 		>
