@@ -17,7 +17,10 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
 		"test": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"test:setup": "npx tsx scripts/test-db-setup.ts",
+		"test:e2e": "playwright test",
+		"test:all": "pnpm test:setup && pnpm test && pnpm test:e2e"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
