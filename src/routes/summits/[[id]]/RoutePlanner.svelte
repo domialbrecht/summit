@@ -231,9 +231,7 @@ ${trkpts.join('\n')}
 	}
 </script>
 
-<div
-	class="fixed right-2 bottom-24 left-2 z-10 flex flex-col rounded-lg bg-white shadow-lg lg:top-28 lg:right-4 lg:bottom-auto lg:left-auto lg:w-80"
->
+{#snippet panelContent()}
 	<div class="flex items-center justify-between gap-2 border-b px-3 py-2">
 		<span class="text-sm font-medium">{routePoints.length} usgwählt</span>
 		<div class="flex gap-1">
@@ -330,4 +328,19 @@ ${trkpts.join('\n')}
 			{/each}
 		{/if}
 	</div>
+{/snippet}
+
+<!-- Desktop: fixed panel -->
+<div
+	class="fixed top-28 right-4 z-10 hidden flex-col rounded-lg bg-white shadow-lg lg:flex lg:w-80"
+>
+	{@render panelContent()}
+</div>
+
+<!-- Mobile: bottom sheet (no backdrop, map stays interactive) -->
+<div
+	class="bg-base-100 fixed inset-x-0 bottom-0 z-10 flex max-h-[33vh] flex-col rounded-t-xl shadow-[0_-2px_10px_rgba(0,0,0,0.1)] lg:hidden"
+>
+	<div class="bg-base-300 mx-auto mt-2 mb-1 h-1.5 w-12 shrink-0 rounded-full"></div>
+	{@render panelContent()}
 </div>
