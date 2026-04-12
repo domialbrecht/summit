@@ -9,7 +9,8 @@ import {
 	getActiveSeason,
 	getSeasonBySlug,
 	getSeasons,
-	getUserSeasonStats
+	getUserSeasonStats,
+	getSeasonProgressComparison
 } from '$lib/server/db/functions';
 import logger from '$lib/logger';
 
@@ -61,9 +62,14 @@ export const load: PageServerLoad = async (event) => {
 		last_attempts: last_attempts(),
 		seasons,
 		selectedSeasonSlug: selectedSeason?.slug ?? seasons[0]?.slug ?? null,
+		seasonStart: selectedSeason?.startsAt ?? null,
+		seasonEnd: selectedSeason?.endsAt ?? null,
 		leaderboardStats: selectedSeason
 			? getUserSeasonStats(user.id, selectedSeason.id)
-			: Promise.resolve([])
+			: Promise.resolve([]),
+		progressComparison: selectedSeason
+			? getSeasonProgressComparison(user.id, selectedSeason.id)
+			: Promise.resolve({ user: [], average: [], second: [] })
 	};
 };
 

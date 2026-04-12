@@ -76,7 +76,7 @@
 		return startPoint;
 	}
 
-	// Drag handlers
+	// Drag handlers (desktop)
 	function handleDragStart(idx: number) {
 		dragIndex = idx;
 	}
@@ -92,6 +92,39 @@
 	}
 
 	function handleDragEnd() {
+		dragIndex = null;
+	}
+
+	// Touch reorder (mobile)
+	let touchStartY = 0;
+	let touchItemHeight = 0;
+
+	function handleTouchStart(e: TouchEvent, idx: number) {
+		dragIndex = idx;
+		touchStartY = e.touches[0].clientY;
+		const el = e.currentTarget as HTMLElement;
+		touchItemHeight = el.offsetHeight;
+	}
+
+	function handleTouchMove(e: TouchEvent) {
+		if (dragIndex === null) return;
+		e.preventDefault();
+		const y = e.touches[0].clientY;
+		const diff = y - touchStartY;
+		const steps = Math.round(diff / touchItemHeight);
+		if (steps === 0) return;
+		const targetIdx = Math.max(0, Math.min(routePoints.length - 1, dragIndex + steps));
+		if (targetIdx !== dragIndex) {
+			const items = [...routePoints];
+			const [moved] = items.splice(dragIndex, 1);
+			items.splice(targetIdx, 0, moved);
+			routePoints = items;
+			touchStartY += (targetIdx - dragIndex) * touchItemHeight;
+			dragIndex = targetIdx;
+		}
+	}
+
+	function handleTouchEnd() {
 		dragIndex = null;
 	}
 
@@ -285,7 +318,7 @@ ${trkpts.join('\n')}
 		{:else}
 			<button
 				onclick={() => (settingStart = true)}
-				class="btn btn-primary btn-xs {settingStart ? 'text-green-600' : ''}"
+				class="btn btn-primary btn-xs {settingStart ? 'text-green-600' : 'text-white'}"
 			>
 				{settingStart ? 'Klick uf d Karte...' : 'Setze'}
 			</button>
@@ -304,7 +337,10 @@ ${trkpts.join('\n')}
 					ondragstart={() => handleDragStart(idx)}
 					ondragover={(e) => handleDragOver(e, idx)}
 					ondragend={handleDragEnd}
-					class="flex items-center gap-2 border-b border-gray-100 px-2 py-1.5 last:border-b-0
+					ontouchstart={(e) => handleTouchStart(e, idx)}
+					ontouchmove={(e) => handleTouchMove(e)}
+					ontouchend={handleTouchEnd}
+					class="flex touch-none items-center gap-2 border-b border-gray-100 px-2 py-1.5 last:border-b-0
 						{dragIndex === idx ? 'bg-primary/10' : 'hover:bg-gray-50'}"
 				>
 					<span class="cursor-grab text-gray-300 active:cursor-grabbing">

@@ -9,7 +9,9 @@
 	import { dt } from '$lib/utils';
 	import { Button } from '$lib/components/ui/button';
 	import { goto } from '$app/navigation';
-	import StatsChart from './StatsChart.svelte';
+	// import StatsChart from './StatsChart.svelte';
+	// import ProgressChart from './ProgressChart.svelte';
+	import ContributionChart from './ContributionChart.svelte';
 
 	const { data }: { data: PageData; form: ActionData } = $props();
 
@@ -122,12 +124,12 @@
 							{/each}
 						</select>
 						{#await data.leaderboardStats}
-							<div class="skeleton h-72 w-full"></div>
+							<div class="skeleton h-40 w-full"></div>
 						{:then stats}
-							{#if stats.length > 0}
-								<StatsChart chartData={stats} />
+							{#if stats.length > 0 && data.seasonStart && data.seasonEnd}
+								<ContributionChart {stats} seasonStart={data.seasonStart} seasonEnd={data.seasonEnd} />
 							{:else}
-								<div class="flex h-72 items-center justify-center text-gray-400">
+								<div class="flex h-40 items-center justify-center text-gray-400">
 									<p>No keni Date für die Saison</p>
 								</div>
 							{/if}

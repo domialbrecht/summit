@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { eq, and, count, asc, desc } from 'drizzle-orm';
+import { eq, and, count, asc, desc, sql } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
 
 export async function getActiveSeason() {
@@ -118,4 +118,127 @@ export async function db_win_results_by_season(seasonId: number) {
 		.where(eq(table.winActivitiesBySeasonView.seasonId, seasonId));
 
 	return win_results;
+}
+
+export type ProgressPoint = {
+	month: number; // 0-11
+	trophies: number;
+	summits: number;
+};
+
+export type ProgressComparison = {
+	user: ProgressPoint[];
+	average: ProgressPoint[];
+	second: ProgressPoint[];
+};
+
+/**
+ * Get monthly cumulative progress for user vs average vs 2nd place in a season.
+ * "summits" = distinct summits attempted, "trophies" = wins (first to summit).
+ */
+export async function getSeasonProgressComparison(
+	userId: string,
+	seasonId: number
+): Promise<ProgressComparison> {
+	// Get all published attempts in this season with win info
+	const rows = await db
+		.select({
+			usrId: table.summit_attempt.userId,
+			summitId: table.summit_attempt.summitId,
+			date: table.summit_attempt.date,
+			winAttemptId: table.winActivitiesBySeasonView.attemptId
+		})
+		.from(table.summit_attempt)
+		.leftJoin(
+			table.winActivitiesBySeasonView,
+			and(
+				eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id),
+				eq(table.winActivitiesBySeasonView.seasonId, table.summit_attempt.seasonId)
+			)
+		)
+		.where(
+			and(eq(table.summit_attempt.seasonId, seasonId), eq(table.summit_attempt.published, true))
+		)
+		.orderBy(asc(table.summit_attempt.date));
+
+	// Group by user → monthly cumulative trophies & distinct summits
+	const userMap = new Map<
+		string,
+		{ summits: Set<number>; trophies: number; monthly: ProgressPoint[] }
+	>();
+
+	for (const row of rows) {
+		let entry = userMap.get(row.usrId);
+		if (!entry) {
+			entry = { summits: new Set(), trophies: 0, monthly: [] };
+			userMap.set(row.usrId, entry);
+		}
+		entry.summits.add(row.summitId);
+		if (row.winAttemptId !== null) {
+			entry.trophies++;
+		}
+		const m = new Date(row.date).getMonth();
+		// Update or add monthly point (last value per month = cumulative at end of month)
+		const existing = entry.monthly.find((p) => p.month === m);
+		if (existing) {
+			existing.trophies = entry.trophies;
+			existing.summits = entry.summits.size;
+		} else {
+			entry.monthly.push({ month: m, trophies: entry.trophies, summits: entry.summits.size });
+		}
+	}
+
+	// Current user's progress
+	const userProgress = userMap.get(userId)?.monthly ?? [];
+
+	// For average: exclude current user
+	const otherUsers = [...userMap.entries()].filter(([id]) => id !== userId).map(([, v]) => v);
+
+	// Average of others
+	const avgProgress: ProgressPoint[] = [];
+	if (otherUsers.length > 0) {
+		for (let m = 0; m <= 11; m++) {
+			let totalTrophies = 0;
+			let totalSummits = 0;
+			let cnt = 0;
+			for (const u of otherUsers) {
+				// Find the latest entry at or before month m
+				let val: ProgressPoint | undefined;
+				for (const p of u.monthly) {
+					if (p.month <= m) {
+						if (!val || p.month > val.month) val = p;
+					}
+				}
+				if (val) {
+					totalTrophies += val.trophies;
+					totalSummits += val.summits;
+					cnt++;
+				}
+			}
+			if (cnt > 0) {
+				avgProgress.push({
+					month: m,
+					trophies: Math.round((totalTrophies / cnt) * 10) / 10,
+					summits: Math.round((totalSummits / cnt) * 10) / 10
+				});
+			}
+		}
+	}
+
+	// 2nd place: user with most trophies (then summits) excluding first
+	const allUsers = [...userMap.values()];
+	const ranked = allUsers
+		.map((u) => {
+			const last = u.monthly[u.monthly.length - 1];
+			return { monthly: u.monthly, trophies: last?.trophies ?? 0, summits: last?.summits ?? 0 };
+		})
+		.sort((a, b) => b.trophies - a.trophies || b.summits - a.summits);
+
+	const secondProgress = ranked.length >= 2 ? ranked[1].monthly : [];
+
+	return {
+		user: userProgress,
+		average: avgProgress,
+		second: secondProgress
+	};
 }
