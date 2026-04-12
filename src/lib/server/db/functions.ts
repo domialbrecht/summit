@@ -65,6 +65,7 @@ export async function getUserSeasonStats(userId: string, seasonId: number) {
 		.select({
 			date: table.summit_attempt.date,
 			attemptId: table.summit_attempt.id,
+			summitId: table.summit_attempt.summitId,
 			winAttemptId: table.winActivitiesBySeasonView.attemptId
 		})
 		.from(table.summit_attempt)
@@ -84,17 +85,18 @@ export async function getUserSeasonStats(userId: string, seasonId: number) {
 		)
 		.orderBy(asc(table.summit_attempt.date));
 
-	let cumulativeAttempts = 0;
+	const seenSummits = new Set<number>();
 	let cumulativeTrophies = 0;
 
 	return attempts.map((row) => {
-		cumulativeAttempts++;
+		seenSummits.add(row.summitId);
 		if (row.winAttemptId !== null) {
 			cumulativeTrophies++;
 		}
 		return {
 			date: row.date,
-			attempts: cumulativeAttempts,
+			summitId: row.summitId,
+			attempts: seenSummits.size,
 			trophies: cumulativeTrophies
 		};
 	});

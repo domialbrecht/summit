@@ -4,16 +4,53 @@
 	import Finish from '$site/icons/finish.png';
 	import Section from '$lib/components/ui/section';
 	import { dt } from '$lib/utils';
+	import { goto } from '$app/navigation';
 	import type { PageServerData } from './$types';
 
 	const { data }: { data: PageServerData } = $props();
+
+	const MONTH_NAMES = [
+		'Januar',
+		'Februar',
+		'März',
+		'April',
+		'Mai',
+		'Juni',
+		'Juli',
+		'August',
+		'September',
+		'Oktober',
+		'November',
+		'Dezember'
+	];
+
+	const selectedKey = $derived(`${data.selectedYear}-${data.selectedMonth}`);
+
+	function onMonthChange(e: Event) {
+		const value = (e.target as HTMLSelectElement).value;
+		if (!value) return;
+		const [year, month] = value.split('-');
+		const params = new URLSearchParams();
+		params.set('year', year);
+		params.set('month', month);
+		goto(`/activities?${params.toString()}`, { invalidateAll: true });
+	}
 </script>
 
 <Section sectionId="postsync">
+	<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
+		<span class="text-primary">Aktivitäte</span> vom SolyVC
+	</div>
+
+	<div class="mt-4 mb-6 flex flex-wrap gap-4">
+		<select class="select select-bordered" value={selectedKey} onchange={onMonthChange}>
+			{#each data.availableMonths as m}
+				<option value={`${m.year}-${m.month}`}>{MONTH_NAMES[m.month - 1]} {m.year}</option>
+			{/each}
+		</select>
+	</div>
+
 	{#if data.activities.length > 0}
-		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
-			<span class="text-primary">Aktivitäte</span> vom SolyVC
-		</div>
 		<div class="overflow-x-auto">
 			<table class="table">
 				<thead>
@@ -25,7 +62,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each data.activities as activity (activity.id)}
+					{#each data.activities as activity (activity.attemptId)}
 						<tr>
 							<td>
 								<div class="flex items-center gap-3">
@@ -57,22 +94,7 @@
 				</tbody>
 			</table>
 		</div>
-		<div>
-			{#if data.offset > 50}
-				<a href={`?offset=${data.offset - 50 < 0 ? 0 : data.offset - 50}`} class="btn btn-primary"
-					>Vorherigi Site</a
-				>
-			{/if}
-			{#if data.activities.length === 50}
-				<a href={`?offset=${data.offset + 50}`} class="btn btn-primary">Witeri Site</a>
-			{/if}
-		</div>
 	{:else}
-		{#if data.offset > 0}
-			<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
-				<span class="text-primary">Keni Date</span> meh ab hie
-			</div>
-		{/if}
-		<div class="mt-2"><Button href="/activities">Zum Start</Button></div>
+		<p class="mt-4 text-gray-400">Keni Aktivitäte für die Ziit.</p>
 	{/if}
 </Section>

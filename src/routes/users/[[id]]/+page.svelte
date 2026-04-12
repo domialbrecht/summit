@@ -21,35 +21,38 @@
 				{data.user?.name}'s Päss
 			</div>
 			<div>
-				{#if data.userSummits}
-					<div class="overflow-x-auto">
-						<table class="table">
-							<thead>
-								<tr>
-									<th>Name</th>
-									<th>Trophäe</th>
-								</tr>
-							</thead>
-							<tbody>
-								{#each data.userSummits as entry (entry.summitId)}
+				{#if data.groupedSummits && data.groupedSummits.length > 0}
+					{#each data.groupedSummits as group (group.area)}
+						<h3 class="font-title mt-8 mb-2 text-xl font-bold">{group.area}</h3>
+						<div class="overflow-x-auto">
+							<table class="table">
+								<thead>
 									<tr>
-										<th>
-											<a href={`/summits/${entry.summitId}`} class="badge badge-ghost badge-sm"
-												>{entry.summitName}</a
-											>
-										</th>
-										<th>
-											{#if entry.winAttempt}
-												<img src={Trophy} alt="trophy" class="h-8 w-8" />
-											{:else}
-												<img src={Finish} alt="finish" class="h-8 w-8" />
-											{/if}
-										</th>
+										<th>Name</th>
+										<th>Trophäe</th>
 									</tr>
-								{/each}
-							</tbody>
-						</table>
-					</div>
+								</thead>
+								<tbody>
+									{#each group.summits as entry (entry.summitId)}
+										<tr>
+											<th>
+												<a href={`/summits/${entry.summitId}`} class="badge badge-ghost badge-sm"
+													>{entry.summitName}</a
+												>
+											</th>
+											<th>
+												{#if entry.winAttempt}
+													<img src={Trophy} alt="trophy" class="h-8 w-8" />
+												{:else}
+													<img src={Finish} alt="finish" class="h-8 w-8" />
+												{/if}
+											</th>
+										</tr>
+									{/each}
+								</tbody>
+							</table>
+						</div>
+					{/each}
 				{:else}
 					No kei Summits
 				{/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	type StatPoint = { date: Date; attempts: number; trophies: number };
+	type StatPoint = { date: Date; attempts: number; trophies: number; summitId: number };
 
 	let {
 		stats,
@@ -15,10 +15,23 @@
 	const GAP = 3;
 	const SIZE = CELL + GAP;
 	const DAYS = ['Mo', '', 'Mi', '', 'Fr', '', 'So'];
-	const MONTHS = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+	const MONTHS = [
+		'Jan',
+		'Feb',
+		'Mär',
+		'Apr',
+		'Mai',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Okt',
+		'Nov',
+		'Dez'
+	];
 
-	// Build day map: dateStr -> { summits, trophies }
-	const dayMap = new Map<string, { summits: number; trophies: number }>();
+	// Build day map: dateStr -> { summitIds (unique), trophies }
+	const dayMap = new Map<string, { summitIds: Set<number>; trophies: number }>();
 	let prevTrophies = 0;
 	for (const s of stats) {
 		const key = new Date(s.date).toISOString().slice(0, 10);
@@ -26,10 +39,10 @@
 		const newTrophies = s.trophies > prevTrophies ? s.trophies - prevTrophies : 0;
 		prevTrophies = s.trophies;
 		if (existing) {
-			existing.summits++;
+			existing.summitIds.add(s.summitId);
 			existing.trophies += newTrophies;
 		} else {
-			dayMap.set(key, { summits: 1, trophies: newTrophies });
+			dayMap.set(key, { summitIds: new Set([s.summitId]), trophies: newTrophies });
 		}
 	}
 
@@ -82,7 +95,7 @@
 			date: key,
 			dayOfWeek,
 			weekIndex,
-			summits: data?.summits ?? 0,
+			summits: data?.summitIds.size ?? 0,
 			trophies: data?.trophies ?? 0,
 			inSeason
 		});
