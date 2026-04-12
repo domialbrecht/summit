@@ -4,6 +4,7 @@
 		GeoJSON,
 		SymbolLayer,
 		CircleLayer,
+		DefaultMarker,
 		type LayerClickInfo
 	} from 'svelte-maplibre';
 	import type { ExpressionSpecification } from 'maplibre-gl';
@@ -40,7 +41,9 @@
 		mapUrl,
 		selectionMode = false,
 		selectedIds = [],
-		onSummitToggle
+		onSummitToggle,
+		onMapClick,
+		startPoint = null
 	}: {
 		map?: maplibregl.Map;
 		handleClick: () => void;
@@ -48,6 +51,8 @@
 		selectionMode?: boolean;
 		selectedIds?: number[];
 		onSummitToggle?: (feature: Feature<Geometry, SummitProperty>) => void;
+		onMapClick?: (lngLat: { lat: number; lng: number }) => void;
+		startPoint?: { lat: number; lng: number } | null;
 	} = $props();
 
 	let selectedFilter: ExpressionSpecification = $derived(
@@ -69,6 +74,14 @@
 	]}
 	center={[7.535409043530986, 47.20735710031535]}
 	zoom={13}
+	onclick={(e) => {
+		if (onMapClick && map) {
+			const features = map.queryRenderedFeatures(e.point, { layers: ['summit_symbols'] });
+			if (features.length === 0) {
+				onMapClick({ lat: e.lngLat.lat, lng: e.lngLat.lng });
+			}
+		}
+	}}
 >
 	{#snippet children({ allImagesLoaded })}
 		<GeoJSON id="summits" data={mapUrl}>
@@ -117,6 +130,9 @@
 				}}
 			/>
 		</GeoJSON>
+		{#if startPoint}
+			<DefaultMarker lngLat={[startPoint.lng, startPoint.lat]} />
+		{/if}
 		{#if selectionMode}
 			<GeoJSON id="summits-selection" data={mapUrl}>
 				<CircleLayer
