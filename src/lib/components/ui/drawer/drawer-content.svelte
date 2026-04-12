@@ -44,7 +44,9 @@
 	<DrawerOverlay />
 	<DrawerPrimitive.Content
 		bind:ref
-		class={cn(drawerContentVariants({ variant: contentProps?.variant, className }))}
+		class={cn(
+			drawerContentVariants({ variant: contentProps?.variant, className: className as string })
+		)}
 		{...restProps}
 	>
 		<div

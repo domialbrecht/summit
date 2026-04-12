@@ -4,7 +4,8 @@
 		GeoJSON,
 		SymbolLayer,
 		CircleLayer,
-		DefaultMarker,
+		LineLayer,
+		Marker,
 		type LayerClickInfo
 	} from 'svelte-maplibre';
 	import type { ExpressionSpecification } from 'maplibre-gl';
@@ -43,7 +44,9 @@
 		selectedIds = [],
 		onSummitToggle,
 		onMapClick,
-		startPoint = null
+		startPoint = null,
+		routeGeoJSON = null,
+		customWaypoints = []
 	}: {
 		map?: maplibregl.Map;
 		handleClick: () => void;
@@ -53,6 +56,8 @@
 		onSummitToggle?: (feature: Feature<Geometry, SummitProperty>) => void;
 		onMapClick?: (lngLat: { lat: number; lng: number }) => void;
 		startPoint?: { lat: number; lng: number } | null;
+		routeGeoJSON?: GeoJSON.FeatureCollection | null;
+		customWaypoints?: { lat: number; lng: number }[];
 	} = $props();
 
 	let selectedFilter: ExpressionSpecification = $derived(
@@ -84,6 +89,42 @@
 	}}
 >
 	{#snippet children({ allImagesLoaded })}
+		{#if routeGeoJSON}
+			<GeoJSON id="summit-route" data={routeGeoJSON}>
+				<LineLayer
+					id="summit-route-line-casing"
+					layout={{ 'line-join': 'round', 'line-cap': 'round' }}
+					paint={{
+						'line-color': '#ffffff',
+						'line-width': 6,
+						'line-opacity': 0.8
+					}}
+				/>
+				<LineLayer
+					id="summit-route-line"
+					layout={{ 'line-join': 'round', 'line-cap': 'round' }}
+					paint={{
+						'line-color': '#e5384e',
+						'line-width': 3,
+						'line-opacity': 0.85
+					}}
+				/>
+			</GeoJSON>
+		{/if}
+		{#if selectionMode}
+			<GeoJSON id="summits-selection" data={mapUrl}>
+				<CircleLayer
+					id="summit_selection_highlight"
+					filter={selectedFilter}
+					paint={{
+						'circle-radius': 18,
+						'circle-color': 'transparent',
+						'circle-stroke-width': 2.5,
+						'circle-stroke-color': '#ffffff'
+					}}
+				/>
+			</GeoJSON>
+		{/if}
 		<GeoJSON id="summits" data={mapUrl}>
 			<SymbolLayer
 				id="summit_symbols"
@@ -131,22 +172,14 @@
 			/>
 		</GeoJSON>
 		{#if startPoint}
-			<DefaultMarker lngLat={[startPoint.lng, startPoint.lat]} />
+			<Marker lngLat={[startPoint.lng, startPoint.lat]}>
+				<div class="h-4 w-4 rounded-full border-2 border-white bg-emerald-500 shadow-md"></div>
+			</Marker>
 		{/if}
-		{#if selectionMode}
-			<GeoJSON id="summits-selection" data={mapUrl}>
-				<CircleLayer
-					id="summit_selection_highlight"
-					filter={selectedFilter}
-					paint={{
-						'circle-radius': 20,
-						'circle-color': '#e63946',
-						'circle-opacity': 0.3,
-						'circle-stroke-width': 3,
-						'circle-stroke-color': '#e63946'
-					}}
-				/>
-			</GeoJSON>
-		{/if}
+		{#each customWaypoints as wp}
+			<Marker lngLat={[wp.lng, wp.lat]}>
+				<div class="h-3 w-3 rounded-full border-2 border-white bg-gray-500 shadow-md"></div>
+			</Marker>
+		{/each}
 	{/snippet}
 </MapLibre>

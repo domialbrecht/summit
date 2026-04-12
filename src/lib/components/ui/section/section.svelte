@@ -55,7 +55,7 @@
 	<div
 		bind:this={ref}
 		{...restProps}
-		class={cn(sectionVariants({ variant, size, spacing, className }))}
+		class={cn(sectionVariants({ variant, size, spacing, className: className as string }))}
 	>
 		{@render children?.()}
 	</div>

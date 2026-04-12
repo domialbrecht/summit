@@ -33,7 +33,7 @@
 			<div class="skeleton h-44 xl:col-span-4"></div>
 			<div class="skeleton h-44 xl:col-span-4"></div>
 		{:then summits}
-			{#each summits as entry (entry.id)}
+			{#each summits as entry (entry.summit.id)}
 				<SummitCard {...entry} />
 			{/each}
 		{/await}

@@ -56,6 +56,10 @@
 	}: CardProps = $props();
 </script>
 
-<div bind:this={ref} class={cn(cardVariants({ variant, size, spacing, className }))} {...restProps}>
+<div
+	bind:this={ref}
+	class={cn(cardVariants({ variant, size, spacing, className: className as string }))}
+	{...restProps}
+>
 	{@render children?.()}
 </div>

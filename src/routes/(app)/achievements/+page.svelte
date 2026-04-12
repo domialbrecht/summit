@@ -20,7 +20,7 @@
 			<div class="skeleton h-44 xl:col-span-4"></div>
 			<div class="skeleton h-44 xl:col-span-4"></div>
 		{:then entries}
-			{#each entries as entry (entry.id)}
+			{#each entries as entry (entry.area.id)}
 				<AreaCard {...entry} />
 			{/each}
 		{/await}

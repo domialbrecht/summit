@@ -8,10 +8,10 @@ describe('Summit index query', () => {
 		const summits = await db.execute(sql`SELECT id, name, alias, lat, long FROM summit LIMIT 10`);
 
 		expect(summits.length).toBeGreaterThan(0);
-		for (const s of summits) {
+		for (const s of summits as Record<string, unknown>[]) {
 			expect(s.id).toBeTypeOf('number');
 			expect(s.name).toBeTypeOf('string');
-			expect(s.name.length).toBeGreaterThan(0);
+			expect((s.name as string).length).toBeGreaterThan(0);
 			expect(s.lat).toBeDefined();
 			expect(s.long).toBeDefined();
 			// lat/long should be valid coordinates

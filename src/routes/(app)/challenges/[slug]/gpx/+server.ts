@@ -6,6 +6,10 @@ import { error, type RequestHandler } from '@sveltejs/kit';
 export const GET: RequestHandler = async ({ params }) => {
 	const slug = params.slug;
 
+	if (!slug) {
+		error(400, { message: 'Missing slug' });
+	}
+
 	const [challenge] = await db
 		.select({
 			id: table.challenge.id,

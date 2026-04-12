@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type maplibregl from 'maplibre-gl';
-	import type { Feature, Geometry } from 'geojson';
 	import SummitMap from '$lib/components/map/summits.svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import Navbar from '$lib/components/navbar.svelte';
@@ -11,25 +10,12 @@
 	import Title from './Title.svelte';
 	import Search from './Search.svelte';
 	import SeasonToggle from './SeasonToggle.svelte';
+	import RoutePlanner from './RoutePlanner.svelte';
 	import RefreshCw from 'lucide-svelte/icons/refresh-cw';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
 	import Crosshair from 'lucide-svelte/icons/crosshair';
-	import Download from 'lucide-svelte/icons/download';
-	import X from 'lucide-svelte/icons/x';
-	import GripVertical from 'lucide-svelte/icons/grip-vertical';
-	import Trash2 from 'lucide-svelte/icons/trash-2';
-	import MapPin from 'lucide-svelte/icons/map-pin';
-	import Info from 'lucide-svelte/icons/info';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
-
-	type SelectedSummit = {
-		id: number;
-		name: string;
-		elevation: number;
-		lat: number;
-		lng: number;
-	};
 
 	const { data }: { data: PageServerData } = $props();
 	const { user } = page.data;
@@ -46,127 +32,12 @@
 
 	let mapComp: maplibregl.Map | undefined = $state();
 
-	// Selection mode state
+	// Route planner
 	let selectionMode = $state(false);
-	let selectedSummits: SelectedSummit[] = $state([]);
-	let selectedIds = $derived(selectedSummits.map((s) => s.id));
-
-	// Route name state
-	let routeName = $state('Summit Route');
-
-	// Startpoint state
-	let startPoint: { lat: number; lng: number } | null = $state(null);
-	let settingStart = $state(false);
-
-	// Drag-to-reorder state
-	let dragIndex: number | null = $state(null);
-
-	function handleDragStart(idx: number) {
-		dragIndex = idx;
-	}
-
-	function handleDragOver(e: DragEvent, idx: number) {
-		e.preventDefault();
-		if (dragIndex === null || dragIndex === idx) return;
-		const items = [...selectedSummits];
-		const [moved] = items.splice(dragIndex, 1);
-		items.splice(idx, 0, moved);
-		selectedSummits = items;
-		dragIndex = idx;
-	}
-
-	function handleDragEnd() {
-		dragIndex = null;
-	}
-
-	function removeSummit(id: number) {
-		selectedSummits = selectedSummits.filter((s) => s.id !== id);
-	}
+	let planner: ReturnType<typeof RoutePlanner> | undefined = $state();
 
 	function toggleSelectionMode() {
 		selectionMode = !selectionMode;
-		if (!selectionMode) {
-			selectedSummits = [];
-			startPoint = null;
-			settingStart = false;
-		}
-	}
-
-	function handleMapClick(lngLat: { lat: number; lng: number }) {
-		if (settingStart) {
-			startPoint = lngLat;
-			settingStart = false;
-		}
-	}
-
-	function handleSummitToggle(feature: Feature<Geometry, any>) {
-		const props = feature.properties;
-		const id = props.id;
-		const idx = selectedSummits.findIndex((s) => s.id === id);
-		if (idx >= 0) {
-			selectedSummits = selectedSummits.filter((s) => s.id !== id);
-		} else {
-			const geom = feature.geometry as { type: string; coordinates: [number, number] };
-			selectedSummits = [
-				...selectedSummits,
-				{
-					id,
-					name: props.name,
-					elevation: props.elevation,
-					lat: geom.coordinates[1],
-					lng: geom.coordinates[0]
-				}
-			];
-		}
-	}
-
-	function exportGpx() {
-		if (selectedSummits.length === 0) return;
-		const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-		// Build track points: startPoint (if set) → summits in order
-		const trkpts: string[] = [];
-		if (startPoint) {
-			trkpts.push(`        <trkpt lat="${startPoint.lat}" lon="${startPoint.lng}">
-          <name>Start</name>
-        </trkpt>`);
-		}
-		for (const s of selectedSummits) {
-			trkpts.push(`        <trkpt lat="${s.lat}" lon="${s.lng}">
-          <name>${esc(s.name)}</name>
-          <ele>${s.elevation}</ele>
-        </trkpt>`);
-		}
-
-		const gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Summit"
-  xmlns="http://www.topografix.com/GPX/1/1"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
-  <metadata>
-    <name>${esc(routeName)}</name>
-  </metadata>
-  <trk>
-    <name>${esc(routeName)}</name>
-    <trkseg>
-${trkpts.join('\n')}
-    </trkseg>
-  </trk>
-</gpx>`;
-		const blob = new Blob([gpx], { type: 'application/gpx+xml' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		const today = new Date().toISOString().slice(0, 10);
-		const slug =
-			routeName
-				.trim()
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, '-')
-				.replace(/^-|-$/g, '') || 'summit-route';
-		a.download = `${slug}-${today}.gpx`;
-		a.click();
-		URL.revokeObjectURL(url);
 	}
 
 	async function handleRefresh() {
@@ -256,116 +127,19 @@ ${trkpts.join('\n')}
 					</div>
 				</div>
 				{#if selectionMode}
-					<div
-						class="fixed right-2 bottom-24 left-2 z-10 flex flex-col rounded-lg bg-white shadow-lg lg:top-28 lg:right-4 lg:bottom-auto lg:left-auto lg:w-80"
-					>
-						<div class="flex items-center justify-between gap-2 border-b px-3 py-2">
-							<span class="text-sm font-medium">{selectedSummits.length} usgwählt</span>
-							<div class="flex gap-1">
-								<div class="dropdown dropdown-end">
-									<div tabindex="0" role="button" class="btn btn-sm btn-ghost btn-circle">
-										<Info size={16} class="text-gray-400" />
-									</div>
-									<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-									<div
-										tabindex="0"
-										class="dropdown-content bg-base-100 z-20 w-64 rounded-lg p-3 shadow-lg"
-									>
-										<p class="text-xs text-gray-600">
-											Bi Komoot "Originalroute verwenden" uswähle. Komoot entfernt automatisch
-											Wegpünkt wo scho uf der Route si. D Reihefolg wird übernoh. Du chasch ner
-											manuell d Route zwüsche Pünkt setze.
-										</p>
-									</div>
-								</div>
-								<button
-									onclick={exportGpx}
-									disabled={selectedSummits.length === 0}
-									class="btn btn-sm btn-primary gap-1"
-								>
-									<Download size={16} />
-									GPX
-								</button>
-								<button onclick={toggleSelectionMode} class="btn btn-sm btn-ghost">
-									<X size={16} />
-								</button>
-							</div>
-						</div>
-						<div class="border-b px-3 py-1.5">
-							<input
-								type="text"
-								bind:value={routeName}
-								placeholder="Route Name"
-								class="input input-xs input-bordered w-full text-sm"
-							/>
-						</div>
-						<div class="flex items-center gap-2 border-b px-3 py-1.5">
-							<MapPin size={16} class="shrink-0 text-green-600" />
-							<span class="text-xs text-gray-400">Start:</span>
-							{#if startPoint}
-								<span class="min-w-0 flex-1 truncate text-sm">
-									{startPoint.lat.toFixed(4)}, {startPoint.lng.toFixed(4)}
-								</span>
-								<button
-									onclick={() => (startPoint = null)}
-									class="btn btn-ghost btn-xs hover:text-error text-gray-400"
-								>
-									<Trash2 size={14} />
-								</button>
-							{:else}
-								<button
-									onclick={() => (settingStart = true)}
-									class="btn btn-secondary btn-xs {settingStart
-										? 'text-green-600'
-										: 'text-gray-400'}"
-								>
-									{settingStart ? 'Klick uf d Karte...' : 'Setze'}
-								</button>
-							{/if}
-						</div>
-						<div class="max-h-60 overflow-y-auto">
-							{#if selectedSummits.length === 0}
-								<p class="px-3 py-4 text-center text-sm text-gray-400">
-									Klick uf d Karte zum Summits uswähle
-								</p>
-							{:else}
-								{#each selectedSummits as summit, idx (summit.id)}
-									<div
-										role="listitem"
-										draggable="true"
-										ondragstart={() => handleDragStart(idx)}
-										ondragover={(e) => handleDragOver(e, idx)}
-										ondragend={handleDragEnd}
-										class="flex items-center gap-2 border-b border-gray-100 px-2 py-1.5 last:border-b-0
-											{dragIndex === idx ? 'bg-primary/10' : 'hover:bg-gray-50'}"
-									>
-										<span class="cursor-grab text-gray-300 active:cursor-grabbing">
-											<GripVertical size={16} />
-										</span>
-										<span class="text-xs text-gray-400">{idx + 1}.</span>
-										<span class="min-w-0 flex-1 truncate text-sm">{summit.name}</span>
-										<span class="badge badge-sm badge-ghost">{summit.elevation}m</span>
-										<button
-											onclick={() => removeSummit(summit.id)}
-											class="btn btn-ghost btn-xs hover:text-error text-gray-400"
-										>
-											<Trash2 size={14} />
-										</button>
-									</div>
-								{/each}
-							{/if}
-						</div>
-					</div>
+					<RoutePlanner bind:this={planner} onclose={toggleSelectionMode} />
 				{/if}
 				<SummitMap
 					bind:map={mapComp}
 					handleClick={() => (open = true)}
 					{mapUrl}
 					{selectionMode}
-					{selectedIds}
-					onSummitToggle={handleSummitToggle}
-					onMapClick={handleMapClick}
-					{startPoint}
+					selectedIds={planner?.getSelectedIds() ?? []}
+					onSummitToggle={(f) => planner?.handleSummitToggle(f)}
+					onMapClick={(lngLat) => planner?.handleMapClick(lngLat)}
+					startPoint={planner?.getStartPoint() ?? null}
+					routeGeoJSON={planner?.getRouteGeoJSON() ?? null}
+					customWaypoints={planner?.getCustomWaypoints() ?? []}
 				/>
 			</div>
 			<Drawer.Root direction="left" bind:open>
