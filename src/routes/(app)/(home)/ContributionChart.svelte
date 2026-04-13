@@ -149,12 +149,8 @@
 	}
 </script>
 
-<div class="relative w-full overflow-x-auto">
-	<svg
-		viewBox="0 0 {svgWidth} {svgHeight}"
-		class="w-full"
-		style="min-width: {Math.min(svgWidth, 600)}px"
-	>
+<div class="relative max-w-full overflow-x-auto">
+	<svg viewBox="0 0 {svgWidth} {svgHeight}" class="block w-full">
 		<!-- Day labels -->
 		{#each DAYS as label, i}
 			{#if label}
