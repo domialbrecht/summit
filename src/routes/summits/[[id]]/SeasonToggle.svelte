@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CalendarDays from 'lucide-svelte/icons/calendar-days';
 
-	let { showSeason = $bindable(false) } = $props();
+	let { showSeason = $bindable(true) } = $props();
 
 	let loading = $state(false);
 	let timeout: ReturnType<typeof setTimeout>;

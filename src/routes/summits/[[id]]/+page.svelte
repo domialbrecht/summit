@@ -27,7 +27,7 @@
 	let refreshTimestamp = $state(Date.now());
 	let isRefreshing = $state(false);
 	let mapUrl = $derived(
-		`${showSeasonOnly ? '/summits/geojson?season=active' : '/summits/geojson'}&t=${refreshTimestamp}`
+		`/summits/geojson?${showSeasonOnly ? 'season=active&' : ''}t=${refreshTimestamp}`
 	);
 
 	let mapComp: maplibregl.Map | undefined = $state();

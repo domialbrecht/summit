@@ -72,7 +72,7 @@ function getAllData() {
                 FROM (
                   SELECT ${table.winActivitiesBySeasonView.userId} 
                   FROM ${table.winActivitiesBySeasonView} 
-                  wHERE ${table.winActivitiesBySeasonView.summitId} = ${table.summit}.id
+                  WHERE ${table.winActivitiesBySeasonView.summitId} = ${table.summit}.id
                 ) wa
               )
             )
