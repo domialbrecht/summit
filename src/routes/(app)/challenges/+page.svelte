@@ -12,7 +12,7 @@
 <Section sectionId="challenges">
 	<div class="flex items-start justify-between">
 		<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
-			<span class="text-primary">SolyVC</span> Challenges
+			<span class="text-primary">SOLYVC</span> Challenges
 		</div>
 		<Button href="/challenges/new">Challange erstelle</Button>
 	</div>
@@ -24,7 +24,7 @@
 	</p>
 
 	{#if data.challenges.length === 0}
-		<p class="text-base-content/60 mt-12">No no kei Challanges. Ersteu du die ersti!</p>
+		<p class="text-base-content/60 mt-12">No kei Challanges. Ersteu du die ersti!</p>
 	{:else}
 		<div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
 			{#each data.challenges as challenge (challenge.id)}

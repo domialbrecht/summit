@@ -226,7 +226,7 @@
 				<Card.Body>
 					<Card.Title>Teilnehmer ({data.participants.length})</Card.Title>
 					{#if data.participants.length === 0}
-						<p class="text-base-content/60 mt-2 text-sm">No no niemert beigetrete.</p>
+						<p class="text-base-content/60 mt-2 text-sm">No niemer bitrete.</p>
 					{:else}
 						<ul class="mt-2 flex flex-col gap-1">
 							{#each data.participants as p (p.userId)}
