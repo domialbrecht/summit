@@ -12,6 +12,7 @@
 	import solyvc from '$site/solyvc.png';
 	import trophy from '$site/icons/trophy.png';
 	import trophyF from '$site/icons/trophyF.png';
+	import check from '$site/icons/check.png';
 	import type { Feature, Geometry } from 'geojson';
 	import { goto } from '$app/navigation';
 
@@ -40,6 +41,7 @@
 		map = $bindable(),
 		handleClick,
 		mapUrl,
+		userMapUrl = null,
 		selectionMode = false,
 		selectedIds = [],
 		onSummitToggle,
@@ -51,6 +53,7 @@
 		map?: maplibregl.Map;
 		handleClick: () => void;
 		mapUrl: string;
+		userMapUrl?: string | null;
 		selectionMode?: boolean;
 		selectedIds?: number[];
 		onSummitToggle?: (feature: Feature<Geometry, SummitProperty>) => void;
@@ -75,7 +78,8 @@
 	images={[
 		{ id: 'solyvc_logo', url: solyvc },
 		{ id: 'attempt_icon', url: trophy },
-		{ id: 'attempt_icon_female', url: trophyF }
+		{ id: 'attempt_icon_female', url: trophyF },
+		{ id: 'check_icon', url: check }
 	]}
 	center={[7.535409043530986, 47.20735710031535]}
 	zoom={13}
@@ -171,6 +175,45 @@
 				}}
 			/>
 		</GeoJSON>
+		{#if userMapUrl}
+			<GeoJSON id="user-summits" data={userMapUrl}>
+				<SymbolLayer
+					id="user_summit_symbols"
+					hoverCursor="pointer"
+					interactive={true}
+					onclick={handleSummitClick}
+					layout={{
+						'text-field': ['to-string', ['get', 'name']],
+						'text-size': 14,
+						'icon-image': 'check_icon',
+						'icon-size': 0.08,
+						'text-anchor': 'top',
+						'text-offset': [0, 1.2],
+						'text-font': ['Noto Sans Regular'],
+						'icon-allow-overlap': true
+					}}
+					paint={{
+						'text-color': [
+							'match',
+							['get', 'category'],
+							[1],
+							'#86efac',
+							[2],
+							'#00d7c0',
+							[3],
+							'#00b6ff',
+							[4],
+							'#ffbe00',
+							[5],
+							'#ff5861',
+							'#000000'
+						],
+						'text-halo-color': 'hsl(0, 0%, 30%)',
+						'text-halo-width': 1
+					}}
+				/>
+			</GeoJSON>
+		{/if}
 		{#if startPoint}
 			<Marker lngLat={[startPoint.lng, startPoint.lat]}>
 				<div class="h-4 w-4 rounded-full border-2 border-white bg-emerald-500 shadow-md"></div>

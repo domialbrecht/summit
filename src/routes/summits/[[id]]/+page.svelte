@@ -14,6 +14,7 @@
 	import RefreshCw from 'lucide-svelte/icons/refresh-cw';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
 	import Crosshair from 'lucide-svelte/icons/crosshair';
+	import UserIcon from 'lucide-svelte/icons/user';
 	import type { PageServerData } from './$types';
 	import { page } from '$app/state';
 
@@ -24,11 +25,13 @@
 	let open = $state(false);
 
 	let showSeasonOnly = $state(true);
+	let showMyDone = $state(false);
 	let refreshTimestamp = $state(Date.now());
 	let isRefreshing = $state(false);
 	let mapUrl = $derived(
 		`/summits/geojson?${showSeasonOnly ? 'season=active&' : ''}t=${refreshTimestamp}`
 	);
+	let userMapUrl = $derived(showMyDone ? `/summits/geojson/me?t=${refreshTimestamp}` : null);
 
 	let mapComp: maplibregl.Map | undefined = $state();
 
@@ -49,18 +52,22 @@
 	}
 
 	$effect(() => {
-		if (!activeSummit) {
+		if (!activeSummit || !mapComp) {
 			return;
 		}
 		const { lat, long } = activeSummit;
-		if (page.url.searchParams.has('reveal')) {
-			zoomToSummit(lat, long);
-		} else {
-			open = true;
-			if (mapComp) {
-				mapComp.flyTo({ center: [parseFloat(long), parseFloat(lat)], zoom: 14 });
+		const reveal = page.url.searchParams.has('reveal');
+		const map = mapComp;
+
+		// Defer flyTo to break synchronous reactive cycle with MapLibre's internal state updates
+		requestAnimationFrame(() => {
+			if (reveal) {
+				map.flyTo({ center: [parseFloat(long), parseFloat(lat)], zoom: 14 });
+			} else {
+				open = true;
+				map.flyTo({ center: [parseFloat(long), parseFloat(lat)], zoom: 14 });
 			}
-		}
+		});
 	});
 
 	const zoomToSummit = (lat: string, long: string) => {
@@ -102,6 +109,18 @@
 							}}
 						/>
 						<SeasonToggle bind:showSeason={showSeasonOnly} />
+						{#if user}
+							<button
+								onclick={() => (showMyDone = !showMyDone)}
+								class="btn btn-circle btn-sm shadow-lg {showMyDone
+									? 'btn-primary'
+									: 'bg-white text-gray-700 hover:bg-gray-100'}"
+								aria-label="Toggle my summits"
+								title="Mini Summits azeige"
+							>
+								<UserIcon size={20} />
+							</button>
+						{/if}
 						<button
 							onclick={toggleSelectionMode}
 							class="btn btn-circle btn-sm shadow-lg {selectionMode
@@ -133,6 +152,7 @@
 					bind:map={mapComp}
 					handleClick={() => (open = true)}
 					{mapUrl}
+					{userMapUrl}
 					{selectionMode}
 					selectedIds={planner?.getSelectedIds() ?? []}
 					onSummitToggle={(f) => planner?.handleSummitToggle(f)}
