@@ -1,10 +1,13 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { sql, count } from 'drizzle-orm';
+import { sql, eq, inArray } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
-	const challenges = await db
+export const load: PageServerLoad = async (event) => {
+	const activeClubId = event.locals.activeClub?.id ?? null;
+
+	// Build base query with optional club filter
+	const baseQuery = db
 		.select({
 			id: table.challenge.id,
 			slug: table.challenge.slug,
@@ -31,8 +34,19 @@ export const load: PageServerLoad = async () => {
 			)`
 		})
 		.from(table.challenge)
-		.innerJoin(table.user, sql`${table.user.id} = ${table.challenge.createdBy}`)
-		.orderBy(sql`${table.challenge.createdAt} DESC`);
+		.innerJoin(table.user, sql`${table.user.id} = ${table.challenge.createdBy}`);
+
+	if (activeClubId) {
+		baseQuery.where(eq(table.challenge.clubId, activeClubId));
+	} else {
+		// Global mode: show challenges from all clubs the user belongs to
+		const userClubIds = event.locals.userClubs.map((uc) => uc.club.id);
+		if (userClubIds.length > 0) {
+			baseQuery.where(inArray(table.challenge.clubId, userClubIds));
+		}
+	}
+
+	const challenges = await baseQuery.orderBy(sql`${table.challenge.createdAt} DESC`);
 
 	return { challenges };
 };

@@ -8,7 +8,10 @@ export async function load(event: RequestEvent) {
 	}
 
 	if (event.url.searchParams.has('noclub')) {
-		error(403, { message: 'You must be a member of the SolyVC Strava club to access this site.' });
+		error(403, {
+			message:
+				'You are not a member of any registered club. Ask a club admin to register your Strava club, or visit /clubs/new if you are a club admin.'
+		});
 	}
 
 	return {};

@@ -28,8 +28,8 @@ async function user_last_attempt(userId: string) {
 	return results.at(0);
 }
 
-async function last_attempts() {
-	const results = await db
+async function last_attempts(clubId: number | null) {
+	const baseQuery = db
 		.select({
 			id: table.summit.id,
 			name: table.summit.name,
@@ -40,10 +40,21 @@ async function last_attempts() {
 		})
 		.from(table.summit_attempt)
 		.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
-		.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id))
-		.where(and(eq(table.summit_attempt.published, true)))
-		.orderBy(desc(table.summit_attempt.date))
-		.limit(5);
+		.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id));
+
+	const results = clubId
+		? await baseQuery
+				.innerJoin(
+					table.userClub,
+					and(eq(table.userClub.userId, table.user.id), eq(table.userClub.clubId, clubId))
+				)
+				.where(eq(table.summit_attempt.published, true))
+				.orderBy(desc(table.summit_attempt.date))
+				.limit(5)
+		: await baseQuery
+				.where(eq(table.summit_attempt.published, true))
+				.orderBy(desc(table.summit_attempt.date))
+				.limit(5);
 
 	return results;
 }
@@ -52,6 +63,7 @@ export const load: PageServerLoad = async (event) => {
 	const { user } = await event.parent();
 
 	const seasonSlug = event.url.searchParams.get('season');
+	const clubId = event.locals.activeClub?.id ?? null;
 	const [seasons, selectedSeason] = await Promise.all([
 		getSeasons(),
 		seasonSlug ? getSeasonBySlug(seasonSlug) : getActiveSeason()
@@ -59,16 +71,16 @@ export const load: PageServerLoad = async (event) => {
 
 	return {
 		last_attempt: user_last_attempt(user.id),
-		last_attempts: last_attempts(),
+		last_attempts: last_attempts(clubId),
 		seasons,
 		selectedSeasonSlug: selectedSeason?.slug ?? seasons[0]?.slug ?? null,
 		seasonStart: selectedSeason?.startsAt ?? null,
 		seasonEnd: selectedSeason?.endsAt ?? null,
 		leaderboardStats: selectedSeason
-			? getUserSeasonStats(user.id, selectedSeason.id)
+			? getUserSeasonStats(user.id, selectedSeason.id, clubId)
 			: Promise.resolve([]),
 		progressComparison: selectedSeason
-			? getSeasonProgressComparison(user.id, selectedSeason.id)
+			? getSeasonProgressComparison(user.id, selectedSeason.id, clubId)
 			: Promise.resolve({ user: [], average: [], second: [] })
 	};
 };

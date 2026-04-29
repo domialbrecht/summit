@@ -6,6 +6,8 @@ export const load: LayoutServerLoad = async (event: LayoutServerLoadEvent) => {
 		redirect(302, '/welcome');
 	}
 	return {
-		user: event.locals.user
+		user: event.locals.user,
+		activeClub: event.locals.activeClub,
+		userClubs: event.locals.userClubs
 	};
 };

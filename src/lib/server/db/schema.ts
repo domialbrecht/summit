@@ -24,12 +24,52 @@ export const user = pgTable('user', {
 	isAdmin: boolean('is_admin').notNull().default(false)
 });
 
+export const club = pgTable('club', {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	slug: text('slug').notNull().unique(),
+	stravaClubId: integer('strava_club_id').notNull().unique(),
+	name: text('name').notNull(),
+	description: text('description'),
+	profileImageUrl: text('profile_image_url'),
+	createdBy: text('created_by').references(() => user.id),
+	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull().defaultNow()
+});
+
+export const userClub = pgTable(
+	'user_club',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		clubId: integer('club_id')
+			.notNull()
+			.references(() => club.id, { onDelete: 'cascade' }),
+		role: text('role').notNull().default('member'),
+		joinedAt: timestamp('joined_at', { withTimezone: true, mode: 'date' }).notNull().defaultNow()
+	},
+	(t) => ({
+		pk: primaryKey({ columns: [t.userId, t.clubId] })
+	})
+);
+
+export const clubRelations = relations(club, ({ many, one }) => ({
+	members: many(userClub),
+	creator: one(user, { fields: [club.createdBy], references: [user.id] }),
+	challenges: many(challenge)
+}));
+
+export const userClubRelations = relations(userClub, ({ one }) => ({
+	user: one(user, { fields: [userClub.userId], references: [user.id] }),
+	club: one(club, { fields: [userClub.clubId], references: [club.id] })
+}));
+
 export const session = pgTable('session', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),
-	expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'date' }).notNull()
+	expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'date' }).notNull(),
+	activeClubId: integer('active_club_id').references(() => club.id, { onDelete: 'set null' })
 });
 
 export const tokens = pgTable('strava_tokens', {
@@ -290,6 +330,89 @@ JOIN season s ON s.id = was.season_id
 WHERE s.is_active = TRUE
 `);
 
+export const winActivitiesBySeasonClubView = pgView('win_activities_by_season_club', {
+	activityId: text('activity_id')
+		.notNull()
+		.references(() => activity.id),
+	attemptId: integer('attempt_id')
+		.notNull()
+		.references(() => summit_attempt.id),
+	summitId: integer('summit_id')
+		.notNull()
+		.references(() => summit.id),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	seasonId: integer('season_id')
+		.notNull()
+		.references(() => season.id),
+	clubId: integer('club_id')
+		.notNull()
+		.references(() => club.id)
+}).as(sql`
+WITH earliestAttempts AS (
+  SELECT
+    ${summit_attempt.summitId} AS summit_id,
+    ${summit_attempt.seasonId} AS season_id,
+    ${userClub.clubId} AS club_id,
+    MIN(${summit_attempt.date}) AS min_date
+  FROM ${summit_attempt}
+  JOIN ${userClub} ON ${userClub.userId} = ${summit_attempt.userId}
+  WHERE ${summit_attempt.published} = TRUE
+  GROUP BY ${summit_attempt.summitId}, ${summit_attempt.seasonId}, ${userClub.clubId}
+)
+SELECT DISTINCT ON (${summit_attempt.userId}, ${summit_attempt.summitId}, ${summit_attempt.seasonId}, ${userClub.clubId})
+  ${summit_attempt.activityId} AS activity_id,
+  ${summit_attempt.id} AS attempt_id,
+  ${summit_attempt.summitId} AS summit_id,
+  ${summit_attempt.userId} AS user_id,
+  ${summit_attempt.seasonId} AS season_id,
+  ${userClub.clubId} AS club_id
+FROM ${summit_attempt}
+JOIN ${userClub} ON ${userClub.userId} = ${summit_attempt.userId}
+JOIN earliestAttempts ea
+  ON ${summit_attempt.summitId} = ea.summit_id
+ AND ${summit_attempt.seasonId} = ea.season_id
+ AND ${userClub.clubId} = ea.club_id
+WHERE
+  ${summit_attempt.published} = TRUE
+  AND DATE(${summit_attempt.date}) = DATE(ea.min_date)
+ORDER BY
+  ${summit_attempt.userId},
+  ${summit_attempt.summitId},
+  ${summit_attempt.seasonId},
+  ${userClub.clubId},
+  ${summit_attempt.date}
+`);
+
+export const winActivitiesClubView = pgView('win_activities_club', {
+	activityId: text('activity_id')
+		.notNull()
+		.references(() => activity.id),
+	attemptId: integer('attempt_id')
+		.notNull()
+		.references(() => summit_attempt.id),
+	summitId: integer('summit_id')
+		.notNull()
+		.references(() => summit.id),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	clubId: integer('club_id')
+		.notNull()
+		.references(() => club.id)
+}).as(sql`
+SELECT
+  was.activity_id,
+  was.attempt_id,
+  was.summit_id,
+  was.user_id,
+  was.club_id
+FROM win_activities_by_season_club was
+JOIN season s ON s.id = was.season_id
+WHERE s.is_active = TRUE
+`);
+
 export const season = pgTable(
 	'season',
 	{
@@ -313,6 +436,7 @@ export const challenge = pgTable('challenge', {
 	description: text('description'),
 	type: text('type').notNull().default('one_time'),
 	ordered: boolean('ordered').notNull().default(false),
+	clubId: integer('club_id').references(() => club.id, { onDelete: 'cascade' }),
 	createdBy: text('created_by')
 		.notNull()
 		.references(() => user.id),
@@ -321,6 +445,7 @@ export const challenge = pgTable('challenge', {
 
 export const challengeRelations = relations(challenge, ({ one, many }) => ({
 	creator: one(user, { fields: [challenge.createdBy], references: [user.id] }),
+	club: one(club, { fields: [challenge.clubId], references: [club.id] }),
 	points: many(challengePoint),
 	participants: many(challengeParticipant),
 	attempts: many(challengeAttempt)
@@ -436,6 +561,8 @@ export type Tokens = typeof tokens.$inferSelect;
 export type User = typeof user.$inferSelect;
 export type Activity = typeof activity.$inferSelect;
 export type ParsedActivity = typeof parseActivityResults.$inferSelect;
+export type Club = typeof club.$inferSelect;
+export type UserClub = typeof userClub.$inferSelect;
 
 export type SelectArea = typeof area.$inferSelect;
 export type SelectSummit = typeof summit.$inferSelect;

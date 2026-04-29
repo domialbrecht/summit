@@ -1,9 +1,18 @@
 <script lang="ts">
-	import SolYVC from '$site/solyvc.svg';
 	import { page } from '$app/stores';
 	import { Award, LogIn } from 'lucide-svelte';
-	import type { User } from '$lib/server/db/schema';
-	let { user }: { user: User | undefined } = $props();
+	import type { User, Club } from '$lib/server/db/schema';
+	import ClubSwitcher from './club-switcher.svelte';
+
+	let {
+		user,
+		activeClub = null,
+		userClubs = []
+	}: {
+		user: User | undefined;
+		activeClub?: Club | null;
+		userClubs?: Array<{ club: Club; role: string }>;
+	} = $props();
 </script>
 
 <ul
@@ -14,11 +23,22 @@
 			href="/"
 			class="tooltip"
 			class:menu-active={$page.url.pathname === '/'}
-			style="--menu-active-bg: var(--color-base-300);"
 			data-tip="Home"
 			aria-label="Home"
 		>
-			<img src={SolYVC} alt="SolYVC" class="w-5" />
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="h-5 w-5"
+			>
+				<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+				<polyline points="9 22 9 12 15 12 15 22" />
+			</svg>
 		</a>
 	</li>
 	<li>
@@ -102,6 +122,7 @@
 				<Award class="h-5 w-5" />
 			</a>
 		</li>
+		<ClubSwitcher {activeClub} {userClubs} />
 	{/if}
 	<li>
 		<a

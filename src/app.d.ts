@@ -5,6 +5,12 @@ declare global {
 		interface Locals {
 			user: import('$lib/server/session').SessionValidationResult['user'];
 			session: import('$lib/server/session').SessionValidationResult['session'];
+			activeClub: import('$lib/server/db/schema').Club | null;
+			userClubs: Array<{
+				club: import('$lib/server/db/schema').Club;
+				role: string;
+				joinedAt: Date;
+			}>;
 		}
 		interface PageData {
 			user?: import('$lib/server/session').SessionValidationResult['user'];

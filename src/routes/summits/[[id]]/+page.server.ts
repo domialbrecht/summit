@@ -6,26 +6,52 @@ import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 import type { UserSummitWin } from '$lib/types';
 
-async function getSummitMedals(summitId: string | undefined, seasonId: number) {
+async function getSummitMedals(
+	summitId: string | undefined,
+	seasonId: number,
+	clubId: number | null
+) {
 	if (!summitId) {
 		return [];
 	}
 
 	const attemptAcounts = db.$with('attemptCounts').as(
-		db
-			.select({
-				user_id: table.summit_attempt.userId,
-				attempt_count: count(table.summit_attempt.id).as('attempt_count')
-			})
-			.from(table.summit_attempt)
-			.where(
-				and(
-					eq(table.summit_attempt.summitId, parseInt(summitId)),
-					eq(table.summit_attempt.published, true),
-					eq(table.summit_attempt.seasonId, seasonId)
-				)
-			)
-			.groupBy(table.summit_attempt.userId)
+		clubId
+			? db
+					.select({
+						user_id: table.summit_attempt.userId,
+						attempt_count: count(table.summit_attempt.id).as('attempt_count')
+					})
+					.from(table.summit_attempt)
+					.innerJoin(
+						table.userClub,
+						and(
+							eq(table.userClub.userId, table.summit_attempt.userId),
+							eq(table.userClub.clubId, clubId)
+						)
+					)
+					.where(
+						and(
+							eq(table.summit_attempt.summitId, parseInt(summitId)),
+							eq(table.summit_attempt.published, true),
+							eq(table.summit_attempt.seasonId, seasonId)
+						)
+					)
+					.groupBy(table.summit_attempt.userId)
+			: db
+					.select({
+						user_id: table.summit_attempt.userId,
+						attempt_count: count(table.summit_attempt.id).as('attempt_count')
+					})
+					.from(table.summit_attempt)
+					.where(
+						and(
+							eq(table.summit_attempt.summitId, parseInt(summitId)),
+							eq(table.summit_attempt.published, true),
+							eq(table.summit_attempt.seasonId, seasonId)
+						)
+					)
+					.groupBy(table.summit_attempt.userId)
 	);
 
 	const rankedUsers = db.$with('rankedUsers').as(
@@ -54,30 +80,51 @@ async function getSummitMedals(summitId: string | undefined, seasonId: number) {
 
 async function getSummitWins(
 	summitId: string | undefined,
-	seasonId: number
+	seasonId: number,
+	clubId: number | null
 ): Promise<UserSummitWin[]> {
 	if (!summitId) {
 		return [];
 	}
 
-	const win_result = await db
-		.select({
-			winAttempt: table.summit_attempt,
-			username: table.user.firstName,
-			profile: table.user.profile
-		})
-		.from(table.winActivitiesBySeasonView)
-		.innerJoin(
-			table.summit_attempt,
-			eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id)
-		)
-		.innerJoin(table.user, eq(table.user.id, table.winActivitiesBySeasonView.userId))
-		.where(
-			and(
-				eq(table.winActivitiesBySeasonView.summitId, parseInt(summitId)),
-				eq(table.winActivitiesBySeasonView.seasonId, seasonId)
-			)
-		);
+	const win_result = clubId
+		? await db
+				.select({
+					winAttempt: table.summit_attempt,
+					username: table.user.firstName,
+					profile: table.user.profile
+				})
+				.from(table.winActivitiesBySeasonClubView)
+				.innerJoin(
+					table.summit_attempt,
+					eq(table.winActivitiesBySeasonClubView.attemptId, table.summit_attempt.id)
+				)
+				.innerJoin(table.user, eq(table.user.id, table.winActivitiesBySeasonClubView.userId))
+				.where(
+					and(
+						eq(table.winActivitiesBySeasonClubView.summitId, parseInt(summitId)),
+						eq(table.winActivitiesBySeasonClubView.seasonId, seasonId),
+						eq(table.winActivitiesBySeasonClubView.clubId, clubId)
+					)
+				)
+		: await db
+				.select({
+					winAttempt: table.summit_attempt,
+					username: table.user.firstName,
+					profile: table.user.profile
+				})
+				.from(table.winActivitiesBySeasonView)
+				.innerJoin(
+					table.summit_attempt,
+					eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id)
+				)
+				.innerJoin(table.user, eq(table.user.id, table.winActivitiesBySeasonView.userId))
+				.where(
+					and(
+						eq(table.winActivitiesBySeasonView.summitId, parseInt(summitId)),
+						eq(table.winActivitiesBySeasonView.seasonId, seasonId)
+					)
+				);
 
 	const get_media_for_win = win_result.map(async (win) => {
 		const result = await db
@@ -112,7 +159,9 @@ async function getSummitProfiles(
 		.where(eq(table.summit_profile.summitId, parseInt(summitId)));
 }
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async (event) => {
+	const { params } = event;
+	const clubId = event.locals.activeClub?.id ?? null;
 	let summit_data:
 		| {
 				summit: table.SelectSummit;
@@ -157,8 +206,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		seasons: seasons.map((s) => ({
 			season: s.slug,
 			isActive: s.isActive,
-			summit_medals: getSummitMedals(params.id, s.id),
-			summit_wins: getSummitWins(params.id, s.id)
+			summit_medals: getSummitMedals(params.id, s.id, clubId),
+			summit_wins: getSummitWins(params.id, s.id, clubId)
 		}))
 	};
 };

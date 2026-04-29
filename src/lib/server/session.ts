@@ -20,7 +20,8 @@ export async function createSession(token: string, userId: string) {
 	const session: table.Session = {
 		id: sessionId,
 		userId,
-		expiresAt: new Date(Date.now() + DAY_IN_MS * 30)
+		expiresAt: new Date(Date.now() + DAY_IN_MS * 30),
+		activeClubId: null
 	};
 	await db.insert(table.session).values(session);
 	return session;
@@ -40,21 +41,23 @@ export async function validateSessionToken(token: string) {
 				ftp: table.user.ftp,
 				isAdmin: table.user.isAdmin
 			},
-			session: table.session
+			session: table.session,
+			activeClub: table.club
 		})
 		.from(table.session)
 		.innerJoin(table.user, eq(table.session.userId, table.user.id))
+		.leftJoin(table.club, eq(table.session.activeClubId, table.club.id))
 		.where(eq(table.session.id, sessionId));
 
 	if (!result) {
-		return { session: null, user: undefined };
+		return { session: null, user: undefined, activeClub: null };
 	}
-	const { session, user } = result;
+	const { session, user, activeClub } = result;
 
 	const sessionExpired = Date.now() >= session.expiresAt.getTime();
 	if (sessionExpired) {
 		await db.delete(table.session).where(eq(table.session.id, session.id));
-		return { session: null, user: undefined };
+		return { session: null, user: undefined, activeClub: null };
 	}
 
 	const renewSession = Date.now() >= session.expiresAt.getTime() - DAY_IN_MS * 15;
@@ -66,7 +69,7 @@ export async function validateSessionToken(token: string) {
 			.where(eq(table.session.id, session.id));
 	}
 
-	return { session, user };
+	return { session, user, activeClub };
 }
 
 export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>;

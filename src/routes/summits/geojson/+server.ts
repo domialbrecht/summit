@@ -5,20 +5,42 @@ import { db } from '$lib/server/db';
 import { json } from '@sveltejs/kit';
 import { sql } from 'drizzle-orm';
 
-export const GET: RequestHandler = async ({ setHeaders, url }) => {
+export const GET: RequestHandler = async ({ setHeaders, url, locals }) => {
 	const season = url.searchParams.get('season') ? true : false;
+	const clubId = locals.activeClub?.id ?? null;
 
-	const result = season ? await getSeasonData() : await getAllData();
+	const result = season ? await getSeasonData(clubId) : await getAllData(clubId);
 
 	const geojson = result.at(0)?.geojson;
 
 	setHeaders({
-		'cache-control': 'public, max-age=3600, stale-while-revalidate=14400'
+		'cache-control': clubId
+			? 'private, max-age=3600, stale-while-revalidate=14400'
+			: 'public, max-age=3600, stale-while-revalidate=14400'
 	});
 	return json(geojson);
 };
 
-function getSeasonData() {
+function getSeasonData(clubId: number | null) {
+	const attemptsSubquery = clubId
+		? sql`(
+				SELECT json_agg(wa.user_id)
+				FROM (
+					SELECT ${table.winActivitiesClubView.userId}
+					FROM ${table.winActivitiesClubView}
+					WHERE ${table.winActivitiesClubView.summitId} = ${table.summit}.id
+					AND ${table.winActivitiesClubView.clubId} = ${clubId}
+				) wa
+			)`
+		: sql`(
+				SELECT json_agg(wa.user_id)
+				FROM (
+					SELECT ${table.winActivitiesView.userId}
+					FROM ${table.winActivitiesView}
+					WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
+				) wa
+			)`;
+
 	return db
 		.select({
 			geojson: sql`json_build_object(
@@ -34,14 +56,7 @@ function getSeasonData() {
               'elevation', elevation,
               'category', category,
               'desc', description,
-              'attempts', (
-                SELECT json_agg(wa.user_id)
-                FROM (
-                  SELECT ${table.winActivitiesView.userId} 
-                  FROM ${table.winActivitiesView} 
-                  WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
-                ) wa
-              )
+              'attempts', ${attemptsSubquery}
             )
           )
         )
@@ -51,7 +66,26 @@ function getSeasonData() {
 		.from(table.summit);
 }
 
-function getAllData() {
+function getAllData(clubId: number | null) {
+	const attemptsSubquery = clubId
+		? sql`(
+				SELECT json_agg(wa.user_id)
+				FROM (
+					SELECT ${table.winActivitiesBySeasonClubView.userId}
+					FROM ${table.winActivitiesBySeasonClubView}
+					WHERE ${table.winActivitiesBySeasonClubView.summitId} = ${table.summit}.id
+					AND ${table.winActivitiesBySeasonClubView.clubId} = ${clubId}
+				) wa
+			)`
+		: sql`(
+				SELECT json_agg(wa.user_id)
+				FROM (
+					SELECT ${table.winActivitiesBySeasonView.userId}
+					FROM ${table.winActivitiesBySeasonView}
+					WHERE ${table.winActivitiesBySeasonView.summitId} = ${table.summit}.id
+				) wa
+			)`;
+
 	return db
 		.select({
 			geojson: sql`json_build_object(
@@ -67,14 +101,7 @@ function getAllData() {
               'elevation', elevation,
               'category', category,
               'desc', description,
-              'attempts', (
-                SELECT json_agg(wa.user_id)
-                FROM (
-                  SELECT ${table.winActivitiesBySeasonView.userId} 
-                  FROM ${table.winActivitiesBySeasonView} 
-                  WHERE ${table.winActivitiesBySeasonView.summitId} = ${table.summit}.id
-                ) wa
-              )
+              'attempts', ${attemptsSubquery}
             )
           )
         )

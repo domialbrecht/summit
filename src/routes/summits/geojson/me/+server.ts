@@ -12,6 +12,26 @@ export const GET: RequestHandler = async ({ setHeaders, locals }) => {
 		return json([]);
 	}
 
+	const clubId = locals.activeClub?.id ?? null;
+	const attemptsSubquery = clubId
+		? sql`(
+				SELECT json_agg(wa.user_id)
+				FROM (
+					SELECT ${table.winActivitiesClubView.userId}
+					FROM ${table.winActivitiesClubView}
+					WHERE ${table.winActivitiesClubView.summitId} = ${table.summit}.id
+					AND ${table.winActivitiesClubView.clubId} = ${clubId}
+				) wa
+			)`
+		: sql`(
+				SELECT json_agg(wa.user_id)
+				FROM (
+					SELECT ${table.winActivitiesView.userId}
+					FROM ${table.winActivitiesView}
+					WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
+				) wa
+			)`;
+
 	const result = await db
 		.select({
 			geojson: sql`json_build_object(
@@ -27,14 +47,7 @@ export const GET: RequestHandler = async ({ setHeaders, locals }) => {
               'elevation', elevation,
               'category', category,
               'desc', description,
-              'attempts', (
-                SELECT json_agg(wa.user_id)
-                FROM (
-                  SELECT ${table.winActivitiesView.userId} 
-                  FROM ${table.winActivitiesView} 
-                  WHERE ${table.winActivitiesView.summitId} = ${table.summit}.id
-                ) wa
-              )
+              'attempts', ${attemptsSubquery}
             )
           )
         )
@@ -50,7 +63,7 @@ export const GET: RequestHandler = async ({ setHeaders, locals }) => {
 	const geojson = result.at(0)?.geojson;
 
 	setHeaders({
-		'cache-control': 'public, max-age=3600, stale-while-revalidate=14400'
+		'cache-control': 'private, max-age=3600, stale-while-revalidate=14400'
 	});
 	return json(geojson);
 };

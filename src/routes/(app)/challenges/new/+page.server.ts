@@ -41,6 +41,12 @@ export const actions = {
 	default: async ({ request, locals }: { request: Request; locals: App.Locals }) => {
 		const user = locals.user;
 		if (!user) return fail(401, {});
+
+		const activeClub = locals.activeClub;
+		if (!activeClub) {
+			return fail(400, { message: 'Select a club before creating a challenge.' });
+		}
+
 		const form = await superValidate(request, zod4(createChallengeSchema));
 
 		if (!form.valid) {
@@ -75,6 +81,7 @@ export const actions = {
 				description: form.data.description ?? null,
 				type: challengeType,
 				ordered: isOrdered,
+				clubId: activeClub.id,
 				createdBy: user.id,
 				createdAt: new Date()
 			})

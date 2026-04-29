@@ -5,6 +5,7 @@
 	import Section from '$lib/components/ui/section';
 	import { dt } from '$lib/utils';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import type { PageServerData } from './$types';
 
 	const { data }: { data: PageServerData } = $props();
@@ -39,7 +40,10 @@
 
 <Section sectionId="postsync">
 	<div class="font-title text-[clamp(1.5rem,6vw,4rem)] leading-none font-black">
-		<span class="text-primary">Aktivitäte</span> vom SolyVC
+		<span class="text-primary">Aktivitäte</span>
+		{#if $page.data.activeClub}
+			vom {$page.data.activeClub.name}
+		{/if}
 	</div>
 
 	<div class="mt-4 mb-6 flex flex-wrap gap-4">

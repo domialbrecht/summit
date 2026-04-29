@@ -3,6 +3,7 @@ import { createSession, generateSessionToken, setSessionTokenCookie } from '$lib
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
+import { syncUserClubMemberships } from '$lib/server/clubs';
 
 import type { OAuth2Tokens } from '$lib/server/oauth';
 import type { RequestEvent } from './$types';
@@ -42,19 +43,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	userRequest.headers.set('Authorization', `Bearer ${stravaAccessToken}`);
 	const userResponse = await fetch(userRequest);
 	const userResult = await userResponse.json();
-	const SOLYVC_CLUB = 1196981;
-
-	if (
-		!userResult.clubs ||
-		!userResult.clubs.some((club: { id: number }) => club.id === SOLYVC_CLUB)
-	) {
-		return new Response(null, {
-			status: 302,
-			headers: {
-				location: '/login?noclub'
-			}
-		});
-	}
 
 	const stravaId = userResult.id.toString();
 	const results = await db.select().from(table.user).where(eq(table.user.stravaId, stravaId));
@@ -65,8 +53,22 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		const profile = userResult.profile;
 		await db.update(table.user).set({ profile }).where(eq(table.user.id, stravaId));
 
+		// Sync club memberships from Strava
+		const memberships = await syncUserClubMemberships(existingUser.id, userResult.clubs ?? []);
+		if (memberships.length === 0) {
+			return new Response(null, {
+				status: 302,
+				headers: { location: '/login?noclub' }
+			});
+		}
+
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, existingUser.id);
+		// Set active club to first membership
+		await db
+			.update(table.session)
+			.set({ activeClubId: memberships[0].club.id })
+			.where(eq(table.session.id, session.id));
 		await storeTokens(existingUser.id, tokens);
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {
@@ -88,8 +90,22 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			.insert(table.user)
 			.values({ id: stravaId, stravaId, firstName, lastName, profile, ftp });
 
+		// Sync club memberships for new user
+		const memberships = await syncUserClubMemberships(stravaId, userResult.clubs ?? []);
+		if (memberships.length === 0) {
+			return new Response(null, {
+				status: 302,
+				headers: { location: '/login?noclub' }
+			});
+		}
+
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, stravaId);
+		// Set active club to first membership
+		await db
+			.update(table.session)
+			.set({ activeClubId: memberships[0].club.id })
+			.where(eq(table.session.id, session.id));
 		await storeTokens(stravaId, tokens);
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		return new Response(null, {

@@ -127,7 +127,11 @@
 							<div class="skeleton h-40 w-full"></div>
 						{:then stats}
 							{#if stats.length > 0 && data.seasonStart && data.seasonEnd}
-								<ContributionChart {stats} seasonStart={data.seasonStart} seasonEnd={data.seasonEnd} />
+								<ContributionChart
+									{stats}
+									seasonStart={data.seasonStart}
+									seasonEnd={data.seasonEnd}
+								/>
 							{:else}
 								<div class="flex h-40 items-center justify-center text-gray-400">
 									<p>No keni Date für die Saison</p>

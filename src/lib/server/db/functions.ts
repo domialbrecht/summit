@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { eq, and, count, asc, desc, sql } from 'drizzle-orm';
+import { eq, and, count, asc, desc } from 'drizzle-orm';
 import * as table from '$lib/server/db/schema';
 
 export async function getActiveSeason() {
@@ -12,8 +12,28 @@ export async function getSeasonBySlug(slug: string) {
 	return s;
 }
 
-export async function db_win_results() {
-	const win_results = await db
+export async function db_win_results(clubId?: number | null) {
+	if (clubId) {
+		return db
+			.select({
+				userName: table.user.firstName,
+				winAttempt: table.summit_attempt,
+				summitName: table.summit.name
+			})
+			.from(table.winActivitiesClubView)
+			.leftJoin(
+				table.summit_attempt,
+				and(
+					eq(table.summit_attempt.activityId, table.winActivitiesClubView.activityId),
+					eq(table.summit_attempt.summitId, table.winActivitiesClubView.summitId)
+				)
+			)
+			.leftJoin(table.user, eq(table.user.id, table.winActivitiesClubView.userId))
+			.leftJoin(table.summit, eq(table.summit.id, table.winActivitiesClubView.summitId))
+			.where(eq(table.winActivitiesClubView.clubId, clubId));
+	}
+
+	return db
 		.select({
 			userName: table.user.firstName,
 			winAttempt: table.summit_attempt,
@@ -29,11 +49,10 @@ export async function db_win_results() {
 		)
 		.leftJoin(table.user, eq(table.user.id, table.winActivitiesView.userId))
 		.leftJoin(table.summit, eq(table.summit.id, table.winActivitiesView.summitId));
-	return win_results;
 }
 
-export async function getAttemptsBySeason(seasonId: number) {
-	return db
+export async function getAttemptsBySeason(seasonId: number, clubId?: number | null) {
+	const query = db
 		.select({
 			userId: table.summit_attempt.userId,
 			userName: table.user.firstName,
@@ -41,7 +60,16 @@ export async function getAttemptsBySeason(seasonId: number) {
 			attempts: count(table.summit_attempt.id).as('attempts')
 		})
 		.from(table.summit_attempt)
-		.innerJoin(table.user, eq(table.user.id, table.summit_attempt.userId))
+		.innerJoin(table.user, eq(table.user.id, table.summit_attempt.userId));
+
+	if (clubId) {
+		query.innerJoin(
+			table.userClub,
+			and(eq(table.userClub.userId, table.user.id), eq(table.userClub.clubId, clubId))
+		);
+	}
+
+	return query
 		.where(
 			and(eq(table.summit_attempt.published, true), eq(table.summit_attempt.seasonId, seasonId))
 		)
@@ -60,22 +88,28 @@ export async function getSeasons() {
 		.orderBy(desc(table.season.isActive), desc(table.season.startsAt), asc(table.season.slug));
 }
 
-export async function getUserSeasonStats(userId: string, seasonId: number) {
+export async function getUserSeasonStats(userId: string, seasonId: number, clubId?: number | null) {
+	const winView = clubId ? table.winActivitiesBySeasonClubView : table.winActivitiesBySeasonView;
+	const winJoin = clubId
+		? and(
+				eq(table.winActivitiesBySeasonClubView.attemptId, table.summit_attempt.id),
+				eq(table.winActivitiesBySeasonClubView.seasonId, table.summit_attempt.seasonId),
+				eq(table.winActivitiesBySeasonClubView.clubId, clubId)
+			)
+		: and(
+				eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id),
+				eq(table.winActivitiesBySeasonView.seasonId, table.summit_attempt.seasonId)
+			);
+
 	const attempts = await db
 		.select({
 			date: table.summit_attempt.date,
 			attemptId: table.summit_attempt.id,
 			summitId: table.summit_attempt.summitId,
-			winAttemptId: table.winActivitiesBySeasonView.attemptId
+			winAttemptId: winView.attemptId
 		})
 		.from(table.summit_attempt)
-		.leftJoin(
-			table.winActivitiesBySeasonView,
-			and(
-				eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id),
-				eq(table.winActivitiesBySeasonView.seasonId, table.summit_attempt.seasonId)
-			)
-		)
+		.leftJoin(winView, winJoin)
 		.where(
 			and(
 				eq(table.summit_attempt.userId, userId),
@@ -102,8 +136,31 @@ export async function getUserSeasonStats(userId: string, seasonId: number) {
 	});
 }
 
-export async function db_win_results_by_season(seasonId: number) {
-	const win_results = await db
+export async function db_win_results_by_season(seasonId: number, clubId?: number | null) {
+	if (clubId) {
+		return db
+			.select({
+				userName: table.user.firstName,
+				winAttempt: table.summit_attempt,
+				summitName: table.summit.name,
+				seasonId: table.winActivitiesBySeasonClubView.seasonId
+			})
+			.from(table.winActivitiesBySeasonClubView)
+			.leftJoin(
+				table.summit_attempt,
+				eq(table.summit_attempt.id, table.winActivitiesBySeasonClubView.attemptId)
+			)
+			.leftJoin(table.user, eq(table.user.id, table.winActivitiesBySeasonClubView.userId))
+			.leftJoin(table.summit, eq(table.summit.id, table.winActivitiesBySeasonClubView.summitId))
+			.where(
+				and(
+					eq(table.winActivitiesBySeasonClubView.seasonId, seasonId),
+					eq(table.winActivitiesBySeasonClubView.clubId, clubId)
+				)
+			);
+	}
+
+	return db
 		.select({
 			userName: table.user.firstName,
 			winAttempt: table.summit_attempt,
@@ -113,13 +170,11 @@ export async function db_win_results_by_season(seasonId: number) {
 		.from(table.winActivitiesBySeasonView)
 		.leftJoin(
 			table.summit_attempt,
-			eq(table.summit_attempt.id, table.winActivitiesBySeasonView.attemptId) // best join
+			eq(table.summit_attempt.id, table.winActivitiesBySeasonView.attemptId)
 		)
 		.leftJoin(table.user, eq(table.user.id, table.winActivitiesBySeasonView.userId))
 		.leftJoin(table.summit, eq(table.summit.id, table.winActivitiesBySeasonView.summitId))
 		.where(eq(table.winActivitiesBySeasonView.seasonId, seasonId));
-
-	return win_results;
 }
 
 export type ProgressPoint = {
@@ -140,24 +195,43 @@ export type ProgressComparison = {
  */
 export async function getSeasonProgressComparison(
 	userId: string,
-	seasonId: number
+	seasonId: number,
+	clubId?: number | null
 ): Promise<ProgressComparison> {
 	// Get all published attempts in this season with win info
-	const rows = await db
+	const winView = clubId ? table.winActivitiesBySeasonClubView : table.winActivitiesBySeasonView;
+	const winJoin = clubId
+		? and(
+				eq(table.winActivitiesBySeasonClubView.attemptId, table.summit_attempt.id),
+				eq(table.winActivitiesBySeasonClubView.seasonId, table.summit_attempt.seasonId),
+				eq(table.winActivitiesBySeasonClubView.clubId, clubId)
+			)
+		: and(
+				eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id),
+				eq(table.winActivitiesBySeasonView.seasonId, table.summit_attempt.seasonId)
+			);
+
+	const baseQuery = db
 		.select({
 			usrId: table.summit_attempt.userId,
 			summitId: table.summit_attempt.summitId,
 			date: table.summit_attempt.date,
-			winAttemptId: table.winActivitiesBySeasonView.attemptId
+			winAttemptId: winView.attemptId
 		})
 		.from(table.summit_attempt)
-		.leftJoin(
-			table.winActivitiesBySeasonView,
-			and(
-				eq(table.winActivitiesBySeasonView.attemptId, table.summit_attempt.id),
-				eq(table.winActivitiesBySeasonView.seasonId, table.summit_attempt.seasonId)
+		.leftJoin(winView, winJoin);
+
+	const query = clubId
+		? baseQuery.innerJoin(
+				table.userClub,
+				and(
+					eq(table.userClub.userId, table.summit_attempt.userId),
+					eq(table.userClub.clubId, clubId)
+				)
 			)
-		)
+		: baseQuery;
+
+	const rows = await query
 		.where(
 			and(eq(table.summit_attempt.seasonId, seasonId), eq(table.summit_attempt.published, true))
 		)

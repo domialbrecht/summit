@@ -4,8 +4,9 @@ import { count, eq, and, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { error } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ parent, params }) => {
+export const load: PageServerLoad = async ({ parent, params, locals }) => {
 	const { user } = await parent();
+	const clubId = locals.activeClub?.id ?? null;
 	let user_data;
 	let statuser;
 	if (params.id) {
@@ -15,9 +16,21 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 			.from(table.user)
 			.where(eq(table.user.id, userId));
 
+		const winView = clubId ? table.winActivitiesClubView : table.winActivitiesView;
+		const winJoinCondition = clubId
+			? and(
+					eq(table.summit_attempt.activityId, table.winActivitiesClubView.activityId),
+					eq(table.summit_attempt.summitId, table.winActivitiesClubView.summitId),
+					eq(table.winActivitiesClubView.clubId, clubId)
+				)
+			: and(
+					eq(table.summit_attempt.activityId, table.winActivitiesView.activityId),
+					eq(table.summit_attempt.summitId, table.winActivitiesView.summitId)
+				);
+
 		user_data = await db
 			.select({
-				winAttempt: count(table.winActivitiesView.summitId).as('winAttempt'),
+				winAttempt: count(winView.summitId).as('winAttempt'),
 				summitName: table.summit.name,
 				summitId: table.summit_attempt.summitId,
 				areas: sql<{ id: number; name: string }[]>`
@@ -30,13 +43,7 @@ export const load: PageServerLoad = async ({ parent, params }) => {
 			})
 			.from(table.summit_attempt)
 			.leftJoin(table.summit, eq(table.summit.id, table.summit_attempt.summitId))
-			.leftJoin(
-				table.winActivitiesView,
-				and(
-					eq(table.summit_attempt.activityId, table.winActivitiesView.activityId),
-					eq(table.summit_attempt.summitId, table.winActivitiesView.summitId)
-				)
-			)
+			.leftJoin(winView, winJoinCondition)
 			.leftJoin(
 				table.summitsToAreas,
 				eq(table.summitsToAreas.summitId, table.summit_attempt.summitId)

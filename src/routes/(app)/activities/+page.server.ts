@@ -4,6 +4,7 @@ import * as table from '$lib/server/db/schema';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
+	const clubId = event.locals.activeClub?.id ?? null;
 	const now = new Date();
 	const yearParam = event.url.searchParams.get('year') ?? String(now.getFullYear());
 	const monthParam = event.url.searchParams.get('month') ?? String(now.getMonth() + 1);
@@ -20,29 +21,61 @@ export const load: PageServerLoad = async (event) => {
 		lt(table.summit_attempt.date, end)
 	];
 
-	const results = await db
-		.select({
-			attemptId: table.summit_attempt.id,
-			id: table.summit.id,
-			name: table.summit.name,
-			date: table.summit_attempt.date,
-			firstName: table.user.firstName,
-			lastName: table.user.lastName,
-			profile: table.user.profile,
-			win: table.winActivitiesView.activityId
-		})
-		.from(table.summit_attempt)
-		.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
-		.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id))
-		.leftJoin(
-			table.winActivitiesView,
-			and(
-				eq(table.summit_attempt.summitId, table.winActivitiesView.summitId),
-				eq(table.summit_attempt.activityId, table.winActivitiesView.activityId)
-			)
-		)
-		.where(and(...conditions))
-		.orderBy(desc(table.summit_attempt.date));
+	const results = clubId
+		? await db
+				.select({
+					attemptId: table.summit_attempt.id,
+					id: table.summit.id,
+					name: table.summit.name,
+					date: table.summit_attempt.date,
+					firstName: table.user.firstName,
+					lastName: table.user.lastName,
+					profile: table.user.profile,
+					win: table.winActivitiesClubView.activityId
+				})
+				.from(table.summit_attempt)
+				.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
+				.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id))
+				.leftJoin(
+					table.winActivitiesClubView,
+					and(
+						eq(table.summit_attempt.summitId, table.winActivitiesClubView.summitId),
+						eq(table.summit_attempt.activityId, table.winActivitiesClubView.activityId),
+						eq(table.winActivitiesClubView.clubId, clubId)
+					)
+				)
+				.innerJoin(
+					table.userClub,
+					and(
+						eq(table.userClub.userId, table.summit_attempt.userId),
+						eq(table.userClub.clubId, clubId)
+					)
+				)
+				.where(and(...conditions))
+				.orderBy(desc(table.summit_attempt.date))
+		: await db
+				.select({
+					attemptId: table.summit_attempt.id,
+					id: table.summit.id,
+					name: table.summit.name,
+					date: table.summit_attempt.date,
+					firstName: table.user.firstName,
+					lastName: table.user.lastName,
+					profile: table.user.profile,
+					win: table.winActivitiesView.activityId
+				})
+				.from(table.summit_attempt)
+				.innerJoin(table.summit, eq(table.summit_attempt.summitId, table.summit.id))
+				.innerJoin(table.user, eq(table.summit_attempt.userId, table.user.id))
+				.leftJoin(
+					table.winActivitiesView,
+					and(
+						eq(table.summit_attempt.summitId, table.winActivitiesView.summitId),
+						eq(table.summit_attempt.activityId, table.winActivitiesView.activityId)
+					)
+				)
+				.where(and(...conditions))
+				.orderBy(desc(table.summit_attempt.date));
 
 	// Find the earliest published attempt to determine how far back the dropdown goes
 	const [earliest] = await db
