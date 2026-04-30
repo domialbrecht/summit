@@ -31,6 +31,7 @@ export const club = pgTable('club', {
 	name: text('name').notNull(),
 	description: text('description'),
 	profileImageUrl: text('profile_image_url'),
+	primaryColor: text('primary_color'),
 	createdBy: text('created_by').references(() => user.id),
 	createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull().defaultNow()
 });

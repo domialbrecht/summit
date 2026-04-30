@@ -8,7 +8,7 @@
 	} from 'svelte-maplibre';
 	import { type Map, type MapMouseEvent } from 'maplibre-gl';
 	import { CHALLENGE_COLORS as COLORS } from './challenge-colors';
-	import solyvc from '$site/solyvc.png';
+	import mountain from '$site/icons/mountain.png';
 
 	export type EditorMode = 'drag' | 'select' | 'place';
 
@@ -104,7 +104,7 @@
 		style="/komoot_mapstyle.json"
 		standardControls
 		class="h-full w-full"
-		images={[{ id: 'solyvc_logo', url: solyvc }]}
+		images={[{ id: 'summit_logo', url: mountain }]}
 		center={[7.535409043530986, 47.20735710031535]}
 		zoom={12}
 		onclick={handleMapClick}
@@ -123,7 +123,7 @@
 						'text-anchor': 'top',
 						'text-offset': [0, 1.2],
 						'text-font': ['Noto Sans Regular'],
-						'icon-image': 'solyvc_logo'
+						'icon-image': 'summit_logo'
 					}}
 					paint={{
 						'text-color': [

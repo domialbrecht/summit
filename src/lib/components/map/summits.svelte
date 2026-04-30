@@ -9,7 +9,7 @@
 		type LayerClickInfo
 	} from 'svelte-maplibre';
 	import type { ExpressionSpecification } from 'maplibre-gl';
-	import solyvc from '$site/solyvc.png';
+	import mountain from '$site/icons/mountain.png';
 	import trophy from '$site/icons/trophy.png';
 	import trophyF from '$site/icons/trophyF.png';
 	import check from '$site/icons/check.png';
@@ -42,6 +42,7 @@
 		handleClick,
 		mapUrl,
 		userMapUrl = null,
+		clubLogoUrl = null,
 		selectionMode = false,
 		selectedIds = [],
 		onSummitToggle,
@@ -54,6 +55,7 @@
 		handleClick: () => void;
 		mapUrl: string;
 		userMapUrl?: string | null;
+		clubLogoUrl?: string | null;
 		selectionMode?: boolean;
 		selectedIds?: number[];
 		onSummitToggle?: (feature: Feature<Geometry, SummitProperty>) => void;
@@ -68,6 +70,17 @@
 			? (['in', ['get', 'id'], ['literal', selectedIds]] as ExpressionSpecification)
 			: (['==', ['get', 'id'], -1] as ExpressionSpecification)
 	);
+
+	let mapImages = $derived([
+		{
+			id: 'summit_logo',
+			url: clubLogoUrl ?? mountain,
+			options: { pixelRatio: clubLogoUrl ? 0.24 : 1 }
+		},
+		{ id: 'attempt_icon', url: trophy },
+		{ id: 'attempt_icon_female', url: trophyF },
+		{ id: 'check_icon', url: check }
+	]);
 </script>
 
 <MapLibre
@@ -75,12 +88,7 @@
 	style="/komoot_mapstyle.json"
 	standardControls
 	class="h-full w-full {selectionMode ? 'cursor-crosshair' : ''}"
-	images={[
-		{ id: 'solyvc_logo', url: solyvc },
-		{ id: 'attempt_icon', url: trophy },
-		{ id: 'attempt_icon_female', url: trophyF },
-		{ id: 'check_icon', url: check }
-	]}
+	images={mapImages}
 	center={[7.535409043530986, 47.20735710031535]}
 	zoom={13}
 	onclick={(e) => {
@@ -138,12 +146,7 @@
 				layout={{
 					'text-field': ['to-string', ['get', 'name']],
 					'text-size': 14,
-					'icon-size': [
-						'case',
-						['any', ['has', 'attempts'], ['boolean', ['get', 'attempts'], false]],
-						0.1, // Use this icon if true
-						0.06 // Default icon
-					],
+					'icon-size': 0.1,
 					'text-anchor': 'top',
 					'text-offset': [0, 1.2],
 					'text-font': ['Noto Sans Regular'],
@@ -151,7 +154,7 @@
 						'case',
 						['any', ['has', 'attempts'], ['boolean', ['get', 'attempts'], false]],
 						'attempt_icon', // Default attempt icon if attempts exist
-						'solyvc_logo' // Default icon if no attempts
+						'summit_logo' // Club logo or mountain icon
 					]
 				}}
 				paint={{

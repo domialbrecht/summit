@@ -113,6 +113,13 @@
 			"when": 1777542000000,
 			"tag": "0015_club_win_views",
 			"breakpoints": true
+		},
+		{
+			"idx": 16,
+			"version": "7",
+			"when": 1777628400000,
+			"tag": "0016_club_colors",
+			"breakpoints": true
 		}
 	]
 }

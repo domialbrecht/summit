@@ -153,6 +153,7 @@
 					handleClick={() => (open = true)}
 					{mapUrl}
 					{userMapUrl}
+					clubLogoUrl={page.data.activeClub ? `/clubs/${page.data.activeClub.slug}/logo` : null}
 					{selectionMode}
 					selectedIds={planner?.getSelectedIds() ?? []}
 					onSummitToggle={(f) => planner?.handleSummitToggle(f)}
